@@ -82,7 +82,7 @@ function CEKIP() {
     if [[ "$MYIP" == "$IPVPS" ]]; then
         echo -e "${green}✓ Validasi IP berhasil - Lanjut installasi${NC}"
         domain
-        Pasang
+        Installasi
     else
         echo -e "${red}✗ Validasi IP gagal${NC}"
         echo -e "${yellow}IP $MYIP tidak terdaftar di whitelist${NC}"
@@ -291,18 +291,6 @@ function domain(){
         clear
         rm /root/subdomainx
     fi
-}
-
-function Pasang(){
-    cd
-    # SKIP TOOLS.SH - Langsung mulai installasi
-    clear
-    start=$(date +%s)
-    ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-    
-    # Update repository dan install dependencies dasar
-    apt update -y >/dev/null 2>&1
-    apt install curl git python3 -y >/dev/null 2>&1
 }
 
 function Installasi(){
@@ -564,11 +552,36 @@ fi
 
 sysctl -p >/dev/null 2>&1
 
-# Mulai installasi
-CEKIP
-Installasi
+# ========== PROSES INSTALLASI DI AWAL ==========
+clear
+echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+echo -e "${green}│         MEMULAI INSTALLASI PAKET         │${NC}"
+echo -e "${green}└──────────────────────────────────────────┘${NC}"
 
-# Setup DNS
+# INSTALL PACKAGE DASAR DI AWAL
+echo -e "${yellow}Mengupdate repository system...${NC}"
+apt update -y >/dev/null 2>&1
+
+echo -e "${yellow}Installing core packages...${NC}"
+apt install curl git python3 -y >/dev/null 2>&1
+
+echo -e "${yellow}Installing p7zip-full...${NC}"
+apt install p7zip-full -y >/dev/null 2>&1
+
+echo -e "${yellow}Installing network tools...${NC}"
+apt install net-tools iptables-persistent -y >/dev/null 2>&1
+
+echo -e "${yellow}Setting timezone...${NC}"
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+
+echo -e "${green}✓ Package dasar berhasil diinstall${NC}"
+sleep 2
+
+# LANJUT KE PROSES NORMAL
+start=$(date +%s)
+CEKIP
+
+# ========== SETUP SETELAH INSTALLASI SELESAI ==========
 sudo systemctl disable systemd-resolved
 sudo systemctl stop systemd-resolved
 sudo rm -f /etc/resolv.conf
@@ -577,7 +590,6 @@ sudo chattr +i /etc/resolv.conf
 sudo systemctl start systemd-resolved
 sudo systemctl enable systemd-resolved
 
-# Setup profile
 cat> /root/.profile << END
 if [ "$BASH" ]; then
     if [ -f ~/.bashrc ]; then
@@ -591,7 +603,6 @@ END
 
 chmod 644 /root/.profile
 
-# Cleanup
 if [ -f "/root/log-install.txt" ]; then
     rm /root/log-install.txt > /dev/null 2>&1
 fi
@@ -601,7 +612,7 @@ if [ -f "/etc/afak.conf" ]; then
 fi
 
 history -c
-serverV=$( curl -sS ${REPO}versi  )
+serverV=$( curl -sS ${REPO}versi )
 echo $serverV > /opt/.ver
 echo "00" > /home/daily_reboot
 aureb=$(cat /home/daily_reboot)
@@ -616,7 +627,7 @@ fi
 cd
 curl -sS ifconfig.me > /etc/myipvps
 curl -s ipinfo.io/city?token=75082b4831f909 >> /etc/xray/city
-curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 >> /etc/xray/isp
+curl -s ipinfo.io/org?token=75082b4831f909 | cut -d " " -f 2-10 >> /etc/xray/isp
 
 # Cleanup script files
 rm -f /root/tools.sh >/dev/null 2>&1
