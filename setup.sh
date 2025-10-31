@@ -30,7 +30,36 @@ function VALIDASI_IP() {
         echo -e "Data: $IP_DATA"
         echo ""
         rm -f /tmp/whitelist_check.txt
-        return 0
+        
+        # KONFIRMASI INSTALL
+        echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+        echo -e "${green}│           KONFIRMASI INSTALLASI          │${NC}"
+        echo -e "${green}└──────────────────────────────────────────┘${NC}"
+        echo -e "${yellow}Apakah Anda ingin melanjutkan installasi?${NC}"
+        echo -e "${yellow}IP ${green}$MYIP${yellow} sudah terdaftar dan diizinkan.${NC}"
+        echo ""
+        echo -e "${green}1. Ya, lanjutkan installasi${NC}"
+        echo -e "${red}2. Tidak, batalkan installasi${NC}"
+        echo ""
+        
+        while true; do
+            read -p "Pilih (1/2): " konfirmasi
+            case $konfirmasi in
+                1)
+                    echo -e "${green}Melanjutkan installasi...${NC}"
+                    sleep 2
+                    return 0
+                    ;;
+                2)
+                    echo -e "${red}Installasi dibatalkan oleh user.${NC}"
+                    exit 0
+                    ;;
+                *)
+                    echo -e "${red}Pilihan tidak valid. Pilih 1 atau 2.${NC}"
+                    ;;
+            esac
+        done
+        
     else
         echo -e "${red}✗ IP TIDAK TERDAFTAR di whitelist${NC}"
         echo ""
@@ -103,17 +132,28 @@ echo "IP=" >> /var/lib/ipvps.conf
 
 clear
 echo -e "[ ${green}INFO${NC} ] Aight good ... installation file is ready"
-echo -e "$green                                                                                         $NC"
-echo -e "$green____ _  _ ___ ____    _ _  _ ____ ___ ____ _    _   $NC"
-echo -e "$green|__| |  |  |  |  |    | |\ | [__   |  |__| |    |   $NC"
-echo -e "$green|  | |__|  |  |__|    | | \| ___]  |  |  | |___ |___$NC"
-echo -e "$green                                                      $NC"
-echo -e "$green                ____ ____ _  _ $NC"
-echo -e "$green                [__  [__  |__|$NC"
-echo -e "$green                ___] ___] |  |$NC"
-echo -e "$green                $NC"
-echo -e "$green♥ TERIMAKSIH TELAH MEMAKAI SCRIPT PeyxDev ♥$NC"
-sleep 2
+sleep 1
+
+# MODERN ASCII ART
+echo -e "${green}"
+echo -e "██████╗ ███████╗██╗   ██╗██╗  ██╗"
+echo -e "██╔══██╗██╔════╝╚██╗ ██╔╝╚██╗██╔╝"
+echo -e "██████╔╝█████╗   ╚████╔╝  ╚███╔╝ "
+echo -e "██╔═══╝ ██╔══╝    ╚██╔╝   ██╔██╗ "
+echo -e "██║     ███████╗   ██║   ██╔╝ ██╗"
+echo -e "╚═╝     ╚══════╝   ╚═╝   ╚═╝  ╚═╝"
+echo -e "${NC}"
+echo -e "${tyblue}┌──────────────────────────────────────────┐${NC}"
+echo -e "${tyblue}│           PREMIUM AUTOSCRIPT             │${NC}"
+echo -e "${tyblue}│               BY PEYXDEV                 │${NC}"
+echo -e "${tyblue}└──────────────────────────────────────────┘${NC}"
+echo -e "${green}🚀 Fast & Stable VPN Services${NC}"
+echo -e "${green}🔒 Secure & Encrypted Connections${NC}"
+echo -e "${green}⚡ Multi Protocol Support${NC}"
+echo -e "${yell}────────────────────────────────────────────${NC}"
+echo -e "${purple}❤️  TERIMA KASIH TELAH MEMAKAI SCRIPT INI ❤️${NC}"
+echo -e "${yell}────────────────────────────────────────────${NC}"
+sleep 3
 
 echo -e  "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e  "${green}│              MASUKKAN NAMA KAMU          │${NC}"
