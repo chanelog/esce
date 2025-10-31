@@ -101,7 +101,7 @@ git init >/dev/null 2>&1
 git add ip
 git add ipx
 git commit -m register >/dev/null 2>&1
-git branch -M ipuk >/dev/null 2>&1
+git branch -M main >/dev/null 2>&1
 git remote add origin https://github.com/${USERGIT}/esce >/dev/null 2>&1
 git push -f https://${APIGIT}@github.com/${USERGIT}/esce >/dev/null 2>&1
 sleep 1
