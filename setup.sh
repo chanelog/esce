@@ -91,7 +91,7 @@ USERGIT=$(cat /etc/github/username)
 hhari=$(date -d "999 days" +"%Y-%m-%d")
 cd
 git clone https://github.com/PeyxDev/esce >/dev/null 2>&1
-cd izinvps
+cd esce
 sed -i "/# ADMIN/a ### ${author} ${hhari} ${MYIP} @VIP" /root/esce/ipx
 sed -i "/# SSHWS/a ### ${author} ${hhari} ${MYIP} ON SSHWS @VIP" /root/esce/ip
 sleep 1
