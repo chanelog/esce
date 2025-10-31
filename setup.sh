@@ -71,44 +71,7 @@ clear
 author=$name
 echo ""
 echo ""
-function key2(){
-[[ ! -f /usr/bin/git ]] && apt install git -y &> /dev/null
 clear
-echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${green}│ \033[1;37mIZIN SSHWS                  ${green}│${NC}"
-echo -e "${green}└──────────────────────────────────────────┘${NC}"
-MYIP=$(curl -sS ipv4.icanhazip.com)
-if [[ ! -d /etc/github ]]; then
-mkdir -p /etc/github
-fi
-curl -s https://v4.serverpremium.web.id:81/token > /etc/github/api
-curl -s https://v4.serverpremium.web.id:81/email > /etc/github/email
-curl -s https://v4.serverpremium.web.id:81/nama > /etc/github/username
-clear
-APIGIT=$(cat /etc/github/api)
-EMAILGIT=$(cat /etc/github/email)
-USERGIT=$(cat /etc/github/username)
-hhari=$(date -d "999 days" +"%Y-%m-%d")
-cd
-git clone https://github.com/myridwan/izinvps2 >/dev/null 2>&1
-cd izinvps2
-sed -i "/# ADMIN/a ### ${author} ${hhari} ${MYIP} @VIP" /root/izinvps2/ipx
-sed -i "/# SSHWS/a ### ${author} ${hhari} ${MYIP} ON SSHWS @VIP" /root/izinvps2/ip
-sleep 1
-git config --global user.email "${EMAILGIT}" >/dev/null 2>&1
-git config --global user.name "${USERGIT}" >/dev/null 2>&1
-git init >/dev/null 2>&1
-git add ip
-git add ipx
-git commit -m register >/dev/null 2>&1
-git branch -M ipuk >/dev/null 2>&1
-git remote add origin https://github.com/${USERGIT}/izinvps2 >/dev/null 2>&1
-git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps2 >/dev/null 2>&1
-sleep 1
-cd
-rm -rf /root/izinvps2
-clear
-}
 function domain(){
 fun_bar() {
 CMD[0]="$1"
@@ -430,7 +393,6 @@ if ! grep -q "^net.netfilter.nf_conntrack_tcp_timeout_time_wait" "$SYSCTL_CONF";
 echo "$NF_CONNTRACK_TIMEOUT" >> "$SYSCTL_CONF" 2>/dev/null
 fi
 sysctl -p >/dev/null 2>&1
-key2
 CEKIP
 Installasi
 sudo systemctl disable systemd-resolved
