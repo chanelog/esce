@@ -259,8 +259,10 @@ function Pasang(){
     clear
     start=$(date +%s)
     ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-    apt install git curl -y >/dev/null 2>&1
-    apt install python -y >/dev/null 2>&1
+    
+    # Update repository dan install dependencies dasar
+    apt update -y >/dev/null 2>&1
+    apt install curl git python3 -y >/dev/null 2>&1
 }
 
 function Installasi(){
@@ -295,7 +297,12 @@ function Installasi(){
     }
     
     res2() {
-        wget ${REPO}install/ssh-vpn.sh && chmod +x ssh-vpn.sh && ./ssh-vpn.sh
+        # Fix untuk netfilter-persistent
+        wget ${REPO}install/ssh-vpn.sh -O /tmp/ssh-vpn.sh
+        # Patch script untuk menghindari netfilter-persistent
+        sed -i 's/apt install -y netfilter-persistent/# apt install -y netfilter-persistent/g' /tmp/ssh-vpn.sh
+        sed -i 's/systemctl enable netfilter-persistent/# systemctl enable netfilter-persistent/g' /tmp/ssh-vpn.sh
+        chmod +x /tmp/ssh-vpn.sh && /tmp/ssh-vpn.sh
         clear
     }
     
@@ -341,8 +348,8 @@ function Installasi(){
         echo -e "${green}Setup untuk OS: $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
         setup_debian
     else
-        echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
-        exit 1
+        echo -e "${yellow}OS: $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
+        setup_generic
     fi
 }
 
@@ -382,6 +389,41 @@ function setup_debian(){
 }
 
 function setup_ubuntu(){
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│      PROCESS INSTALLED SSH & OPENVPN     │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res2
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│           PROCESS INSTALLED XRAY         │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res3
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│       PROCESS INSTALLED WEBSOCKET SSH    │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res4
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│       PROCESS INSTALLED BACKUP MENU      │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res5
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│           PROCESS INSTALLED OHP          │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res6
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│           DOWNLOAD EXTRA MENU            │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res7
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│           DOWNLOAD SYSTEM                │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res8
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│           DOWNLOAD UDP COSTUM            │${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    res9
+}
+
+function setup_generic(){
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│      PROCESS INSTALLED SSH & OPENVPN     │${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
