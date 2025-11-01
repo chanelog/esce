@@ -255,8 +255,8 @@ function domain(){
     if [[ $domain == "2" ]]; then
         clear
         echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-        echo -e "${green}│${bold_white}  Contoh subdomain ( peyx )${neutral}                  ${green}│${NC}"
-        echo -e "${green}│${bold_white}    xxx.peyx.me jadi subdomain kamu${neutral}          ${green}│${NC}"
+        echo -e "${green}│${bold_white}         Contoh subdomain ( xxx )${neutral}         ${green}│${NC}"
+        echo -e "${green}│${bold_white}    xxx.peyx.site jadi subdomain kamu${neutral}     ${green}│${NC}"
         echo -e "${green}└──────────────────────────────────────────┘${NC}"
         echo " "
         
