@@ -393,37 +393,37 @@ function setup_debian(){
     fun_bar 'res2'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           PROCESS INSTALLED XRAY${neutral}          ${green}│${NC}"
+    echo -e "${green}│${bold_white}           PROCESS INSTALLED XRAY${neutral}         ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res3'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}       PROCESS INSTALLED WEBSOCKET SSH${neutral}     ${green}│${NC}"
+    echo -e "${green}│${bold_white}       PROCESS INSTALLED WEBSOCKET SSH${neutral}    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res4'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}       PROCESS INSTALLED BACKUP MENU${neutral}       ${green}│${NC}"
+    echo -e "${green}│${bold_white}       PROCESS INSTALLED BACKUP MENU${neutral}      ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res5'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           PROCESS INSTALLED OHP${neutral}           ${green}│${NC}"
+    echo -e "${green}│${bold_white}           PROCESS INSTALLED OHP${neutral}          ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res6'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD EXTRA MENU${neutral}             ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD EXTRA MENU${neutral}            ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res7'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD SYSTEM${neutral}                 ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD SYSTEM${neutral}                ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res8'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD UDP COSTUM${neutral}             ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD UDP COSTUM${neutral}            ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     fun_bar 'res9'
 }
@@ -432,40 +432,40 @@ function setup_ubuntu(){
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}      PROCESS INSTALLED SSH & OPENVPN${neutral}     ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res2
+    fun_bar 'res2'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           PROCESS INSTALLED XRAY${neutral}          ${green}│${NC}"
+    echo -e "${green}│${bold_white}           PROCESS INSTALLED XRAY${neutral}         ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res3
+    fun_bar 'res3'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}       PROCESS INSTALLED WEBSOCKET SSH${neutral}     ${green}│${NC}"
+    echo -e "${green}│${bold_white}       PROCESS INSTALLED WEBSOCKET SSH${neutral}    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res4
+    fun_bar 'res4'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}       PROCESS INSTALLED BACKUP MENU${neutral}       ${green}│${NC}"
+    echo -e "${green}│${bold_white}       PROCESS INSTALLED BACKUP MENU${neutral}      ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res5
+    fun_bar 'res5'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           PROCESS INSTALLED OHP${neutral}           ${green}│${NC}"
+    echo -e "${green}│${bold_white}           PROCESS INSTALLED OHP${neutral}          ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res6
+    fun_bar 'res6'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD EXTRA MENU${neutral}             ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD EXTRA MENU${neutral}            ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res7
+    fun_bar 'res7'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD SYSTEM${neutral}                 ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD SYSTEM${neutral}                ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    res8
+    fun_bar 'res8'
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}           DOWNLOAD UDP COSTUM${neutral}             ${green}│${NC}"
+    echo -e "${green}│${bold_white}           DOWNLOAD UDP COSTUM${neutral}            ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     res9
 }
@@ -591,7 +591,7 @@ cd
 iinfo
 
 echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                 ${green}│${NC}"
+echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
 echo -e "${green}└────────────────────────────────────────────┘${NC}"
 echo ""
 sleep 4
