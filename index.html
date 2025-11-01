@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE ACCESS // GITHUB VAULT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Matrix rain effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 20px;
+            width: 100%;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+            animation: flicker 3s infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #008800;
+        }
+        
+        .repo-info {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .repo-name {
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .login-form {
+            background-color: rgba(10, 20, 10, 0.7);
+            border: 1px solid #00aa00;
+            padding: 30px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            position: relative;
+        }
+        
+        .login-form::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, #008800, #00ff00);
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            background-color: #001100;
+            border: 1px solid #008800;
+            color: #00ff00;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            outline: none;
+        }
+        
+        .password-input:focus {
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #003300;
+            color: #00ff00;
+            border: 1px solid #008800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #008800;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        .terminal {
+            background-color: #001100;
+            border: 1px solid #008800;
+            padding: 20px;
+            margin-top: 30px;
+            width: 100%;
+            height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .terminal-line {
+            margin-bottom: 5px;
+            animation: typewriter 0.5s steps(40) forwards;
+            opacity: 0;
+        }
+        
+        .terminal-line:nth-child(1) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(2) { animation-delay: 1s; }
+        .terminal-line:nth-child(3) { animation-delay: 1.5s; }
+        .terminal-line:nth-child(4) { animation-delay: 2s; }
+        .terminal-line:nth-child(5) { animation-delay: 2.5s; }
+        .terminal-line:nth-child(6) { animation-delay: 3s; }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        .error-message {
+            color: #ff3333;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+            text-shadow: 0 0 5px #ff0000;
+        }
+        
+        .access-info {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #008800;
+            line-height: 1.5;
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                opacity: 0.5;
+            }
+        }
+        
+        @keyframes borderGlow {
+            0% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+        
+        @keyframes typewriter {
+            from {
+                width: 0;
+                opacity: 1;
+            }
+            to {
+                width: 100%;
+                opacity: 1;
+            }
+        }
+        
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+        
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #00ff00, transparent);
+            animation: scan 3s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes scan {
+            0% {
+                top: 0%;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    <div class="scan-line"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">SECURE ACCESS</h1>
+            <p class="subtitle">// GITHUB REPOSITORY VAULT // AUTHORIZED PERSONNEL ONLY</p>
+            
+            <div class="repo-info">
+                <div>PROTECTED REPOSITORY:</div>
+                <div class="repo-name" id="repoName">PeyxDev/[******]</div>
+            </div>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-group">
+                <label for="password">ENTER ACCESS CODE:</label>
+                <input type="password" id="password" class="password-input" placeholder="············">
+            </div>
+            <button class="submit-btn" id="loginBtn">INITIATE ACCESS</button>
+            <div class="error-message" id="errorMsg">ACCESS DENIED - UNAUTHORIZED ENTRY DETECTED</div>
+            <div class="access-info">
+                <p>This GitHub repository is protected by security protocol.</p>
+                <p>Please contact the administrator for access credentials.</p>
+            </div>
+        </div>
+        
+        <div class="terminal" id="terminal">
+            <div class="terminal-line">> INITIALIZING SECURE CONNECTION...</div>
+            <div class="terminal-line">> AUTHENTICATING CREDENTIALS...</div>
+            <div class="terminal-line">> ACCESS GRANTED. WELCOME, ADMIN.</div>
+            <div class="terminal-line">> LOADING PROTECTED REPOSITORY...</div>
+            <div class="terminal-line">> SECURE CONNECTION ESTABLISHED.</div>
+            <div class="terminal-line">> REDIRECTING TO REPOSITORY<span class="blink">_</span></div>
+        </div>
+    </div>
+
+    <script>
+        // ================================
+        // KONFIGURASI - EDIT BAGIAN INI SAJA
+        // ================================
+        const CONFIG = {
+            // Password untuk mengakses repository
+            ACCESS_PASSWORD: "PeyxDev@23",
+            
+            // URL repository GitHub yang ingin dilindungi
+            PROTECTED_REPO_URL: "https://github.com/PeyxDev/esce",
+            
+            // Nama repository yang akan ditampilkan
+            REPO_DISPLAY_NAME: "PeyxDev/Project"
+        };
+        // ================================
+
+        // Matrix rain effect
+        const matrixBg = document.getElementById('matrixBg');
+        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        
+        function createMatrix() {
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.style.position = 'absolute';
+                column.style.top = '-100px';
+                column.style.left = (i * 20) + 'px';
+                column.style.width = '2px';
+                column.style.color = '#00ff00';
+                column.style.fontSize = '18px';
+                column.style.textAlign = 'center';
+                column.style.textShadow = '0 0 5px #00ff00';
+                column.style.animation = `fall ${Math.random() * 3 + 2}s linear infinite`;
+                column.style.animationDelay = `${Math.random() * 5}s`;
+                
+                let text = '';
+                const length = Math.floor(Math.random() * 10) + 5;
+                for (let j = 0; j < length; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)];
+                }
+                
+                column.textContent = text;
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        // Add CSS for falling animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    top: 100vh;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Password validation
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const terminal = document.getElementById('terminal');
+        const repoName = document.getElementById('repoName');
+        
+        // Set repository name
+        repoName.textContent = CONFIG.REPO_DISPLAY_NAME;
+        
+        loginBtn.addEventListener('click', function() {
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === CONFIG.ACCESS_PASSWORD) {
+                // Correct password
+                document.querySelector('.login-form').style.display = 'none';
+                terminal.style.display = 'block';
+                errorMsg.style.display = 'none';
+                
+                // Redirect ke repository GitHub setelah terminal animation
+                setTimeout(() => {
+                    window.location.href = CONFIG.PROTECTED_REPO_URL;
+                }, 4000);
+            } else {
+                // Incorrect password
+                errorMsg.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Add shake effect to form
+                document.querySelector('.login-form').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.login-form').style.animation = '';
+                }, 500);
+            }
+        });
+        
+        // Allow Enter key to submit
+        passwordInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+        
+        // Add shake animation for wrong password
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+        
+        // Initialize matrix effect
+        createMatrix();
+        
+        // Add random terminal-like flicker to the title
+        setInterval(() => {
+            const title = document.querySelector('.title');
+            if (Math.random() > 0.7) {
+                title.style.textShadow = '0 0 15px #00ff00';
+            } else {
+                title.style.textShadow = '0 0 10px #00ff00';
+            }
+        }, 100);
+    </script>
+</body>
+</html>
