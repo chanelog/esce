@@ -432,37 +432,37 @@ function setup_ubuntu(){
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}      PROCESS INSTALLED SSH & OPENVPN${neutral}     ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res2'
+    res2
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}           PROCESS INSTALLED XRAY${neutral}         ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res3'
+    res3
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}       PROCESS INSTALLED WEBSOCKET SSH${neutral}    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res4'
+    res4
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}       PROCESS INSTALLED BACKUP MENU${neutral}      ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res5'
+    res5
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}           PROCESS INSTALLED OHP${neutral}          ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res6'
+    res6
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}           DOWNLOAD EXTRA MENU${neutral}            ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res7'
+    res7
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}           DOWNLOAD SYSTEM${neutral}                ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    fun_bar 'res8'
+    res8
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}           DOWNLOAD UDP COSTUM${neutral}            ${green}│${NC}"
