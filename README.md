@@ -30,13 +30,13 @@
 ---
 
 ### INSTALL SCRIPT UBUNTU
-<pre><code>apt install -y screen && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && sed -i 's/\r$//' setup.sh && ./setup.sh
+<pre><code>apt install -y screen && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && ./setup.sh
 </code></pre>
 
 ---
 
 ### INSTALL SCRIPT DEBIAN
-<pre><code>apt update && apt install -y screen bsdextrautils util-linux coreutils wget curl && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && sed -i 's/\r$//' setup.sh && ./setup.sh
+<pre><code>apt update && apt install -y screen bsdextrautils util-linux coreutils wget curl && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && ./setup.sh
 </code></pre>
 
 ### TESTED ON OS 
