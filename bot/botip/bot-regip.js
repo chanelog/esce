@@ -389,7 +389,7 @@ function formatIPList() {
         return '📭 Tidak ada data IP VPS terdaftar';
     }
     
-    let result = '📋 *DAFTAR IP VPS*\n\n';
+    let result = '📋 <b>DAFTAR IP VPS</b>\n\n';
     result += '```\n';
     result += '┌──────────────────────────────────────────────┐\n';
     result += '│ USERNAME         EXPIRED     IP VPS         │\n';
@@ -427,25 +427,25 @@ function generateInstallScript(osType, ipAddress, username) {
     }
     
     const installMessage = `
-🔄 *SCRIPT INSTALL UNTUK VPS*
+🔄 <b>SCRIPT INSTALL UNTUK VPS</b>
 
-🌐 *IP VPS:* \`${ipAddress}\`
-👤 *Username:* \`${username}\`
-📦 *OS:* ${osType === 'ubuntu' ? 'Ubuntu' : 'Debian'}
+🌐 <b>IP VPS:</b> \`${ipAddress}\`
+👤 <b>Username:</b> \`${username}\`
+📦 <b>OS:</b> ${osType === 'ubuntu' ? 'Ubuntu' : 'Debian'}
 
-📝 *Salin script berikut dan jalankan di VPS:*
+📝 <b>Salin script berikut dan jalankan di VPS:</b>
 
 \`\`\`bash
 ${script}
 \`\`\`
 
-*Cara penggunaan:*
+<b>Cara penggunaan:</b>
 1. SSH ke VPS: \`ssh root@${ipAddress}\`
 2. Paste dan jalankan script di atas
 3. Tunggu hingga proses install selesai
 4. VPS siap digunakan!
 
-⚠️ *Pastikan VPS sudah terinstall OS Ubuntu/Debian fresh*
+⚠️ <b>Pastikan VPS sudah terinstall OS Ubuntu/Debian fresh</b>
     `;
     
     return installMessage;
@@ -700,7 +700,7 @@ async function handleAddIP(chatId, user) {
 // Minta izin untuk add IP
 async function requestAddIPAccess(chatId, user) {
     const requestText = `
-🔐 *PERMOHONAN AKSES TAMBAH IP*
+🔐 <b>PERMOHONAN AKSES TAMBAH IP</b>
 
 👤 User: <b>${formatUserName(user)}</b>
 🆔 ID: <code>${user.id}</code>
@@ -735,7 +735,7 @@ async function handleRequestAccess(chatId, user) {
     
     if (granted) {
         await bot.sendMessage(chatId, `
-✅ *IZIN DIBERIKAN!*
+✅ <b>IZIN DIBERIKAN!</b>
 
 Anda sekarang memiliki akses untuk menambah <b>1 IP VPS</b>.
 
@@ -779,35 +779,35 @@ async function handleRenewIP(chatId, user) {
 // Handler untuk Help
 async function handleHelp(chatId, user) {
     const helpText = `
-🆘 *Bantuan VPS Manager Bot*
+🆘 <b>Bantuan VPS Manager Bot</b>
 
 👋 Halo, <b>${formatUserName(user)}</b>!
 🆔 ID Telegram: <code>${user.id}</code>
 👤 Status: <b>${isAdmin(user.id.toString()) ? 'ADMIN 👑' : 'USER 👤'}</b>
 
-*Cara Penggunaan:*
+<b>Cara Penggunaan:</b>
 1. Gunakan button untuk memilih aksi
 2. Untuk fitur admin, perlu verifikasi password
 3. User perlu izin sekali pakai untuk Add IP
 4. Data otomatis tersinkronisasi dengan GitHub
 
-*Fitur User:*
-• *LIST IP* - Lihat semua IP VPS yang terdaftar
-• *CHECK GITHUB* - Test koneksi ke repository GitHub
-• *ADD IP* - Tambah IP baru (perlu izin sekali pakai)
+</b>Fitur User:</b>
+• <b>LIST IP</b> - Lihat semua IP VPS yang terdaftar
+• <b>CHECK GITHUB</b> - Test koneksi ke repository GitHub
+• <b>ADD IP</b> - Tambah IP baru (perlu izin sekali pakai)
 
-*Fitur Admin:*
-• *DELETE IP* - Hapus IP
-• *RENEW IP* - Perpanjang masa aktif IP
-• *SYNC DATA* - Sinkronisasi data dengan GitHub
+<b>Fitur Admin:</b>
+• <b>DELETE IP</b> - Hapus IP
+• <b>RENEW IP</b>- Perpanjang masa aktif IP
+• <b>SYNC DATA</b> - Sinkronisasi data dengan GitHub
 
-*Sistem Izin:*
+<b>Sistem Izin:</b>
 - User biasa perlu minta izin untuk Add IP
 - Izin hanya berlaku 1x penggunaan
 - Setelah Add IP, izin otomatis dicabut
 - Admin tidak perlu izin
 
-👨‍💻 *Developer:* <b>PeyxDev</b>
+👨‍💻 Developer: <b>PeyxDev</b>
     `;
 
     await bot.sendMessage(chatId, helpText, {
@@ -827,7 +827,7 @@ const addIPState = new Map();
 async function askForPassword(chatId, action, user) {
     console.log(`🔐 Meminta password untuk action: ${action}, chatId: ${chatId}`);
     
-    const msg = await bot.sendMessage(chatId, '🔐 *Verifikasi Admin*\n\nMasukkan password:', {
+    const msg = await bot.sendMessage(chatId, '🔐 <b>Verifikasi Admin</b>\n\nMasukkan password:', {
         parse_mode: 'Markdown',
         reply_markup: { force_reply: true }
     });
@@ -898,7 +898,7 @@ async function askForIPAddress(chatId) {
     const state = addIPState.get(chatId);
     state.step = 'ip';
     
-    const msg = await bot.sendMessage(chatId, '➕ *Tambah IP VPS*\n\nMasukkan IP Address:', {
+    const msg = await bot.sendMessage(chatId, '➕ <b>Tambah IP VPS</b>\n\nMasukkan IP Address:', {
         parse_mode: 'Markdown',
         reply_markup: { force_reply: true }
     });
@@ -1041,7 +1041,7 @@ async function handleOSSelection(chatId, osType, user) {
             }
             
             // Kirim konfirmasi sukses
-            await bot.editMessageText(`✅ *IP VPS Berhasil Ditambahkan!*\n\n📝 Username: ${username}\n🌐 IP: ${ip}\n📅 Expired: ${expiredDate}\n⏰ Masa Aktif: ${days} hari\n🐧 OS: ${os === 'ubuntu' ? 'Ubuntu' : 'Debian'}`, {
+            await bot.editMessageText(`✅ <b>IP VPS Berhasil Ditambahkan!</b>\n\n📝 Username: ${username}\n🌐 IP: ${ip}\n📅 Expired: ${expiredDate}\n⏰ Masa Aktif: ${days} hari\n🐧 OS: ${os === 'ubuntu' ? 'Ubuntu' : 'Debian'}`, {
                 chat_id: chatId,
                 message_id: loadingMsg.message_id,
                 parse_mode: 'Markdown'
@@ -1062,7 +1062,7 @@ async function handleOSSelection(chatId, osType, user) {
             // Jika user biasa, beri tahu bahwa izin sudah dicabut
             if (!isAdmin(userId)) {
                 await bot.sendMessage(chatId, `
-ℹ️ *INFORMASI IZIN*
+ℹ️ <b>INFORMASI IZIN</b>
 
 Izin Add IP Anda telah <b>otomatis dicabut</b> setelah penggunaan.
 
@@ -1092,7 +1092,7 @@ async function startDeleteIPProcess(chatId) {
         // Tampilkan list IP dulu
         await handleListIP(chatId);
         
-        const msg = await bot.sendMessage(chatId, '🗑️ *Hapus IP VPS*\n\nMasukkan IP yang ingin dihapus:', {
+        const msg = await bot.sendMessage(chatId, '🗑️ <b>Hapus IP VPS</b>\n\nMasukkan IP yang ingin dihapus:', {
             parse_mode: 'Markdown',
             reply_markup: { force_reply: true }
         });
@@ -1113,7 +1113,7 @@ async function startDeleteIPProcess(chatId) {
                         const saved = await saveDataToGitHub(`Delete IP ${ipToDelete}`);
                         
                         if (saved) {
-                            await bot.editMessageText(`✅ *IP VPS Berhasil Dihapus!*\n\n🌐 USERNAME: ${ipToDelete}`, {
+                            await bot.editMessageText(`✅ <b>IP VPS Berhasil Dihapus!</b>\n\n🌐 USERNAME: ${ipToDelete}`, {
                                 chat_id: chatId,
                                 message_id: loadingMsg.message_id,
                                 parse_mode: 'Markdown',
@@ -1163,7 +1163,7 @@ async function startRenewIPProcess(chatId) {
         // Tampilkan list IP dulu
         await handleListIP(chatId);
         
-        const msg = await bot.sendMessage(chatId, '🔄 *Perpanjang IP VPS*\n\nMasukkan IP yang ingin diperpanjang:', {
+        const msg = await bot.sendMessage(chatId, '🔄 <b>Perpanjang IP VPS</b>\n\nMasukkan IP yang ingin diperpanjang:', {
             parse_mode: 'Markdown',
             reply_markup: { force_reply: true }
         });
@@ -1195,7 +1195,7 @@ async function startRenewIPProcess(chatId) {
                                 const saved = await saveDataToGitHub(`Renew IP ${ipToRenew}`);
                                 
                                 if (saved) {
-                                    await bot.editMessageText(`✅ *IP VPS Berhasil Diperpanjang!*\n\n🌐 IP: ${ipToRenew}\n⏰ Tambahan: ${additionalDays} hari`, {
+                                    await bot.editMessageText(`✅ <b>IP VPS Berhasil Diperpanjang!</b>\n\n🌐 IP: ${ipToRenew}\n⏰ Tambahan: ${additionalDays} hari`, {
                                         chat_id: chatId,
                                         message_id: loadingMsg.message_id,
                                         parse_mode: 'Markdown',
