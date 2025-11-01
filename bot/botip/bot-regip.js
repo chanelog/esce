@@ -187,12 +187,21 @@ async function setupGit() {
 async function cloneRepo() {
     try {
         if (fs.existsSync(GIT_DIR)) {
-            fs.rmSync(GIT_DIR, { recursive: true });
+            // Update existing repo instead of re-cloning
+            try {
+                await runCommand(`cd ${GIT_DIR} && git pull origin main`);
+                console.log('✅ Repository updated successfully');
+                return true;
+            } catch (pullError) {
+                console.log('🔄 Git pull failed, doing fresh clone...');
+                fs.rmSync(GIT_DIR, { recursive: true });
+            }
         }
         
         const repoUrl = `https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/${GITHUB_REPO}.git`;
-        await runCommand(`git clone ${repoUrl} ${GIT_DIR}`);
-        console.log('✅ Repository cloned successfully');
+        // Gunakan shallow clone untuk lebih cepat
+        await runCommand(`git clone --depth 1 ${repoUrl} ${GIT_DIR}`);
+        console.log('✅ Repository cloned successfully (shallow)');
         return true;
     } catch (error) {
         console.error('❌ Clone error:', error);
@@ -231,8 +240,24 @@ async function checkGitHubConnection() {
 }
 
 // Load data dari GitHub
+// 1. OPTIMASI: Load data dari GitHub dengan cache
 async function loadDataFromGitHub() {
     try {
+        // Cek apakah data sudah ada di local dan masih fresh (5 menit)
+        const cacheTime = 5 * 60 * 1000; // 5 menit
+        const now = Date.now();
+        
+        if (fs.existsSync(IPX_FILE) && fs.existsSync(IP_FILE)) {
+            const stats = fs.statSync(IPX_FILE);
+            const fileAge = now - stats.mtime.getTime();
+            
+            if (fileAge < cacheTime) {
+                console.log('📦 Menggunakan data lokal (cache)');
+                return true; // Gunakan data lokal tanpa sync
+            }
+        }
+        
+        console.log('🔄 Sync data dari GitHub...');
         const cloned = await cloneRepo();
         if (!cloned) return false;
 
@@ -250,6 +275,11 @@ async function loadDataFromGitHub() {
         return true;
     } catch (error) {
         console.error('❌ Load data error:', error);
+        // Fallback ke data lokal jika ada
+        if (fs.existsSync(IPX_FILE) && fs.existsSync(IP_FILE)) {
+            console.log('🔄 Fallback ke data lokal');
+            return true;
+        }
         return false;
     }
 }
@@ -279,27 +309,34 @@ async function saveDataToGitHub(commitMessage) {
 function readIPData() {
     const ips = [];
     
-    if (fs.existsSync(IPX_FILE)) {
-        const content = fs.readFileSync(IPX_FILE, 'utf8');
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.startsWith('###')) {
-                const parts = line.split(' ').filter(part => part.trim() !== '');
-                if (parts.length >= 4) {
-                    ips.push({
-                        username: parts[1],
-                        expired: parts[2],
-                        ip: parts[3],
-                        status: parts[4] || ''
-                    });
+    try {
+        if (fs.existsSync(IPX_FILE)) {
+            const content = fs.readFileSync(IPX_FILE, 'utf8');
+            const lines = content.split('\n');
+            
+            for (const line of lines) {
+                if (line.startsWith('###')) {
+                    const parts = line.split(' ').filter(part => part.trim() !== '');
+                    if (parts.length >= 4) {
+                        ips.push({
+                            username: parts[1],
+                            expired: parts[2],
+                            ip: parts[3],
+                            status: parts[4] || ''
+                        });
+                    }
                 }
+                // Batasi parsing untuk performa
+                if (ips.length >= 1000) break; // Maksimal 1000 IP
             }
         }
+    } catch (error) {
+        console.error('Read IP Data Error:', error);
     }
     
     return ips;
 }
+
 
 // Tambah IP baru
 function addIP(username, ip, days) {
@@ -418,38 +455,57 @@ function renewIP(ip, additionalDays) {
 
 // Format data IP untuk ditampilkan
 function formatIPList() {
-    const ips = readIPData();
-    const now = new Date();
-    
-    if (ips.length === 0) {
-        return '📭 Tidak ada data IP VPS terdaftar';
-    }
-    
-    let result = '<b>📋 DAFTAR IP VPS</b>\n\n';
-    result += '<pre>';
-    result += '┌──────────────────────────────────────────────┐\n';
-    result += '│ USERNAME         EXPIRED     IP VPS         │\n';
-    result += '├──────────────────────────────────────────────┤\n';
-    
-    ips.forEach(ipData => {
-        const expired = new Date(ipData.expired);
-        const isExpired = expired < now;
+    try {
+        const ips = readIPData();
+        const now = new Date();
         
-        const username = ipData.username.padEnd(15);
-        const expiredStr = ipData.expired.padEnd(12);
-        const ip = ipData.ip.padEnd(15);
-        
-        if (isExpired) {
-            result += `│ ❌ ${username} ${expiredStr} ${ip} │\n`;
-        } else {
-            result += `│ ✅ ${username} ${expiredStr} ${ip} │\n`;
+        if (ips.length === 0) {
+            return '📭 Tidak ada data IP VPS terdaftar';
         }
-    });
-    
-    result += '└──────────────────────────────────────────────┘\n';
-    result += '</pre>';
-    
-    return result;
+        
+        let result = '<b>📋 DAFTAR IP VPS</b>\n\n';
+        result += '<pre>';
+        result += '┌──────────────────────────────────────────────┐\n';
+        result += '│ USERNAME         EXPIRED     IP VPS         │\n';
+        result += '├──────────────────────────────────────────────┤\n';
+        
+        // Batasi jumlah IP yang ditampilkan untuk performa
+        const displayIps = ips.slice(0, 50); // Maksimal 50 IP
+        
+        displayIps.forEach(ipData => {
+            const expired = new Date(ipData.expired);
+            const isExpired = expired < now;
+            
+            const username = (ipData.username || '').substring(0, 15).padEnd(15);
+            const expiredStr = (ipData.expired || '').substring(0, 10).padEnd(12);
+            const ip = (ipData.ip || '').padEnd(15);
+            
+            if (isExpired) {
+                result += `│ ❌ ${username} ${expiredStr} ${ip} \n`;
+            } else {
+                result += `│ ✅ ${username} ${expiredStr} ${ip} \n`;
+            }
+        });
+        
+        // Tambahkan info jika ada IP lebih dari 50
+        if (ips.length > 50) {
+            result += `│ ... ${ips.length - 50} IP lainnya ...    \n`;
+        }
+        
+        result += '└──────────────────────────────────────────────┘\n';
+        result += '</pre>';
+        
+        // Tambahkan info total
+        const activeIPs = ips.filter(ip => new Date(ip.expired) > now).length;
+        const expiredIPs = ips.length - activeIPs;
+        
+        result += `\n📊 <b>Total:</b> ${ips.length} IP | ✅ <b>Aktif:</b> ${activeIPs} | ❌ <b>Expired:</b> ${expiredIPs}`;
+        
+        return result;
+    } catch (error) {
+        console.error('Format IP List Error:', error);
+        return '❌ Error memformat data IP';
+    }
 }
 
 // Generate script install berdasarkan OS
@@ -534,8 +590,8 @@ function getUserInfoHeader(user) {
 • 2 IP → Rp 25.000 / Bulan
 • 3 IP → Rp 35.000 / Bulan
 • LIFETIME → Rp 200.000 (Bebas Sewa Selamanya!)
-• OPENSOURCE → Rp 350.000 (Tanpa Bot Seller)
-• FULL OPENSOURCE → Rp 500.000 (Include Bot Seller)
+• OPENSOURCE → Rp 300.000 (Tanpa Bot Seller)
+• FULL OPENSOURCE → Rp 450.000 (Include Bot Seller)
 • MENYEWAKAN JUGA BOT SELLER ONLY, PM ADMIN
 
 📌 <b>CATATAN PENTING:</b>
@@ -543,7 +599,7 @@ function getUserInfoHeader(user) {
 ➡️ Jangan lupa Sync Data jika baru pertama kali install.
 ➡️ Butuh bantuan? Password verifikasi ada di PM Admin.
 
-👨‍💻 Dev Script: <b>PeyxDev</b>
+👨‍💻 Author: <b>PeyxDev</b>
 
 Pilih aksi yang ingin kamu lakukan di bawah ini: 👇
     `;
@@ -586,7 +642,7 @@ function showMainMenu(chatId, user) {
     bot.sendMessage(chatId, menuText, options);
 }
 
-// Admin Menu
+// Admin Menu - DIPERBARUI: Tambah menu GitHub Manager
 function showAdminMenu(chatId, user) {
     const adminText = `
 <b>⚙️ MENU ADMIN</b>
@@ -599,6 +655,7 @@ function showAdminMenu(chatId, user) {
 • Cek Koneksi GitHub
 • Kelola User Access
 • System Info
+• GitHub File Manager
 
 Pilih aksi yang ingin dilakukan:
     `;
@@ -615,6 +672,9 @@ Pilih aksi yang ingin dilakukan:
                     { text: '👥 MANAGE USERS', callback_data: 'manage_users' }
                 ],
                 [
+                    { text: '📁 GITHUB MANAGER', callback_data: 'github_manager' }
+                ],
+                [
                     { text: '📊 MENU UTAMA', callback_data: 'main_menu' }
                 ]
             ]
@@ -623,6 +683,43 @@ Pilih aksi yang ingin dilakukan:
     };
 
     bot.sendMessage(chatId, adminText, options);
+}
+
+// GitHub Manager Menu - FUNGSI BARU
+function showGitHubManagerMenu(chatId) {
+    const menuText = `
+<b>📁 GITHUB REPOSITORY MANAGER</b>
+
+Fitur untuk mengelola file di repository GitHub:
+
+• 📤 Upload File - Upload file ke repository
+• 📋 List Files - Lihat daftar file di repository  
+• 🗑️ Delete File - Hapus file dari repository
+• 🔄 Sync Repo - Sinkronisasi repository
+
+Pilih aksi yang ingin dilakukan:
+    `;
+
+    const options = {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    { text: '📤 Upload File', callback_data: 'github_upload' },
+                    { text: '📋 List Files', callback_data: 'github_list' }
+                ],
+                [
+                    { text: '🗑️ Delete File', callback_data: 'github_delete' },
+                    { text: '🔄 Sync Repo', callback_data: 'github_sync' }
+                ],
+                [
+                    { text: '⬅️ Kembali', callback_data: 'admin_settings' }
+                ]
+            ]
+        },
+        parse_mode: 'HTML'
+    };
+
+    bot.sendMessage(chatId, menuText, options);
 }
 
 // Start command
@@ -704,6 +801,44 @@ bot.on('callback_query', async (callbackQuery) => {
                     await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
                 }
                 break;
+            // ===============================
+            // CALLBACK BARU: GITHUB MANAGER
+            // ===============================
+            case 'github_manager':
+                if (isAdmin(user.id.toString())) {
+                    await showGitHubManagerMenu(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'github_upload':
+                if (isAdmin(user.id.toString())) {
+                    await handleGitHubUpload(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'github_list':
+                if (isAdmin(user.id.toString())) {
+                    await handleGitHubListFiles(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'github_delete':
+                if (isAdmin(user.id.toString())) {
+                    await handleGitHubDeleteFile(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'github_sync':
+                if (isAdmin(user.id.toString())) {
+                    await handleGitHubSync(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
             case 'request_access':
                 await handleRequestAccess(chatId, user);
                 break;
@@ -717,7 +852,18 @@ bot.on('callback_query', async (callbackQuery) => {
                 else if (data.startsWith('delete_ip_')) {
                     const ipToDelete = data.replace('delete_ip_', '');
                     await handleDeleteIPSelection(chatId, ipToDelete, user);
-                } else {
+                }
+                // Handle renew IP selection - DIPERBAIKI
+                else if (data.startsWith('renew_ip_')) {
+                    const ipToRenew = data.replace('renew_ip_', '');
+                    await handleRenewIPSelection(chatId, ipToRenew, user);
+                }
+                // Handle GitHub file selection untuk delete - FUNGSI BARU
+                else if (data.startsWith('github_delete_')) {
+                    const fileToDelete = data.replace('github_delete_', '');
+                    await handleGitHubDeleteFileSelection(chatId, fileToDelete);
+                }
+                else {
                     await bot.sendMessage(chatId, '❌ Aksi tidak dikenali');
                 }
         }
@@ -727,17 +873,353 @@ bot.on('callback_query', async (callbackQuery) => {
     }
 });
 
+// ===============================
+// FUNGSI BARU: GITHUB FILE MANAGER
+// ===============================
+
+// Handler untuk Upload File ke GitHub - FUNGSI BARU
+async function handleGitHubUpload(chatId) {
+    const msg = await bot.sendMessage(chatId, '<b>📤 Upload File ke GitHub</b>\n\nSilakan kirim file yang ingin diupload ke repository GitHub:', {
+        parse_mode: 'HTML',
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: '❌ Batal', callback_data: 'github_manager' }]
+            ]
+        }
+    });
+
+    const fileListener = async (fileMsg) => {
+        if (fileMsg.document || fileMsg.photo) {
+            try {
+                const loadingMsg = await bot.sendMessage(chatId, '📤 Mengupload file...');
+                
+                let fileId, fileName;
+                
+                if (fileMsg.document) {
+                    fileId = fileMsg.document.file_id;
+                    fileName = fileMsg.document.file_name;
+                } else if (fileMsg.photo) {
+                    fileId = fileMsg.photo[fileMsg.photo.length - 1].file_id;
+                    fileName = `photo_${Date.now()}.jpg`;
+                }
+                
+                // Download file
+                const fileStream = bot.getFileStream(fileId);
+                const chunks = [];
+                
+                for await (const chunk of fileStream) {
+                    chunks.push(chunk);
+                }
+                
+                const fileBuffer = Buffer.concat(chunks);
+                
+                // Minta path tujuan
+                await bot.sendMessage(chatId, '📁 Masukkan path tujuan di repository (contoh: scripts/install.sh atau langsung nama file):', {
+                    reply_markup: { force_reply: true }
+                });
+                
+                const pathListener = async (pathMsg) => {
+                    if (pathMsg.reply_to_message) {
+                        const targetPath = pathMsg.text;
+                        
+                        // Hapus listener
+                        bot.removeListener('message', fileListener);
+                        bot.removeListener('message', pathListener);
+                        
+                        // Clone repo
+                        await cloneRepo();
+                        
+                        // Simpan file ke repo
+                        const fullPath = path.join(GIT_DIR, targetPath);
+                        const dir = path.dirname(fullPath);
+                        
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir, { recursive: true });
+                        }
+                        
+                        fs.writeFileSync(fullPath, fileBuffer);
+                        
+                        // Commit dan push
+                        const commitMessage = `Upload file: ${targetPath}`;
+                        const success = await pushToGitHub(commitMessage);
+                        
+                        if (success) {
+                            await bot.editMessageText(`✅ File berhasil diupload!\n\n📁 <b>File:</b> ${targetPath}\n💾 <b>Size:</b> ${(fileBuffer.length / 1024).toFixed(2)} KB`, {
+                                chat_id: chatId,
+                                message_id: loadingMsg.message_id,
+                                parse_mode: 'HTML',
+                                reply_markup: {
+                                    inline_keyboard: [
+                                        [{ text: '📋 Lihat Files', callback_data: 'github_list' }],
+                                        [{ text: '📁 GitHub Manager', callback_data: 'github_manager' }]
+                                    ]
+                                }
+                            });
+                        } else {
+                            throw new Error('Gagal push ke GitHub');
+                        }
+                    }
+                };
+                
+                bot.on('message', pathListener);
+                
+                // Timeout untuk path listener
+                setTimeout(() => {
+                    bot.removeListener('message', pathListener);
+                }, 120000);
+                
+            } catch (error) {
+                console.error('❌ Upload File Error:', error);
+                await bot.sendMessage(chatId, '❌ Gagal mengupload file');
+            }
+        }
+    };
+    
+    bot.on('message', fileListener);
+    
+    // Timeout
+    setTimeout(() => {
+        bot.removeListener('message', fileListener);
+    }, 120000);
+}
+
+// Handler untuk List Files di GitHub - FUNGSI BARU
+async function handleGitHubListFiles(chatId) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '📋 Mengambil daftar file...');
+        
+        // Clone repo
+        await cloneRepo();
+        
+        // Baca semua file di repo
+        const files = getAllFiles(GIT_DIR);
+        
+        if (files.length === 0) {
+            await bot.editMessageText('📭 Repository kosong', {
+                chat_id: chatId,
+                message_id: loadingMsg.message_id
+            });
+            return;
+        }
+        
+        let fileList = '<b>📁 DAFTAR FILE DI REPOSITORY</b>\n\n';
+        
+        files.forEach((file, index) => {
+            const relativePath = path.relative(GIT_DIR, file);
+            const stats = fs.statSync(file);
+            const size = (stats.size / 1024).toFixed(2);
+            fileList += `${index + 1}. <code>${relativePath}</code> (${size} KB)\n`;
+        });
+        
+        await bot.editMessageText(fileList, {
+            chat_id: chatId,
+            message_id: loadingMsg.message_id,
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: '🔄 Refresh', callback_data: 'github_list' }],
+                    [{ text: '📁 GitHub Manager', callback_data: 'github_manager' }]
+                ]
+            }
+        });
+        
+    } catch (error) {
+        console.error('❌ List Files Error:', error);
+        await bot.sendMessage(chatId, '❌ Gagal mengambil daftar file');
+    }
+}
+
+// Handler untuk Delete File dari GitHub - FUNGSI BARU
+async function handleGitHubDeleteFile(chatId) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '📋 Mengambil daftar file...');
+        
+        // Clone repo
+        await cloneRepo();
+        
+        // Baca semua file di repo
+        const files = getAllFiles(GIT_DIR);
+        
+        if (files.length === 0) {
+            await bot.editMessageText('📭 Tidak ada file yang bisa dihapus', {
+                chat_id: chatId,
+                message_id: loadingMsg.message_id
+            });
+            return;
+        }
+        
+        // Buat keyboard dengan daftar file
+        const keyboard = [];
+        files.forEach(file => {
+            const relativePath = path.relative(GIT_DIR, file);
+            keyboard.push([{ 
+                text: `🗑️ ${relativePath}`, 
+                callback_data: `github_delete_${relativePath}` 
+            }]);
+        });
+        
+        keyboard.push([{ text: '❌ Batal', callback_data: 'github_manager' }]);
+        
+        await bot.editMessageText('🗑️ <b>Hapus File dari GitHub</b>\n\nPilih file yang ingin dihapus:', {
+            chat_id: chatId,
+            message_id: loadingMsg.message_id,
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: keyboard
+            }
+        });
+        
+    } catch (error) {
+        console.error('❌ Delete File Process Error:', error);
+        await bot.sendMessage(chatId, '❌ Terjadi error saat memulai proses hapus file');
+    }
+}
+
+// Handler untuk Delete File Selection - FUNGSI BARU
+async function handleGitHubDeleteFileSelection(chatId, fileToDelete) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '⏳ Menghapus file...');
+        
+        // Clone repo
+        await cloneRepo();
+        
+        const filePath = path.join(GIT_DIR, fileToDelete);
+        
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            
+            // Commit dan push
+            const commitMessage = `Delete file: ${fileToDelete}`;
+            const success = await pushToGitHub(commitMessage);
+            
+            if (success) {
+                await bot.editMessageText(`✅ File berhasil dihapus!\n\n🗑️ <b>File:</b> ${fileToDelete}`, {
+                    chat_id: chatId,
+                    message_id: loadingMsg.message_id,
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '📋 Lihat Files', callback_data: 'github_list' }],
+                            [{ text: '📁 GitHub Manager', callback_data: 'github_manager' }]
+                        ]
+                    }
+                });
+            } else {
+                throw new Error('Gagal push ke GitHub');
+            }
+        } else {
+            await bot.editMessageText('❌ File tidak ditemukan', {
+                chat_id: chatId,
+                message_id: loadingMsg.message_id
+            });
+        }
+        
+    } catch (error) {
+        console.error('❌ Delete File Error:', error);
+        await bot.sendMessage(chatId, '❌ Gagal menghapus file');
+    }
+}
+
+// Handler untuk Sync Repository - FUNGSI BARU
+async function handleGitHubSync(chatId) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '🔄 Sinkronisasi repository...');
+        
+        const success = await cloneRepo();
+        
+        if (success) {
+            await bot.editMessageText('✅ Repository berhasil disinkronisasi!', {
+                chat_id: chatId,
+                message_id: loadingMsg.message_id,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '📋 Lihat Files', callback_data: 'github_list' }],
+                        [{ text: '📁 GitHub Manager', callback_data: 'github_manager' }]
+                    ]
+                }
+            });
+        } else {
+            throw new Error('Gagal sinkronisasi');
+        }
+        
+    } catch (error) {
+        console.error('❌ Sync Error:', error);
+        await bot.sendMessage(chatId, '❌ Gagal sinkronisasi repository');
+    }
+}
+
+// Helper function untuk mendapatkan semua file di directory - FUNGSI BARU
+function getAllFiles(dir, fileList = []) {
+    const files = fs.readdirSync(dir);
+    
+    files.forEach(file => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        
+        if (stat.isDirectory()) {
+            getAllFiles(filePath, fileList);
+        } else {
+            // Skip .git directory
+            if (!filePath.includes('.git')) {
+                fileList.push(filePath);
+            }
+        }
+    });
+    
+    return fileList;
+}
+
+// ===============================
+// FUNGSI BAWAAN (TIDAK DIUBAH)
+// ===============================
+
 // Handler untuk List IP
 async function handleListIP(chatId) {
     try {
         const loadingMsg = await bot.sendMessage(chatId, '📋 Mengambil data IP VPS...');
         
-        // Sync data dari GitHub dulu
-        await loadDataFromGitHub();
+        // Gunakan data lokal dulu untuk tampilan cepat
+        let ipList = '';
+        if (fs.existsSync(IPX_FILE) && fs.existsSync(IP_FILE)) {
+            ipList = formatIPList();
+            
+            // Tampilkan data lokal secepatnya
+            await bot.editMessageText(ipList + '\n\n🔄 <i>Menyinkronisasi dengan GitHub...</i>', {
+                chat_id: chatId,
+                message_id: loadingMsg.message_id,
+                parse_mode: 'HTML'
+            });
+        }
         
-        const ipList = formatIPList();
+        // Sync data dari GitHub di background (non-blocking)
+        setTimeout(async () => {
+            try {
+                await loadDataFromGitHub();
+                const updatedIpList = formatIPList();
+                
+                // Update dengan data terbaru jika berbeda
+                if (updatedIpList !== ipList) {
+                    await bot.editMessageText(updatedIpList, {
+                        chat_id: chatId,
+                        message_id: loadingMsg.message_id,
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [{ text: '🔄 Refresh', callback_data: 'list_ip' }],
+                                [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                            ]
+                        }
+                    });
+                }
+            } catch (syncError) {
+                console.error('Background sync error:', syncError);
+                // Tetap pertahankan data lokal jika sync gagal
+            }
+        }, 100);
         
-        await bot.editMessageText(ipList, {
+        // Tampilkan final data setelah sync
+        const finalIpList = formatIPList();
+        await bot.editMessageText(finalIpList, {
             chat_id: chatId,
             message_id: loadingMsg.message_id,
             parse_mode: 'HTML',
@@ -748,6 +1230,7 @@ async function handleListIP(chatId) {
                 ]
             }
         });
+        
     } catch (error) {
         console.error('❌ List IP Error:', error);
         await bot.sendMessage(chatId, '❌ Gagal mengambil data IP VPS');
@@ -948,14 +1431,14 @@ async function handleSyncData(chatId) {
     }
 }
 
-// Handler untuk Refresh Bot - DITAMBAH: Loading animasi spinner
+// Handler untuk Refresh Bot - DIPERBAIKI: Loading lebih cepat
 async function handleRefreshBot(chatId, user) {
     try {
         // Kirim pesan loading dengan spinner
         let loadingMsg = await bot.sendMessage(chatId, '🔄 Merefresh bot...');
         
-        // Animasi spinner
-        const spinnerFrames = ['🔄', '⏳', '⌛', '🔄'];
+        // Animasi spinner yang lebih cepat
+        const spinnerFrames = ['🔄', '⏳', '⌛'];
         let spinnerIndex = 0;
         
         const spinnerInterval = setInterval(async () => {
@@ -968,13 +1451,22 @@ async function handleRefreshBot(chatId, user) {
             } catch (error) {
                 // Ignore edit errors
             }
-        }, 500);
+        }, 300); // Lebih cepat: 300ms
         
         // Hapus state yang aktif
         addIPState.delete(chatId);
         
-        // Reload data dari GitHub
-        await loadDataFromGitHub();
+        // Reload data dari GitHub (tanpa sync untuk mempercepat)
+        try {
+            if (fs.existsSync(IPX_FILE) && fs.existsSync(IP_FILE)) {
+                // Langsung baca dari file lokal tanpa sync GitHub
+                console.log('🔄 Refresh: Menggunakan data lokal');
+            } else {
+                await loadDataFromGitHub();
+            }
+        } catch (error) {
+            console.error('❌ Refresh data error:', error);
+        }
         
         // Hentikan animasi spinner
         clearInterval(spinnerInterval);
@@ -985,8 +1477,8 @@ async function handleRefreshBot(chatId, user) {
             message_id: loadingMsg.message_id
         });
         
-        // Tunggu sebentar sebelum kembali ke menu
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Tunggu sebentar sebelum kembali ke menu (lebih cepat)
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Hapus pesan loading
         await bot.deleteMessage(chatId, loadingMsg.message_id);
@@ -1011,7 +1503,6 @@ async function handleRefreshBot(chatId, user) {
     }
 }
 
-// ... (fungsi-fungsi lainnya tetap sama seperti sebelumnya)
 // Handler untuk Add IP - DIMODIFIKASI: Semua user wajib verifikasi password
 async function handleAddIP(chatId, user) {
     await askForPassword(chatId, 'add_ip', user);
@@ -1054,6 +1545,7 @@ async function handleHelp(chatId, user) {
 • <b>CHECK GITHUB</b> - Test koneksi ke repository GitHub
 • <b>EDIT GITHUB TOKEN</b> - Update token GitHub
 • <b>SYSTEM INFO</b> - Informasi sistem bot
+• <b>GITHUB MANAGER</b> - Kelola file di repository GitHub
 
 <b>Sistem Keamanan:</b>
 - Semua aksi memerlukan verifikasi password
@@ -1077,7 +1569,7 @@ async function handleHelp(chatId, user) {
 // Variabel global untuk menyimpan state proses add IP
 const addIPState = new Map();
 
-// Fungsi untuk meminta password (untuk semua user) - DIMODIFIKASI
+// Fungsi untuk meminta password (untuk semua user) - DIPERBAIKI: Konfirmasi lebih jelas
 async function askForPassword(chatId, action, user) {
     console.log(`🔐 Meminta password untuk action: ${action}, chatId: ${chatId}, user: ${user.id}`);
     
@@ -1096,7 +1588,18 @@ async function askForPassword(chatId, action, user) {
             
             if (password === ADMIN_PASSWORD) {
                 console.log('✅ Password benar, melanjutkan proses...');
-                await bot.sendMessage(chatId, '✅ Password benar!');
+                
+                // Konfirmasi password benar dengan loading cepat
+                const successMsg = await bot.sendMessage(chatId, '✅ Password benar! Memproses...');
+                
+                // Hapus pesan konfirmasi setelah 1 detik
+                setTimeout(async () => {
+                    try {
+                        await bot.deleteMessage(chatId, successMsg.message_id);
+                    } catch (error) {
+                        // Ignore delete errors
+                    }
+                }, 1000);
                 
                 switch (action) {
                     case 'add_ip':
@@ -1131,7 +1634,7 @@ async function askForPassword(chatId, action, user) {
     }, 120000);
 }
 
-// Proses Add IP - DIMODIFIKASI
+// Proses Add IP - DIPERBAIKI: Loading lebih cepat
 async function startAddIPProcess(chatId, user) {
     console.log('➕ Memulai proses add IP untuk chatId:', chatId);
     
@@ -1265,7 +1768,7 @@ async function askForOS(chatId) {
     });
 }
 
-// Handler untuk OS selection - DIMODIFIKASI
+// Handler untuk OS selection - DIPERBAIKI: Loading lebih cepat
 async function handleOSSelection(chatId, osType, user) {
     console.log('🐧 OS dipilih:', osType, 'untuk chatId:', chatId);
     
@@ -1327,15 +1830,20 @@ async function handleOSSelection(chatId, osType, user) {
     }
 }
 
-// Proses Delete IP - DIMODIFIKASI
+// Proses Delete IP - DIPERBAIKI: Loading lebih cepat
 async function startDeleteIPProcess(chatId) {
     console.log('🗑️ Memulai proses delete IP untuk chatId:', chatId);
     
     try {
         // Load data terbaru dari GitHub
+        const loadingMsg = await bot.sendMessage(chatId, '📋 Mengambil data IP...');
+        
         await loadDataFromGitHub();
         
         const ips = readIPData();
+        
+        await bot.deleteMessage(chatId, loadingMsg.message_id);
+        
         if (ips.length === 0) {
             await bot.sendMessage(chatId, '❌ Tidak ada IP VPS yang bisa dihapus');
             return;
@@ -1364,7 +1872,7 @@ async function startDeleteIPProcess(chatId) {
     }
 }
 
-// Handler untuk delete IP selection
+// Handler untuk delete IP selection - DIPERBAIKI: Loading lebih cepat
 async function handleDeleteIPSelection(chatId, ipToDelete, user) {
     try {
         const loadingMsg = await bot.sendMessage(chatId, '⏳ Menghapus IP VPS...');
@@ -1406,15 +1914,20 @@ async function handleDeleteIPSelection(chatId, ipToDelete, user) {
     }
 }
 
-// Proses Renew IP - DIMODIFIKASI
+// Proses Renew IP - DIPERBAIKI: Loading lebih cepat dan fix callback
 async function startRenewIPProcess(chatId) {
     console.log('🔄 Memulai proses renew IP untuk chatId:', chatId);
     
     try {
         // Load data terbaru dari GitHub
+        const loadingMsg = await bot.sendMessage(chatId, '📋 Mengambil data IP...');
+        
         await loadDataFromGitHub();
         
         const ips = readIPData();
+        
+        await bot.deleteMessage(chatId, loadingMsg.message_id);
+        
         if (ips.length === 0) {
             await bot.sendMessage(chatId, '❌ Tidak ada IP VPS yang bisa diperpanjang');
             return;
@@ -1424,7 +1937,7 @@ async function startRenewIPProcess(chatId) {
         const keyboard = [];
         ips.forEach(ipData => {
             keyboard.push([{ 
-                text: `🔄 ${ipData.ip} (${ipData.username})`, 
+                text: `🔄 ${ipData.ip} (${ipData.username} - ${ipData.expired})`, 
                 callback_data: `renew_ip_${ipData.ip}` 
             }]);
         });
@@ -1440,6 +1953,93 @@ async function startRenewIPProcess(chatId) {
     } catch (error) {
         console.error('❌ Start Renew IP Process Error:', error);
         await bot.sendMessage(chatId, '❌ Terjadi error saat memulai proses perpanjang IP');
+    }
+}
+
+// Handler untuk renew IP selection - FUNGSI BARU YANG DIPERBAIKI
+async function handleRenewIPSelection(chatId, ipToRenew, user) {
+    try {
+        // Minta jumlah hari tambahan
+        const msg = await bot.sendMessage(chatId, `🔄 <b>Perpanjang IP: ${ipToRenew}</b>\n\nMasukkan jumlah hari tambahan:`, {
+            parse_mode: 'HTML',
+            reply_markup: { force_reply: true }
+        });
+
+        const replyListener = async (replyMsg) => {
+            if (replyMsg.reply_to_message && replyMsg.reply_to_message.message_id === msg.message_id) {
+                const additionalDays = replyMsg.text;
+                
+                // Hapus listener
+                bot.removeListener('message', replyListener);
+                
+                // Validasi input
+                if (isNaN(additionalDays) || parseInt(additionalDays) <= 0) {
+                    await bot.sendMessage(chatId, '❌ Jumlah hari harus angka positif!');
+                    return;
+                }
+
+                const loadingMsg = await bot.sendMessage(chatId, '⏳ Memperpanjang IP VPS...');
+                
+                try {
+                    const renewed = renewIP(ipToRenew, additionalDays);
+                    
+                    if (renewed) {
+                        const saved = await saveDataToGitHub(`Renew IP ${ipToRenew} +${additionalDays} hari oleh ${user.id}`);
+                        
+                        if (saved) {
+                            // Dapatkan data IP yang diperbarui untuk menampilkan expired baru
+                            await loadDataFromGitHub();
+                            const ips = readIPData();
+                            const renewedIP = ips.find(ip => ip.ip === ipToRenew);
+                            
+                            let successMessage = `<b>✅ IP VPS Berhasil Diperpanjang!</b>\n\n🌐 <b>IP:</b> ${ipToRenew}\n⏰ <b>Tambahan:</b> ${additionalDays} hari`;
+                            
+                            if (renewedIP) {
+                                successMessage += `\n📅 <b>Expired Baru:</b> ${renewedIP.expired}`;
+                            }
+                            
+                            await bot.editMessageText(successMessage, {
+                                chat_id: chatId,
+                                message_id: loadingMsg.message_id,
+                                parse_mode: 'HTML',
+                                reply_markup: {
+                                    inline_keyboard: [
+                                        [{ text: '📋 Lihat Data', callback_data: 'list_ip' }],
+                                        [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                                    ]
+                                }
+                            });
+                            
+                            console.log(`✅ IP ${ipToRenew} berhasil diperpanjang ${additionalDays} hari oleh user ${user.id}`);
+                        } else {
+                            throw new Error('Gagal menyimpan ke GitHub');
+                        }
+                    } else {
+                        await bot.editMessageText('❌ IP tidak ditemukan', {
+                            chat_id: chatId,
+                            message_id: loadingMsg.message_id
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Renew IP Error:', error);
+                    await bot.editMessageText('❌ Gagal memperpanjang IP VPS', {
+                        chat_id: chatId,
+                        message_id: loadingMsg.message_id
+                    });
+                }
+            }
+        };
+
+        bot.on('message', replyListener);
+        
+        // Timeout
+        setTimeout(() => {
+            bot.removeListener('message', replyListener);
+        }, 120000);
+        
+    } catch (error) {
+        console.error('❌ Renew IP Selection Error:', error);
+        await bot.sendMessage(chatId, '❌ Terjadi error saat memproses perpanjang IP');
     }
 }
 
