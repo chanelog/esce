@@ -122,7 +122,7 @@ function key2(){
     [[ ! -f /usr/bin/git ]] && apt install git -y &> /dev/null
     clear
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}            IZIN SSHWS${neutral}                   ${green}│${NC}"
+    echo -e "${green}│${bold_white}            IZIN SSHWS${neutral}                    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     
     MYIP=$(curl -sS ipv4.icanhazip.com)
@@ -221,9 +221,9 @@ function domain(){
     if [[ $domain == "1" ]]; then
         clear
         echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-        echo -e "${green}│${bold_white}              TERIMA KASIH${neutral}                 ${green}│${NC}"
-        echo -e "${green}│${bold_white}         SUDAH MENGGUNAKAN SCRIPT${neutral}          ${green}│${NC}"
-        echo -e "${green}│${bold_white}             PEYX TUNNELING${neutral}                ${green}│${NC}"
+        echo -e "${green}│${bold_white}              TERIMA KASIH${neutral}                ${green}│${NC}"
+        echo -e "${green}│${bold_white}         SUDAH MENGGUNAKAN SCRIPT${neutral}         ${green}│${NC}"
+        echo -e "${green}│${bold_white}             PEYX TUNNELING${neutral}               ${green}│${NC}"
         echo -e "${green}└──────────────────────────────────────────┘${NC}"
         echo " "
         
