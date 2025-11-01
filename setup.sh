@@ -248,7 +248,25 @@ function domain(){
         echo "$dnss" > /etc/xray/domain
         echo "$dnss" > /etc/v2ray/domain
         echo "IP=$dnss" > /var/lib/ipvps.conf
+        
+        # Konfirmasi domain tersimpan - FIXED TIDAK GESER
+        domain_display="$dnss"
+        if [ ${#domain_display} -gt 30 ]; then
+            domain_display="${domain_display:0:27}..."
+        fi
+        
+        echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+        echo -e "${green}│${bold_white}           DOMAIN BERHASIL DISIMPAN${neutral}       ${green}│${NC}"
+        printf "${green}│${bold_white} %-40s ${green}│${NC}\n" "Domain: $domain_display"
+        echo -e "${green}│${bold_white}                                          ${green}│${NC}"
+        echo -e "${green}│${bold_white}   Domain telah tersimpan di lokasi:${neutral}      ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /root/domain${neutral}                         ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /etc/xray/domain${neutral}                     ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /etc/v2ray/domain${neutral}                    ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /var/lib/ipvps.conf${neutral}                  ${green}│${NC}"
+        echo -e "${green}└──────────────────────────────────────────┘${NC}"
         echo ""
+        read -p "Tekan Enter untuk melanjutkan..."
         clear
     fi
     
@@ -281,8 +299,27 @@ function domain(){
         echo "$dn1" > /etc/xray/domain
         echo "$dn1" > /etc/v2ray/domain
         echo "IP=$dn1" > /var/lib/ipvps.conf
+        
+        # Konfirmasi domain tersimpan - FIXED TIDAK GESER
+        domain_display="$dn1"
+        if [ ${#domain_display} -gt 30 ]; then
+            domain_display="${domain_display:0:27}..."
+        fi
+        
+        echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+        echo -e "${green}│${bold_white}           DOMAIN BERHASIL DISIMPAN${neutral}       ${green}│${NC}"
+        printf "${green}│${bold_white} %-40s ${green}│${NC}\n" "Domain: $domain_display"
+        echo -e "${green}│${bold_white}                                          ${green}│${NC}"
+        echo -e "${green}│${bold_white}   Domain telah tersimpan di lokasi:${neutral}      ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /root/domain${neutral}                         ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /etc/xray/domain${neutral}                     ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /etc/v2ray/domain${neutral}                    ${green}│${NC}"
+        echo -e "${green}│${bold_white}   - /var/lib/ipvps.conf${neutral}                  ${green}│${NC}"
+        echo -e "${green}└──────────────────────────────────────────┘${NC}"
         echo ""
+        read -p "Tekan Enter untuk melanjutkan..."
         clear
+        
         cd
         sleep 1
         fun_bar 'res1'
