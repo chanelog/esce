@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECURE ACCESS // GITHUB VAULT</title>
+    <title>SECURE ACCESS // REPOSITORY GATEWAY</title>
     <style>
         * {
             margin: 0;
@@ -259,11 +260,11 @@
     <div class="container">
         <div class="header">
             <h1 class="title">SECURE ACCESS</h1>
-            <p class="subtitle">// GITHUB REPOSITORY VAULT // AUTHORIZED PERSONNEL ONLY</p>
+            <p class="subtitle">// REPOSITORY GATEWAY // AUTHORIZED PERSONNEL ONLY</p>
             
             <div class="repo-info">
                 <div>PROTECTED REPOSITORY:</div>
-                <div class="repo-name" id="repoName">PeyxDev/[******]</div>
+                <div class="repo-name" id="repoName">Loading protected repository...</div>
             </div>
         </div>
         
@@ -275,7 +276,7 @@
             <button class="submit-btn" id="loginBtn">INITIATE ACCESS</button>
             <div class="error-message" id="errorMsg">ACCESS DENIED - UNAUTHORIZED ENTRY DETECTED</div>
             <div class="access-info">
-                <p>This GitHub repository is protected by security protocol.</p>
+                <p>This repository is protected by security protocol.</p>
                 <p>Please contact the administrator for access credentials.</p>
             </div>
         </div>
@@ -291,20 +292,31 @@
     </div>
 
     <script>
-        // ================================
+        // ===========================================
         // KONFIGURASI - EDIT BAGIAN INI SAJA
-        // ================================
+        // ===========================================
         const CONFIG = {
             // Password untuk mengakses repository
             ACCESS_PASSWORD: "PeyxDev@23",
             
             // URL repository GitHub yang ingin dilindungi
+            // GANTI DENGAN LINK REPOSITORY ANDA
             PROTECTED_REPO_URL: "https://github.com/PeyxDev/esce",
             
             // Nama repository yang akan ditampilkan
-            REPO_DISPLAY_NAME: "PeyxDev/Project"
+            REPO_DISPLAY_NAME: "PeyxDev/esce"
         };
-        // ================================
+        // ===========================================
+
+        // Inisialisasi
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const terminal = document.getElementById('terminal');
+        const repoName = document.getElementById('repoName');
+
+        // Set repository name
+        repoName.textContent = CONFIG.REPO_DISPLAY_NAME;
 
         // Matrix rain effect
         const matrixBg = document.getElementById('matrixBg');
@@ -348,16 +360,7 @@
         `;
         document.head.appendChild(style);
         
-        // Password validation
-        const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const errorMsg = document.getElementById('errorMsg');
-        const terminal = document.getElementById('terminal');
-        const repoName = document.getElementById('repoName');
-        
-        // Set repository name
-        repoName.textContent = CONFIG.REPO_DISPLAY_NAME;
-        
+        // Login handler
         loginBtn.addEventListener('click', function() {
             const enteredPassword = passwordInput.value;
             
@@ -403,7 +406,7 @@
         `;
         document.head.appendChild(shakeStyle);
         
-        // Initialize matrix effect
+        // Initialize effects
         createMatrix();
         
         // Add random terminal-like flicker to the title
