@@ -676,13 +676,13 @@ async function handleSyncData(chatId) {
     }
 }
 
-// Handler untuk Add IP - PERUBAHAN BESAR DI SINI
+// Handler untuk Add IP - DIMODIFIKASI
 async function handleAddIP(chatId, user) {
     const userId = user.id.toString();
     
-    // Admin langsung bisa akses tanpa izin
+    // Admin perlu verifikasi password
     if (isAdmin(userId)) {
-        await startAddIPProcess(chatId, user);
+        await askForPassword(chatId, 'add_ip', user);
         return;
     }
     
@@ -821,7 +821,7 @@ async function handleHelp(chatId, user) {
 // Variabel global untuk menyimpan state proses add IP
 const addIPState = new Map();
 
-// Fungsi untuk meminta password (hanya untuk admin)
+// Fungsi untuk meminta password (hanya untuk admin) - DIMODIFIKASI
 async function askForPassword(chatId, action, user) {
     console.log(`🔐 Meminta password untuk action: ${action}, chatId: ${chatId}`);
     
@@ -843,6 +843,9 @@ async function askForPassword(chatId, action, user) {
                 await bot.sendMessage(chatId, '✅ Password benar!');
                 
                 switch (action) {
+                    case 'add_ip':
+                        await startAddIPProcess(chatId, user);
+                        break;
                     case 'delete_ip':
                         await startDeleteIPProcess(chatId);
                         break;
@@ -872,7 +875,7 @@ async function askForPassword(chatId, action, user) {
     }, 120000);
 }
 
-// Proses Add IP
+// Proses Add IP - DIMODIFIKASI
 async function startAddIPProcess(chatId, user) {
     console.log('➕ Memulai proses add IP untuk chatId:', chatId);
     
@@ -881,7 +884,8 @@ async function startAddIPProcess(chatId, user) {
         addIPState.set(chatId, {
             step: 'ip',
             data: {},
-            userId: user.id.toString()
+            userId: user.id.toString(),
+            isAdmin: isAdmin(user.id.toString())
         });
 
         await askForIPAddress(chatId);
@@ -1005,7 +1009,7 @@ async function askForOS(chatId) {
     });
 }
 
-// Handler untuk OS selection
+// Handler untuk OS selection - DIMODIFIKASI
 async function handleOSSelection(chatId, osType, user) {
     console.log('🐧 OS dipilih:', osType, 'untuk chatId:', chatId);
     
@@ -1022,8 +1026,9 @@ async function handleOSSelection(chatId, osType, user) {
     try {
         const { ip, username, days, os } = state.data;
         const userId = state.userId;
+        const isAdminUser = state.isAdmin;
         
-        console.log('📝 Data untuk add IP:', { ip, username, days, os, userId });
+        console.log('📝 Data untuk add IP:', { ip, username, days, os, userId, isAdminUser });
         
         const expiredDate = addIP(username, ip, days);
         const saved = await saveDataToGitHub(`Add IP ${ip} oleh ${userId}`);
@@ -1033,7 +1038,7 @@ async function handleOSSelection(chatId, osType, user) {
             addIPState.delete(chatId);
             
             // Jika user biasa, cabut akses sementara setelah berhasil add IP
-            if (!isAdmin(userId)) {
+            if (!isAdminUser) {
                 revokeTemporaryAccess(userId);
                 console.log(`✅ Akses sementara dicabut untuk user: ${userId}`);
             }
@@ -1058,7 +1063,7 @@ async function handleOSSelection(chatId, osType, user) {
             });
             
             // Jika user biasa, beri tahu bahwa izin sudah dicabut
-            if (!isAdmin(userId)) {
+            if (!isAdminUser) {
                 await bot.sendMessage(chatId, `
 ℹ️ <b>INFORMASI IZIN</b>
 
