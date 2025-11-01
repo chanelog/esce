@@ -31,6 +31,7 @@ const IPX_FILE = path.join(DATA_DIR, 'ipx');
 const IP_FILE = path.join(DATA_DIR, 'ip');
 const GIT_DIR = path.join(DATA_DIR, 'repo');
 const USERS_FILE = path.join(DATA_DIR, 'allowed_users.json');
+const ENV_FILE = path.join(process.cwd(), '.env');
 
 // Inisialisasi bot
 const bot = new TelegramBot(TOKEN, { polling: true });
@@ -71,6 +72,41 @@ function saveAllowedUsers(usersData) {
         return true;
     } catch (error) {
         console.error('❌ Error saving users file:', error);
+        return false;
+    }
+}
+
+// Update environment variable di .env file
+function updateEnvVariable(key, value) {
+    try {
+        let envContent = '';
+        if (fs.existsSync(ENV_FILE)) {
+            envContent = fs.readFileSync(ENV_FILE, 'utf8');
+        }
+        
+        const lines = envContent.split('\n');
+        let found = false;
+        const newLines = lines.map(line => {
+            if (line.startsWith(key + '=')) {
+                found = true;
+                return `${key}=${value}`;
+            }
+            return line;
+        });
+        
+        if (!found) {
+            newLines.push(`${key}=${value}`);
+        }
+        
+        fs.writeFileSync(ENV_FILE, newLines.join('\n'));
+        
+        // Update process.env juga
+        process.env[key] = value;
+        
+        console.log(`✅ Environment variable ${key} berhasil diupdate`);
+        return true;
+    } catch (error) {
+        console.error(`❌ Error updating ${key}:`, error);
         return false;
     }
 }
@@ -185,7 +221,7 @@ async function checkGitHubConnection() {
         const userInfo = JSON.parse(result);
         
         if (userInfo && userInfo.login) {
-            return { success: true, message: `✅ Koneksi GitHub OK\n<b>User:</b> ${userInfo.login}` };
+            return { success: true, message: `✅ Koneksi GitHub OK\n<b>User:</b> ${userInfo.login}\n<b>Token:</b> ${GITHUB_TOKEN.substring(0, 8)}...` };
         } else {
             return { success: false, message: '❌ Gagal terhubung ke GitHub' };
         }
@@ -486,16 +522,30 @@ function getUserInfoHeader(user) {
 👤 Status: <b>${userStatus}</b>
 🕐 ${currentTime}
 
-Selamat datang di bot izin IP PX STORE.
-Dengan bot ini kamu bisa:
-• Izin IP VPS Otomatis 🔐  
-• Delete izin IP ⚙️  
-• Melihat list member IP 📄  
-• Sync data dulu jika baru install bot
+<b>Selamat datang di bot izin IP PX STORE</b>
+🌟 FITUR UTAMA BOT:
+✅ Izin IP VPS Otomatis & Cepat
+✅ Hapus Izin IP Sesuka Hati
+✅ Lihat Daftar Member Aktif
+✅ Anti Ribet, Sepenuhnya Otomatis
 
-Pilih aksi yang ingin kamu lakukan di bawah ini 👇
+💳 <b>SEWA AUTOSCRIPT:</b>
+• 1 IP → Rp 15.000 / Bulan
+• 2 IP → Rp 25.000 / Bulan
+• 3 IP → Rp 35.000 / Bulan
+• LIFETIME → Rp 200.000 (Bebas Sewa Selamanya!)
+• OPENSOURCE → Rp 350.000 (Tanpa Bot Seller)
+• FULL OPENSOURCE → Rp 500.000 (Include Bot Seller)
+• MENYEWAKAN JUGA BOT SELLER ONLY, PM ADMIN
 
-👨‍💻 Developer: <b>PeyxDev</b>
+📌 <b>CATATAN PENTING:</b>
+➡️ Khusus untuk pengguna Script Bot izin IP.
+➡️ Jangan lupa Sync Data jika baru pertama kali install.
+➡️ Butuh bantuan? Password verifikasi ada di PM Admin.
+
+👨‍💻 Dev Script: <b>PeyxDev</b>
+
+Pilih aksi yang ingin kamu lakukan di bawah ini: 👇
     `;
 }
 
@@ -519,14 +569,60 @@ function showMainMenu(chatId, user) {
                     { text: '🔄 RENEW IP', callback_data: 'renew_ip' }
                  ],
                 [
+                    { text: '🔄 REFRESH BOT', callback_data: 'refresh_bot' },
                     { text: '🆘 HELP', callback_data: 'help' }
+                ],
+                isAdmin(user.id.toString()) ? [
+                    { text: '⚙️ ADMIN SETTINGS', callback_data: 'admin_settings' }
+                ] : [],
+                [
+                    { text: '👨‍💻 ADMIN', url: 'https://t.me/frel01' }
+                ]
+            ].filter(row => row.length > 0),
+        },
+        parse_mode: 'HTML'
+    };
+
+    bot.sendMessage(chatId, menuText, options);
+}
+
+// Admin Menu
+function showAdminMenu(chatId, user) {
+    const adminText = `
+<b>⚙️ MENU ADMIN</b>
+
+👋 Halo, <b>${formatUserName(user)}</b>!
+👑 Status: <b>ADMIN</b>
+
+<b>Fitur Admin:</b>
+• Edit Token GitHub
+• Cek Koneksi GitHub
+• Kelola User Access
+• System Info
+
+Pilih aksi yang ingin dilakukan:
+    `;
+
+    const options = {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    { text: '🔑 EDIT GITHUB TOKEN', callback_data: 'edit_github_token' },
+                    { text: '🌐 CHECK GITHUB', callback_data: 'check_github' }
+                ],
+                [
+                    { text: '📊 SYSTEM INFO', callback_data: 'system_info' },
+                    { text: '👥 MANAGE USERS', callback_data: 'manage_users' }
+                ],
+                [
+                    { text: '📊 MENU UTAMA', callback_data: 'main_menu' }
                 ]
             ]
         },
         parse_mode: 'HTML'
     };
 
-    bot.sendMessage(chatId, menuText, options);
+    bot.sendMessage(chatId, adminText, options);
 }
 
 // Start command
@@ -557,7 +653,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 await handleListIP(chatId);
                 break;
             case 'check_github':
-                await handleCheckGitHub(chatId);
+                await handleCheckGitHub(chatId, user);
                 break;
             case 'add_ip':
                 await handleAddIP(chatId, user);
@@ -571,11 +667,42 @@ bot.on('callback_query', async (callbackQuery) => {
             case 'sync_data':
                 await handleSyncData(chatId);
                 break;
+            case 'refresh_bot':
+                await handleRefreshBot(chatId, user);
+                break;
             case 'help':
                 await handleHelp(chatId, user);
                 break;
             case 'main_menu':
                 showMainMenu(chatId, user);
+                break;
+            case 'admin_settings':
+                if (isAdmin(user.id.toString())) {
+                    await showAdminMenu(chatId, user);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'edit_github_token':
+                if (isAdmin(user.id.toString())) {
+                    await handleEditGitHubToken(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'system_info':
+                if (isAdmin(user.id.toString())) {
+                    await handleSystemInfo(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
+                break;
+            case 'manage_users':
+                if (isAdmin(user.id.toString())) {
+                    await handleManageUsers(chatId);
+                } else {
+                    await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengakses menu ini.');
+                }
                 break;
             case 'request_access':
                 await handleRequestAccess(chatId, user);
@@ -585,6 +712,11 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (data.startsWith('add_ip_os_')) {
                     const selectedOS = data.replace('add_ip_os_', '');
                     await handleOSSelection(chatId, selectedOS, user);
+                }
+                // Handle delete IP selection
+                else if (data.startsWith('delete_ip_')) {
+                    const ipToDelete = data.replace('delete_ip_', '');
+                    await handleDeleteIPSelection(chatId, ipToDelete, user);
                 } else {
                     await bot.sendMessage(chatId, '❌ Aksi tidak dikenali');
                 }
@@ -622,8 +754,20 @@ async function handleListIP(chatId) {
     }
 }
 
-// Handler untuk Check GitHub
-async function handleCheckGitHub(chatId) {
+// Handler untuk Check GitHub - DIMODIFIKASI: Hanya admin
+async function handleCheckGitHub(chatId, user) {
+    // Cek apakah user adalah admin
+    if (!isAdmin(user.id.toString())) {
+        await bot.sendMessage(chatId, '❌ Akses ditolak. Hanya admin yang bisa mengecek koneksi GitHub.', {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                ]
+            }
+        });
+        return;
+    }
+
     try {
         const loadingMsg = await bot.sendMessage(chatId, '🌐 Memeriksa koneksi GitHub...');
         
@@ -635,6 +779,7 @@ async function handleCheckGitHub(chatId) {
             parse_mode: 'HTML',
             reply_markup: {
                 inline_keyboard: [
+                    [{ text: '🔑 Edit Token', callback_data: 'edit_github_token' }],
                     [{ text: '🔄 Test Lagi', callback_data: 'check_github' }],
                     [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
                 ]
@@ -644,6 +789,133 @@ async function handleCheckGitHub(chatId) {
         console.error('❌ Check GitHub Error:', error);
         await bot.sendMessage(chatId, '❌ Gagal memeriksa koneksi GitHub');
     }
+}
+
+// Handler untuk Edit GitHub Token - FUNGSI BARU
+async function handleEditGitHubToken(chatId) {
+    const msg = await bot.sendMessage(chatId, '<b>🔑 Edit GitHub Token</b>\n\nToken saat ini: <code>' + GITHUB_TOKEN.substring(0, 8) + '...</code>\n\nMasukkan token GitHub baru:', {
+        parse_mode: 'HTML',
+        reply_markup: { force_reply: true }
+    });
+
+    const replyListener = async (replyMsg) => {
+        if (replyMsg.reply_to_message && replyMsg.reply_to_message.message_id === msg.message_id) {
+            const newToken = replyMsg.text;
+            
+            // Hapus listener setelah digunakan
+            bot.removeListener('message', replyListener);
+            
+            if (newToken && newToken.length > 10) {
+                const success = updateEnvVariable('GITHUB_TOKEN', newToken);
+                
+                if (success) {
+                    await bot.sendMessage(chatId, `✅ GitHub Token berhasil diupdate!\n\nToken baru: <code>${newToken.substring(0, 8)}...</code>\n\nKlik tombol di bawah untuk test koneksi:`, {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [{ text: '🌐 Test Koneksi', callback_data: 'check_github' }],
+                                [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                            ]
+                        }
+                    });
+                } else {
+                    await bot.sendMessage(chatId, '❌ Gagal mengupdate GitHub Token');
+                }
+            } else {
+                await bot.sendMessage(chatId, '❌ Token tidak valid. Pastikan token memiliki panjang yang cukup.');
+            }
+        }
+    };
+
+    // Tambahkan listener untuk message
+    bot.on('message', replyListener);
+    
+    // Set timeout untuk menghapus listener setelah 2 menit
+    setTimeout(() => {
+        bot.removeListener('message', replyListener);
+    }, 120000);
+}
+
+// Handler untuk System Info - FUNGSI BARU
+async function handleSystemInfo(chatId) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '📊 Mengambil informasi sistem...');
+        
+        // Dapatkan info dasar
+        const nodeVersion = process.version;
+        const platform = process.platform;
+        const arch = process.arch;
+        const uptime = Math.floor(process.uptime() / 60) + ' menit';
+        
+        // Hitung jumlah IP
+        const ips = readIPData();
+        const activeIPs = ips.filter(ip => new Date(ip.expired) > new Date()).length;
+        const expiredIPs = ips.length - activeIPs;
+        
+        const systemInfo = `
+<b>📊 SYSTEM INFORMATION</b>
+
+<b>Bot Info:</b>
+🤖 <b>Node.js Version:</b> <code>${nodeVersion}</code>
+💻 <b>Platform:</b> <code>${platform} ${arch}</code>
+⏰ <b>Uptime:</b> <code>${uptime}</code>
+
+<b>GitHub Info:</b>
+👤 <b>User:</b> <code>${GITHUB_USER}</code>
+🔑 <b>Token:</b> <code>${GITHUB_TOKEN.substring(0, 8)}...</code>
+📁 <b>Repo:</b> <code>${GITHUB_REPO}</code>
+
+<b>Data Info:</b>
+📋 <b>Total IP:</b> <code>${ips.length}</code>
+✅ <b>IP Aktif:</b> <code>${activeIPs}</code>
+❌ <b>IP Expired:</b> <code>${expiredIPs}</code>
+
+<b>Server Time:</b>
+🕐 ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}
+        `;
+        
+        await bot.editMessageText(systemInfo, {
+            chat_id: chatId,
+            message_id: loadingMsg.message_id,
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: '🔄 Refresh', callback_data: 'system_info' }],
+                    [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                ]
+            }
+        });
+    } catch (error) {
+        console.error('❌ System Info Error:', error);
+        await bot.sendMessage(chatId, '❌ Gagal mengambil informasi sistem');
+    }
+}
+
+// Handler untuk Manage Users - FUNGSI BARU (placeholder)
+async function handleManageUsers(chatId) {
+    const usersData = loadAllowedUsers();
+    const totalUsers = usersData.allowedUsers.length;
+    const pendingRequests = usersData.pendingRequests.length;
+    
+    const usersInfo = `
+<b>👥 USER MANAGEMENT</b>
+
+📊 <b>Statistik:</b>
+✅ <b>Total Allowed Users:</b> <code>${totalUsers}</code>
+📩 <b>Pending Requests:</b> <code>${pendingRequests}</code>
+
+⚠️ <b>Fitur dalam pengembangan</b>
+Fitur manajemen user lengkap akan segera hadir!
+    `;
+    
+    await bot.sendMessage(chatId, usersInfo, {
+        parse_mode: 'HTML',
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+            ]
+        }
+    });
 }
 
 // Handler untuk Sync Data
@@ -676,101 +948,82 @@ async function handleSyncData(chatId) {
     }
 }
 
-// Handler untuk Add IP - DIMODIFIKASI
-async function handleAddIP(chatId, user) {
-    const userId = user.id.toString();
-    
-    // Admin perlu verifikasi password
-    if (isAdmin(userId)) {
-        await askForPassword(chatId, 'add_ip', user);
-        return;
-    }
-    
-    // User biasa cek apakah punya akses sementara
-    if (hasTemporaryAccess(userId)) {
-        await startAddIPProcess(chatId, user);
-    } else {
-        // Minta izin dulu
-        await requestAddIPAccess(chatId, user);
-    }
-}
-
-// Minta izin untuk add IP
-async function requestAddIPAccess(chatId, user) {
-    const requestText = `
-<b>🔐 PERMOHONAN AKSES TAMBAH IP</b>
-
-👤 <b>User:</b> <b>${formatUserName(user)}</b>
-🆔 <b>ID:</b> <code>${user.id}</code>
-
-Anda memerlukan izin untuk menambah IP VPS.
-Izin ini hanya berlaku untuk <b>1x penggunaan</b> saja.
-
-Setelah menambah IP, izin akan otomatis dicabut.
-
-Apakah Anda ingin meminta izin?
-    `;
-
-    await bot.sendMessage(chatId, requestText, {
-        parse_mode: 'HTML',
-        reply_markup: {
-            inline_keyboard: [
-                [
-                    { text: '✅ YA, MINTA IZIN', callback_data: 'request_access' },
-                    { text: '❌ BATAL', callback_data: 'main_menu' }
-                ]
-            ]
-        }
-    });
-}
-
-// Handle request access
-async function handleRequestAccess(chatId, user) {
-    const userId = user.id.toString();
-    
-    // Beri akses sementara
-    const granted = grantTemporaryAccess(userId);
-    
-    if (granted) {
-        await bot.sendMessage(chatId, `
-<b>✅ IZIN DIBERIKAN!</b>
-
-Anda sekarang memiliki akses untuk menambah <b>1 IP VPS</b>.
-
-⏰ Izin berlaku selama <b>1 jam</b> atau sampai digunakan.
-
-Silakan klik <b>➕ ADD IP</b> lagi untuk melanjutkan.
-        `, {
-            parse_mode: 'HTML',
+// Handler untuk Refresh Bot - DITAMBAH: Loading animasi spinner
+async function handleRefreshBot(chatId, user) {
+    try {
+        // Kirim pesan loading dengan spinner
+        let loadingMsg = await bot.sendMessage(chatId, '🔄 Merefresh bot...');
+        
+        // Animasi spinner
+        const spinnerFrames = ['🔄', '⏳', '⌛', '🔄'];
+        let spinnerIndex = 0;
+        
+        const spinnerInterval = setInterval(async () => {
+            try {
+                spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
+                await bot.editMessageText(`${spinnerFrames[spinnerIndex]} Merefresh bot...`, {
+                    chat_id: chatId,
+                    message_id: loadingMsg.message_id
+                });
+            } catch (error) {
+                // Ignore edit errors
+            }
+        }, 500);
+        
+        // Hapus state yang aktif
+        addIPState.delete(chatId);
+        
+        // Reload data dari GitHub
+        await loadDataFromGitHub();
+        
+        // Hentikan animasi spinner
+        clearInterval(spinnerInterval);
+        
+        // Update pesan menjadi sukses dengan centang
+        await bot.editMessageText('✅ Bot berhasil di-refresh!', {
+            chat_id: chatId,
+            message_id: loadingMsg.message_id
+        });
+        
+        // Tunggu sebentar sebelum kembali ke menu
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Hapus pesan loading
+        await bot.deleteMessage(chatId, loadingMsg.message_id);
+        
+        // Langsung kembali ke menu utama
+        await showMainMenu(chatId, user);
+        
+        console.log(`🔄 Bot di-refresh oleh user ${user.id} (${formatUserName(user)})`);
+        
+    } catch (error) {
+        console.error('❌ Refresh Bot Error:', error);
+        // Hentikan spinner jika error
+        if (spinnerInterval) clearInterval(spinnerInterval);
+        
+        await bot.sendMessage(chatId, '❌ Gagal merefresh bot', {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: '➕ ADD IP', callback_data: 'add_ip' }],
                     [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
                 ]
             }
         });
-    } else {
-        await bot.sendMessage(chatId, '❌ Gagal memberikan izin. Coba lagi nanti.');
     }
 }
 
-// Handler untuk Delete IP (Admin Only)
-async function handleDeleteIP(chatId, user) {
-    if (!isAdmin(user.id.toString())) {
-        await bot.sendMessage(chatId, '❌ Akses ditolak! Hanya admin yang dapat menghapus IP.');
-        return;
-    }
+// ... (fungsi-fungsi lainnya tetap sama seperti sebelumnya)
+// Handler untuk Add IP - DIMODIFIKASI: Semua user wajib verifikasi password
+async function handleAddIP(chatId, user) {
+    await askForPassword(chatId, 'add_ip', user);
+}
 
+// Handler untuk Delete IP - DIMODIFIKASI: Semua user wajib verifikasi password
+async function handleDeleteIP(chatId, user) {
     await askForPassword(chatId, 'delete_ip', user);
 }
 
-// Handler untuk Renew IP (Admin Only)
+// Handler untuk Renew IP - DIMODIFIKASI: Semua user wajib verifikasi password
 async function handleRenewIP(chatId, user) {
-    if (!isAdmin(user.id.toString())) {
-        await bot.sendMessage(chatId, '❌ Akses ditolak! Hanya admin yang dapat memperpanjang IP.');
-        return;
-    }
-
     await askForPassword(chatId, 'renew_ip', user);
 }
 
@@ -785,25 +1038,28 @@ async function handleHelp(chatId, user) {
 
 <b>Cara Penggunaan:</b>
 1. Gunakan button untuk memilih aksi
-2. Untuk fitur admin, perlu verifikasi password
-3. User perlu izin sekali pakai untuk Add IP
-4. Data otomatis tersinkronisasi dengan GitHub
+2. Untuk semua fitur (Add, Delete, Renew IP) wajib verifikasi password
+3. Data otomatis tersinkronisasi dengan GitHub
 
 <b>Fitur User:</b>
 • <b>LIST IP</b> - Lihat semua IP VPS yang terdaftar
+• <b>REFRESH BOT</b> - Refresh bot dan reset state
+
+<b>Fitur dengan Password:</b>
+• <b>ADD IP</b> - Tambah IP baru (wajib password)
+• <b>DELETE IP</b> - Hapus IP (wajib password)
+• <b>RENEW IP</b> - Perpanjang masa aktif IP (wajib password)
+
+<b>Fitur Admin Only:</b>
 • <b>CHECK GITHUB</b> - Test koneksi ke repository GitHub
-• <b>ADD IP</b> - Tambah IP baru (perlu izin sekali pakai)
+• <b>EDIT GITHUB TOKEN</b> - Update token GitHub
+• <b>SYSTEM INFO</b> - Informasi sistem bot
 
-<b>Fitur Admin:</b>
-• <b>DELETE IP</b> - Hapus IP
-• <b>RENEW IP</b> - Perpanjang masa aktif IP
-• <b>SYNC DATA</b> - Sinkronisasi data dengan GitHub
-
-<b>Sistem Izin:</b>
-- User biasa perlu minta izin untuk Add IP
-- Izin hanya berlaku 1x penggunaan
-- Setelah Add IP, izin otomatis dicabut
-- Admin tidak perlu izin
+<b>Sistem Keamanan:</b>
+- Semua aksi memerlukan verifikasi password
+- Password sama untuk semua user
+- Data tersinkronisasi otomatis dengan GitHub
+- Fitur GitHub hanya untuk admin
 
 👨‍💻 <b>Developer:</b> <b>PeyxDev</b>
     `;
@@ -821,11 +1077,11 @@ async function handleHelp(chatId, user) {
 // Variabel global untuk menyimpan state proses add IP
 const addIPState = new Map();
 
-// Fungsi untuk meminta password (hanya untuk admin) - DIMODIFIKASI
+// Fungsi untuk meminta password (untuk semua user) - DIMODIFIKASI
 async function askForPassword(chatId, action, user) {
-    console.log(`🔐 Meminta password untuk action: ${action}, chatId: ${chatId}`);
+    console.log(`🔐 Meminta password untuk action: ${action}, chatId: ${chatId}, user: ${user.id}`);
     
-    const msg = await bot.sendMessage(chatId, '<b>🔐 Verifikasi Admin</b>\n\nMasukkan password:', {
+    const msg = await bot.sendMessage(chatId, '<b>🔐 Verifikasi Password</b>\n\nMasukkan password untuk melanjutkan:', {
         parse_mode: 'HTML',
         reply_markup: { force_reply: true }
     });
@@ -1026,9 +1282,8 @@ async function handleOSSelection(chatId, osType, user) {
     try {
         const { ip, username, days, os } = state.data;
         const userId = state.userId;
-        const isAdminUser = state.isAdmin;
         
-        console.log('📝 Data untuk add IP:', { ip, username, days, os, userId, isAdminUser });
+        console.log('📝 Data untuk add IP:', { ip, username, days, os, userId });
         
         const expiredDate = addIP(username, ip, days);
         const saved = await saveDataToGitHub(`Add IP ${ip} oleh ${userId}`);
@@ -1036,12 +1291,6 @@ async function handleOSSelection(chatId, osType, user) {
         if (saved) {
             // Hapus state
             addIPState.delete(chatId);
-            
-            // Jika user biasa, cabut akses sementara setelah berhasil add IP
-            if (!isAdminUser) {
-                revokeTemporaryAccess(userId);
-                console.log(`✅ Akses sementara dicabut untuk user: ${userId}`);
-            }
             
             // Kirim konfirmasi sukses
             await bot.editMessageText(`<b>✅ IP VPS Berhasil Ditambahkan!</b>\n\n📝 <b>Username:</b> ${username}\n🌐 <b>IP:</b> ${ip}\n📅 <b>Expired:</b> ${expiredDate}\n⏰ <b>Masa Aktif:</b> ${days} hari\n🐧 <b>OS:</b> ${os === 'ubuntu' ? 'Ubuntu' : 'Debian'}`, {
@@ -1062,193 +1311,166 @@ async function handleOSSelection(chatId, osType, user) {
                 }
             });
             
-            // Jika user biasa, beri tahu bahwa izin sudah dicabut
-            if (!isAdminUser) {
-                await bot.sendMessage(chatId, `
-ℹ️ <b>INFORMASI IZIN</b>
+            console.log(`✅ IP ${ip} berhasil ditambahkan oleh user ${userId}`);
+        } else {
+            throw new Error('Gagal menyimpan ke GitHub');
+        }
+    } catch (error) {
+        console.error('❌ Add IP Error:', error);
+        await bot.editMessageText('❌ Gagal menambahkan IP VPS', {
+            chat_id: chatId,
+            message_id: loadingMsg.message_id
+        });
+        
+        // Hapus state jika error
+        addIPState.delete(chatId);
+    }
+}
 
-Izin Add IP Anda telah <b>otomatis dicabut</b> setelah penggunaan.
+// Proses Delete IP - DIMODIFIKASI
+async function startDeleteIPProcess(chatId) {
+    console.log('🗑️ Memulai proses delete IP untuk chatId:', chatId);
+    
+    try {
+        // Load data terbaru dari GitHub
+        await loadDataFromGitHub();
+        
+        const ips = readIPData();
+        if (ips.length === 0) {
+            await bot.sendMessage(chatId, '❌ Tidak ada IP VPS yang bisa dihapus');
+            return;
+        }
+        
+        // Buat keyboard dengan daftar IP
+        const keyboard = [];
+        ips.forEach(ipData => {
+            keyboard.push([{ 
+                text: `🗑️ ${ipData.ip} (${ipData.username})`, 
+                callback_data: `delete_ip_${ipData.ip}` 
+            }]);
+        });
+        
+        keyboard.push([{ text: '❌ Batal', callback_data: 'main_menu' }]);
+        
+        await bot.sendMessage(chatId, '🗑️ <b>Hapus IP VPS</b>\n\nPilih IP yang ingin dihapus:', {
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: keyboard
+            }
+        });
+    } catch (error) {
+        console.error('❌ Start Delete IP Process Error:', error);
+        await bot.sendMessage(chatId, '❌ Terjadi error saat memulai proses hapus IP');
+    }
+}
 
-Jika ingin menambah IP lagi, silakan minta izin kembali.
-                `, {
-                    parse_mode: 'HTML'
+// Handler untuk delete IP selection
+async function handleDeleteIPSelection(chatId, ipToDelete, user) {
+    try {
+        const loadingMsg = await bot.sendMessage(chatId, '⏳ Menghapus IP VPS...');
+        
+        const deleted = deleteIP(ipToDelete);
+        
+        if (deleted) {
+            const saved = await saveDataToGitHub(`Delete IP ${ipToDelete} oleh ${user.id}`);
+            
+            if (saved) {
+                await bot.editMessageText(`<b>✅ IP VPS Berhasil Dihapus!</b>\n\n🌐 <b>IP:</b> ${ipToDelete}`, {
+                    chat_id: chatId,
+                    message_id: loadingMsg.message_id,
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '📋 Lihat Data', callback_data: 'list_ip' }],
+                            [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+                        ]
+                    }
                 });
+                
+                console.log(`✅ IP ${ipToDelete} berhasil dihapus oleh user ${user.id}`);
+            } else {
+                throw new Error('Gagal menyimpan ke GitHub');
             }
         } else {
-            await bot.editMessageText('❌ Gagal menyimpan data ke GitHub', {
+            await bot.editMessageText('❌ IP tidak ditemukan', {
                 chat_id: chatId,
                 message_id: loadingMsg.message_id
             });
         }
     } catch (error) {
-        console.error('❌ Add IP Final Error:', error);
-        await bot.editMessageText('❌ Gagal menambahkan IP VPS', {
+        console.error('❌ Delete IP Error:', error);
+        await bot.editMessageText('❌ Gagal menghapus IP VPS', {
             chat_id: chatId,
             message_id: loadingMsg.message_id
         });
     }
 }
 
-// Proses Delete IP
-async function startDeleteIPProcess(chatId) {
+// Proses Renew IP - DIMODIFIKASI
+async function startRenewIPProcess(chatId) {
+    console.log('🔄 Memulai proses renew IP untuk chatId:', chatId);
+    
     try {
-        // Tampilkan list IP dulu
-        await handleListIP(chatId);
+        // Load data terbaru dari GitHub
+        await loadDataFromGitHub();
         
-        const msg = await bot.sendMessage(chatId, '<b>🗑️ Hapus IP VPS</b>\n\nMasukkan IP/Username yang ingin dihapus:', {
-            parse_mode: 'HTML',
-            reply_markup: { force_reply: true }
+        const ips = readIPData();
+        if (ips.length === 0) {
+            await bot.sendMessage(chatId, '❌ Tidak ada IP VPS yang bisa diperpanjang');
+            return;
+        }
+        
+        // Buat keyboard dengan daftar IP
+        const keyboard = [];
+        ips.forEach(ipData => {
+            keyboard.push([{ 
+                text: `🔄 ${ipData.ip} (${ipData.username})`, 
+                callback_data: `renew_ip_${ipData.ip}` 
+            }]);
         });
-
-        const replyListener = async (replyMsg) => {
-            if (replyMsg.reply_to_message && replyMsg.reply_to_message.message_id === msg.message_id) {
-                const ipToDelete = replyMsg.text;
-                
-                // Hapus listener
-                bot.removeListener('message', replyListener);
-                
-                const loadingMsg = await bot.sendMessage(chatId, '⏳ Menghapus IP VPS...');
-                
-                try {
-                    const deleted = deleteIP(ipToDelete);
-                    
-                    if (deleted) {
-                        const saved = await saveDataToGitHub(`Delete IP ${ipToDelete}`);
-                        
-                        if (saved) {
-                            await bot.editMessageText(`<b>✅ IP VPS Berhasil Dihapus!</b>\n\n🌐 <b>IP/Username:</b> ${ipToDelete}`, {
-                                chat_id: chatId,
-                                message_id: loadingMsg.message_id,
-                                parse_mode: 'HTML',
-                                reply_markup: {
-                                    inline_keyboard: [
-                                        [{ text: '📋 Lihat Data', callback_data: 'list_ip' }],
-                                        [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
-                                    ]
-                                }
-                            });
-                        } else {
-                            await bot.editMessageText('❌ Gagal menyimpan perubahan ke GitHub', {
-                                chat_id: chatId,
-                                message_id: loadingMsg.message_id
-                            });
-                        }
-                    } else {
-                        await bot.editMessageText('❌ IP tidak ditemukan!', {
-                            chat_id: chatId,
-                            message_id: loadingMsg.message_id
-                        });
-                    }
-                } catch (error) {
-                    await bot.editMessageText('❌ Gagal menghapus IP VPS', {
-                        chat_id: chatId,
-                        message_id: loadingMsg.message_id
-                    });
-                }
-            }
-        };
-
-        bot.on('message', replyListener);
         
-        // Timeout
-        setTimeout(() => {
-            bot.removeListener('message', replyListener);
-        }, 120000);
+        keyboard.push([{ text: '❌ Batal', callback_data: 'main_menu' }]);
+        
+        await bot.sendMessage(chatId, '🔄 <b>Perpanjang IP VPS</b>\n\nPilih IP yang ingin diperpanjang:', {
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: keyboard
+            }
+        });
     } catch (error) {
-        console.error('❌ Delete IP Process Error:', error);
-        await bot.sendMessage(chatId, '❌ Terjadi error saat proses hapus IP');
+        console.error('❌ Start Renew IP Process Error:', error);
+        await bot.sendMessage(chatId, '❌ Terjadi error saat memulai proses perpanjang IP');
     }
 }
 
-// Proses Renew IP
-async function startRenewIPProcess(chatId) {
-    try {
-        // Tampilkan list IP dulu
-        await handleListIP(chatId);
-        
-        const msg = await bot.sendMessage(chatId, '<b>🔄 Perpanjang IP VPS</b>\n\nMasukkan IP yang ingin diperpanjang:', {
-            parse_mode: 'HTML',
-            reply_markup: { force_reply: true }
-        });
-
-        const replyListener = async (replyMsg) => {
-            if (replyMsg.reply_to_message && replyMsg.reply_to_message.message_id === msg.message_id) {
-                const ipToRenew = replyMsg.text;
-                
-                // Hapus listener
-                bot.removeListener('message', replyListener);
-                
-                const msg2 = await bot.sendMessage(chatId, 'Masukkan tambahan hari aktif:', {
-                    reply_markup: { force_reply: true }
-                });
-
-                const replyListener2 = async (replyMsg2) => {
-                    if (replyMsg2.reply_to_message && replyMsg2.reply_to_message.message_id === msg2.message_id) {
-                        const additionalDays = replyMsg2.text;
-                        
-                        // Hapus listener
-                        bot.removeListener('message', replyListener2);
-                        
-                        const loadingMsg = await bot.sendMessage(chatId, '⏳ Memperpanjang IP VPS...');
-                        
-                        try {
-                            const renewed = renewIP(ipToRenew, additionalDays);
-                            
-                            if (renewed) {
-                                const saved = await saveDataToGitHub(`Renew IP ${ipToRenew}`);
-                                
-                                if (saved) {
-                                    await bot.editMessageText(`<b>✅ IP VPS Berhasil Diperpanjang!</b>\n\n🌐 <b>IP:</b> ${ipToRenew}\n⏰ <b>Tambahan:</b> ${additionalDays} hari`, {
-                                        chat_id: chatId,
-                                        message_id: loadingMsg.message_id,
-                                        parse_mode: 'HTML',
-                                        reply_markup: {
-                                            inline_keyboard: [
-                                                [{ text: '📋 Lihat Data', callback_data: 'list_ip' }],
-                                                [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
-                                            ]
-                                        }
-                                    });
-                                } else {
-                                    await bot.editMessageText('❌ Gagal menyimpan perubahan ke GitHub', {
-                                        chat_id: chatId,
-                                        message_id: loadingMsg.message_id
-                                    });
-                                }
-                            } else {
-                                await bot.editMessageText('❌ IP tidak ditemukan!', {
-                                    chat_id: chatId,
-                                    message_id: loadingMsg.message_id
-                                });
-                            }
-                        } catch (error) {
-                            await bot.editMessageText('❌ Gagal memperpanjang IP VPS', {
-                                chat_id: chatId,
-                                message_id: loadingMsg.message_id
-                            });
-                        }
-                    }
-                };
-
-                bot.on('message', replyListener2);
-                
-                // Timeout
-                setTimeout(() => {
-                    bot.removeListener('message', replyListener2);
-                }, 120000);
-            }
-        };
-
-        bot.on('message', replyListener);
-        
-        // Timeout
-        setTimeout(() => {
-            bot.removeListener('message', replyListener);
-        }, 120000);
-    } catch (error) {
-        console.error('❌ Renew IP Process Error:', error);
-        await bot.sendMessage(chatId, '❌ Terjadi error saat proses perpanjang IP');
-    }
+// Handler untuk request access (jika diperlukan)
+async function handleRequestAccess(chatId, user) {
+    const usersData = loadAllowedUsers();
+    const userName = formatUserName(user);
+    
+    // Tambah ke pending requests
+    usersData.pendingRequests.push({
+        userId: user.id.toString(),
+        userName: userName,
+        timestamp: Date.now()
+    });
+    
+    saveAllowedUsers(usersData);
+    
+    // Kirim notifikasi ke admin
+    const adminMessage = `📩 <b>Request Akses Baru</b>\n\n👤 <b>User:</b> ${userName}\n🆔 <b>ID:</b> <code>${user.id}</code>\n⏰ <b>Waktu:</b> ${new Date().toLocaleString('id-ID')}`;
+    
+    await bot.sendMessage(ADMIN_CHAT_ID, adminMessage, {
+        parse_mode: 'HTML'
+    });
+    
+    await bot.sendMessage(chatId, '✅ Request akses telah dikirim ke admin. Tunggu konfirmasi.', {
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: '📊 Menu Utama', callback_data: 'main_menu' }]
+            ]
+        }
+    });
 }
 
 // Error handling
@@ -1260,18 +1482,4 @@ bot.on('polling_error', (error) => {
     console.error('❌ Polling Error:', error);
 });
 
-process.on('unhandledRejection', (error) => {
-    console.error('❌ Unhandled Rejection:', error);
-});
-
-// Setup awal
-setupGit().then(() => {
-    console.log('✅ Bot setup completed');
-    console.log('📊 Admin Chat ID:', ADMIN_CHAT_ID);
-    console.log('🔗 GitHub User:', GITHUB_USER);
-    
-    // Load initial users data
-    const usersData = loadAllowedUsers();
-    console.log('👥 Allowed Users:', usersData.allowedUsers);
-    console.log('⏰ Temporary Access:', Object.keys(usersData.temporaryAccess));
-});
+console.log('✅ Bot berhasil diinisialisasi');
