@@ -1,8 +1,6 @@
-# AUTOSCRIPT MOD BY PEYXDEV 2025
+# AUTOSCRIPT MOD PX VPN 
 # ==================================================
 
-
-#!/bin/bash
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1
 sysctl -w net.ipv6.conf.default.disable_ipv6=1 >/dev/null 2>&1
 REPO="https://raw.githubusercontent.com/PeyxDev/esce/main/"
@@ -84,20 +82,11 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
     exit 1
 fi
 
-# Improved Debian version detection
-if [ -f /etc/debian_version ]; then
-    DEBIAN_VERSION=$(cat /etc/debian_version | cut -d'.' -f1)
-    if [[ $DEBIAN_VERSION -ge 12 ]]; then
-        echo -e "${yellow}Debian ${DEBIAN_VERSION} detected - applying compatibility fixes...${neutral}"
-    fi
-else
-    # Fallback for systems without /etc/debian_version
-    DEBIAN_VERSION=11
+# Check Debian version
+DEBIAN_VERSION=$(cat /etc/debian_version 2>/dev/null | cut -d'.' -f1)
+if [[ $DEBIAN_VERSION -ge 12 ]]; then
+    echo -e "${yellow}Debian ${DEBIAN_VERSION} detected - applying compatibility fixes...${neutral}"
 fi
-
-# Additional OS detection
-OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' 2>/dev/null || echo "debian")
-OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' 2>/dev/null || echo "11")
 
 localip=$(hostname -I | cut -d\  -f1)
 hst=( `hostname` )
@@ -140,25 +129,15 @@ echo ""
 
 function update_system() {
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}         UPDATING SYSTEM ${OS_ID} ${OS_VERSION}${neutral}    ${green}│${NC}"
+    echo -e "${green}│${bold_white}         UPDATING SYSTEM DEBIAN ${DEBIAN_VERSION}${neutral}    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     
     run_with_spinner "Memperbarui package list..." apt update
     
-    # Enhanced fixes for Debian 12+ - including Debian 13
-    if [[ $DEBIAN_VERSION -ge 12 ]] || [[ $OS_ID == "debian" && $OS_VERSION -ge 12 ]]; then
-        echo -e "${yellow}Menerapkan fix khusus untuk Debian ${DEBIAN_VERSION}...${neutral}"
-        
+    # Fix for Debian 13 - install keyring first
+    if [[ $DEBIAN_VERSION -ge 12 ]]; then
         run_with_spinner "Menginstall debian-archive-keyring..." apt install -y debian-archive-keyring
         run_with_spinner "Menginstall apt-transport-https..." apt install -y apt-transport-https ca-certificates
-        run_with_spinner "Menginstall gnupg2..." apt install -y gnupg2 dirmngr
-        
-        # Fix for nginx repository - modern approach without apt-key
-        run_with_spinner "Mengatur repository nginx..." bash -c "mkdir -p /etc/apt/keyrings && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx.gpg"
-        run_with_spinner "Menambahkan nginx repository..." bash -c "echo 'deb [signed-by=/etc/apt/keyrings/nginx.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
-        
-        # Update again after adding repositories
-        run_with_spinner "Memperbarui package list setelah menambah repository..." apt update
     fi
     
     run_with_spinner "Mengupgrade system..." apt upgrade -y
@@ -388,14 +367,12 @@ function Pasang(){
     update_system
     
     run_with_spinner "Menginstall git dan curl..." apt install git curl -y
+    run_with_spinner "Menginstall python..." apt install python -y
     
-    # Enhanced Python handling for Debian 13
+    # Fix for Debian 13 - install python3 if python not available
     if ! command -v python &> /dev/null; then
         run_with_spinner "Menginstall python3..." apt install python3 -y
-        # Create python symlink if it doesn't exist
-        if [[ ! -f /usr/bin/python ]]; then
-            run_with_spinner "Membuat symlink python3..." ln -sf /usr/bin/python3 /usr/bin/python
-        fi
+        ln -sf /usr/bin/python3 /usr/bin/python
     fi
 }
 
@@ -471,7 +448,10 @@ function Installasi(){
         clear
     }
     
-    # Enhanced OS detection
+    # Fix for Debian 13 detection
+    OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    
     if [[ $OS_ID == "ubuntu" ]]; then
         echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
         setup_ubuntu
@@ -481,28 +461,26 @@ function Installasi(){
         setup_debian
     else
         echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
-        # Fallback to Debian setup
-        setup_debian
     fi
 }
 
 function setup_debian(){
-    # Additional fixes for Debian 12+
-    if [[ $DEBIAN_VERSION -ge 12 ]] || [[ $OS_VERSION -ge 12 ]]; then
-        echo -e "${yellow}Menerapkan fix khusus untuk Debian ${DEBIAN_VERSION}...${neutral}"
+    # Additional fixes for Debian 13
+    if [[ $DEBIAN_VERSION -ge 12 ]]; then
+        echo -e "${yellow}Menerapkan fix untuk Debian ${DEBIAN_VERSION}...${neutral}"
         
-        # Install required packages for newer Debian
-        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2 software-properties-common
+        # Install required packages for newer Debian (FIXED: removed software-properties-common)
+        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2
         
-        # Enhanced nginx fix for Debian 13
-        run_with_spinner "Mengatur repository nginx..." bash -c "mkdir -p /etc/apt/keyrings && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx.gpg"
-        run_with_spinner "Menambahkan nginx repository..." bash -c "echo 'deb [signed-by=/etc/apt/keyrings/nginx.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        # Fix for nginx on Debian 13 - using new method without apt-key
+        run_with_spinner "Menambahkan repository nginx..." bash -c "echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        
+        # Download and install nginx key using new method
+        run_with_spinner "Mendownload kunci nginx..." curl -fsSL https://nginx.org/keys/nginx_signing.key -o /tmp/nginx_signing.key
+        run_with_spinner "Menginstall kunci nginx..." bash -c "gpg --dearmor /tmp/nginx_signing.key | tee /usr/share/keyrings/nginx-keyring.gpg > /dev/null"
         
         # Update again after adding nginx repo
         run_with_spinner "Memperbarui package list..." apt update
-        
-        # Install nginx from repository
-        run_with_spinner "Menginstall nginx..." apt install -y nginx
     fi
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
@@ -600,54 +578,79 @@ function iinfo(){
     TIME=$(date +'%Y-%m-%d %H:%M:%S')
     RAMMS=$(free -m | awk 'NR==2 {print $2}')
     MODEL2=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
-    MODEL=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
-    OSARCH=$(uname -m)
-    RELEASE=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    NAMA=$(cat /etc/xray/username)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/PeyxDev/esce/main/ipx | grep $MYIP | awk '{print $3}' )
+    d1=$(date -d "$IZIN" +%s)
+    d2=$(date -d "$today" +%s)
+    EXP=$(( (d1 - d2) / 86400 ))
     TEXT="
-<code>─────────────────────</code>
-<b>⚠️ AUTOSCRIPT INSTALLER ⚠️</b>
-<code>─────────────────────</code>
-<code>ID     : </code><code>$NAMA</code>
-<code>Domain : </code><code>$domain</code>
-<code>Date   : </code><code>$TIME</code>
-<code>OS     : </code><code>$MODEL</code>
-<code>Kernel : </code><code>$MODEL2</code>
-<code>Arch   : </code><code>$OSARCH</code>
-<code>RAM    : </code><code>$RAMMS MB</code>
-<code>ISP    : </code><code>$ISP</code>
-<code>CITY   : </code><code>$CITY</code>
-<code>IP     : </code><code>$MYIP</code>
-<code>─────────────────────</code>
-<i>Success Installation AutoScript</i>
-"
-    
-    curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null 2>&1
+<code>━━━━━━━━━━━━━━━━━━━━</code>
+<code>⚠️ PEYX AUTOSCRIPT PREMIUM ⚠️</code>
+<code>━━━━━━━━━━━━━━━━━━━━</code>
+<code>NAME : </code><code>${author}</code>
+<code>TIME : </code><code>${TIME} WIB</code>
+<code>DOMAIN : </code><code>${domain}</code>
+<code>IP : </code><code>${MYIP}</code>
+<code>ISP : </code><code>${ISP} $CITY</code>
+<code>OS LINUX : </code><code>${MODEL2}</code>
+<code>RAM : </code><code>${RAMMS} MB</code>
+<code>EXP SCRIPT : </code><code>$EXP Days</code>
+<code>━━━━━━━━━━━━━━━━━━━━</code>
+<i> Notifikasi Installer Script...</i>
+"'&reply_markup={"inline_keyboard":[[{"text":"🔥ᴏʀᴅᴇʀ","url":"https://t.me/frel01"},{"text":"🔥GRUP","url":"https://t.me/pxstoree"}]]}'
+    curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+    clear
 }
 
-function finish() {
-    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
-    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+NEW_FILE_MAX=65535
+NF_CONNTRACK_MAX="net.netfilter.nf_conntrack_max=262144"
+NF_CONNTRACK_TIMEOUT="net.netfilter.nf_conntrack_tcp_timeout_time_wait=30"
+SYSCTL_CONF="/etc/sysctl.conf"
+CURRENT_FILE_MAX=$(grep "^fs.file-max" "$SYSCTL_CONF" | awk '{print $3}' 2>/dev/null)
 
-    # Check if systemd-resolved exists and handle accordingly
-    if systemctl list-unit-files | grep -q systemd-resolved.service; then
-        run_with_spinner "Menghentikan systemd-resolved..." systemctl stop systemd-resolved
-        run_with_spinner "Menonaktifkan systemd-resolved..." systemctl disable systemd-resolved
+if [ "$CURRENT_FILE_MAX" != "$NEW_FILE_MAX" ]; then
+    if grep -q "^fs.file-max" "$SYSCTL_CONF"; then
+        sed -i "s/^fs.file-max.*/fs.file-max = $NEW_FILE_MAX/" "$SYSCTL_CONF" >/dev/null 2>&1
     else
-        echo -e "systemd-resolved tidak terdeteksi, melanjutkan..."
+        echo "fs.file-max = $NEW_FILE_MAX" >> "$SYSCTL_CONF" 2>/dev/null
     fi
+fi
 
-    # Configure DNS manually
-    run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf'
+if ! grep -q "^net.netfilter.nf_conntrack_max" "$SYSCTL_CONF"; then
+    echo "$NF_CONNTRACK_MAX" >> "$SYSCTL_CONF" 2>/dev/null
+fi
 
-    # Make resolv.conf immutable to prevent changes
-    run_with_spinner "Mengunci file resolv.conf..." chattr +i /etc/resolv.conf
+if ! grep -q "^net.netfilter.nf_conntrack_tcp_timeout_time_wait" "$SYSCTL_CONF"; then
+    echo "$NF_CONNTRACK_TIMEOUT" >> "$SYSCTL_CONF" 2>/dev/null
+fi
 
-    # Create .profile
-    cat> /root/.profile << END
-if [ "\$BASH" ]; then
+sysctl -p >/dev/null 2>&1
+
+key2
+CEKIP
+Installasi
+
+# FIXED SYSTEMD-RESOLVED SECTION
+echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
+echo -e "${green}└──────────────────────────────────────────┘${NC}"
+
+# Check if systemd-resolved exists and handle accordingly
+if systemctl list-unit-files | grep -q systemd-resolved.service; then
+    run_with_spinner "Menghentikan systemd-resolved..." systemctl stop systemd-resolved
+    run_with_spinner "Menonaktifkan systemd-resolved..." systemctl disable systemd-resolved
+else
+    echo -e "systemd-resolved tidak terdeteksi, melanjutkan..."
+fi
+
+# Configure DNS manually
+run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf'
+
+# Make resolv.conf immutable to prevent changes
+run_with_spinner "Mengunci file resolv.conf..." chattr +i /etc/resolv.conf
+
+cat> /root/.profile << END
+if [ "$BASH" ]; then
     if [ -f ~/.bashrc ]; then
         . ~/.bashrc
     fi
@@ -657,53 +660,53 @@ clear
 welcome
 END
 
-    run_with_spinner "Mengatur permissions .profile..." chmod 644 /root/.profile
+chmod 644 /root/.profile
 
-    # Clean up files
-    run_with_spinner "Membersihkan file log..." rm -f /root/log-install.txt /etc/afak.conf
-    
-    # Clear history
-    run_with_spinner "Membersihkan history..." history -c
-    
-    # Get server version and set daily reboot
-    run_with_spinner "Mengatur konfigurasi sistem..." bash -c "
-        serverV=\$(curl -sS ${REPO}versi)
-        echo \$serverV > /opt/.ver
-        echo '00' > /home/daily_reboot
-    "
-    
-    # Get IP and location info
-    run_with_spinner "Mendapatkan informasi IP dan lokasi..." bash -c "
-        curl -sS ifconfig.me > /etc/myipvps
-        curl -s ipinfo.io/city?token=75082b4831f909 > /etc/xray/city
-        curl -s ipinfo.io/org?token=75082b4831f909 | cut -d ' ' -f 2-10 > /etc/xray/isp
-    "
+if [ -f "/root/log-install.txt" ]; then
+    rm /root/log-install.txt > /dev/null 2>&1
+fi
 
-    # Clean up installation files
-    run_with_spinner "Membersihkan file instalasi sementara..." rm -f /root/tools.sh /root/setup.sh /root/pointing.sh /root/ssh-vpn.sh /root/ins-xray.sh /root/insshws.sh /root/set-br.sh /root/ohp.sh /root/update.sh /root/installsl.sh /root/udp-custom.sh
+if [ -f "/etc/afak.conf" ]; then
+    rm /etc/afak.conf > /dev/null 2>&1
+fi
 
-    # Show installation time
-    echo ""
-    secs_to_human "$(($(date +%s) - ${start}))" | tee -a log-install.txt
-    sleep 3
-    echo ""
-    
-    # Send notification
-    iinfo
+history -c
+serverV=$( curl -sS ${REPO}versi  )
+echo $serverV > /opt/.ver
+echo "00" > /home/daily_reboot
+aureb=$(cat /home/daily_reboot)
+b=11
+if [ $aureb -gt $b ]
+then
+    gg="PM"
+else
+    gg="AM"
+fi
 
-    echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
-    echo -e "${green}└────────────────────────────────────────────┘${NC}"
-    echo ""
-    sleep 2
+cd
+curl -sS ifconfig.me > /etc/myipvps
+curl -s ipinfo.io/city?token=75082b4831f909 >> /etc/xray/city
+curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 >> /etc/xray/isp
 
-    echo -e "[ ${yellow}WARNING${NC} ] Do you want to reboot now ? (y/n)? "
-    read answer
-    if [ "$answer" == "${answer#[Yy]}" ] ;then
-        echo -e "${yellow}System will continue without reboot.${NC}"
-        exit 0
-    else
-        echo -e "${green}Rebooting system...${NC}"
-        reboot
-    fi
-}
+# Clean up files
+run_with_spinner "Membersihkan file sementara..." rm -f /root/tools.sh /root/setup.sh /root/pointing.sh /root/ssh-vpn.sh /root/ins-xray.sh /root/insshws.sh /root/set-br.sh /root/ohp.sh /root/update.sh /root/installsl.sh /root/udp-custom.sh
+
+secs_to_human "$(($(date +%s) - ${start}))" | tee -a log-install.txt
+sleep 3
+echo ""
+cd
+iinfo
+
+echo -e "${green}┌────────────────────────────────────────────┐${NC}"
+echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
+echo -e "${green}└────────────────────────────────────────────┘${NC}"
+echo ""
+sleep 4
+
+echo -e "[ ${yellow}WARNING${NC} ] Do you want to reboot now ? (y/n)? "
+read answer
+if [ "$answer" == "${answer#[Yy]}" ] ;then
+    exit 0
+else
+    reboot
+fi
