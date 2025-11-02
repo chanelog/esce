@@ -79,6 +79,12 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
     exit 1
 fi
 
+# Check Debian version
+DEBIAN_VERSION=$(cat /etc/debian_version 2>/dev/null | cut -d'.' -f1)
+if [[ $DEBIAN_VERSION -ge 12 ]]; then
+    echo -e "${yellow}Debian ${DEBIAN_VERSION} detected - applying compatibility fixes...${neutral}"
+fi
+
 localip=$(hostname -I | cut -d\  -f1)
 hst=( `hostname` )
 dart=$(cat /etc/hosts | grep -w `hostname` | awk '{print $2}')
@@ -117,6 +123,23 @@ clear
 author=$name
 echo ""
 echo ""
+
+function update_system() {
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│${bold_white}         UPDATING SYSTEM DEBIAN ${DEBIAN_VERSION}${neutral}    ${green}│${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
+    
+    run_with_spinner "Memperbarui package list..." apt update
+    
+    # Fix for Debian 13 - install keyring first
+    if [[ $DEBIAN_VERSION -ge 12 ]]; then
+        run_with_spinner "Menginstall debian-archive-keyring..." apt install -y debian-archive-keyring
+        run_with_spinner "Menginstall apt-transport-https..." apt install -y apt-transport-https ca-certificates
+    fi
+    
+    run_with_spinner "Mengupgrade system..." apt upgrade -y
+    run_with_spinner "Menginstall package dasar..." apt install -y curl wget sudo gnupg
+}
 
 function key2(){
     [[ ! -f /usr/bin/git ]] && apt install git -y &> /dev/null
@@ -336,8 +359,18 @@ function Pasang(){
     clear
     start=$(date +%s)
     ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+    
+    # Update system first for Debian 13 compatibility
+    update_system
+    
     run_with_spinner "Menginstall git dan curl..." apt install git curl -y
     run_with_spinner "Menginstall python..." apt install python -y
+    
+    # Fix for Debian 13 - install python3 if python not available
+    if ! command -v python &> /dev/null; then
+        run_with_spinner "Menginstall python3..." apt install python3 -y
+        ln -sf /usr/bin/python3 /usr/bin/python
+    fi
 }
 
 function Installasi(){
@@ -412,11 +445,16 @@ function Installasi(){
         clear
     }
     
-    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+    # Fix for Debian 13 detection
+    OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    
+    if [[ $OS_ID == "ubuntu" ]]; then
         echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
         setup_ubuntu
-    elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+    elif [[ $OS_ID == "debian" ]]; then
         echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
+        echo -e "${yellow}Debian Version: ${OS_VERSION}${NC}"
         setup_debian
     else
         echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
@@ -424,6 +462,21 @@ function Installasi(){
 }
 
 function setup_debian(){
+    # Additional fixes for Debian 13
+    if [[ $DEBIAN_VERSION -ge 12 ]]; then
+        echo -e "${yellow}Menerapkan fix untuk Debian ${DEBIAN_VERSION}...${neutral}"
+        
+        # Install required packages for newer Debian
+        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2 software-properties-common
+        
+        # Fix for nginx on Debian 13
+        run_with_spinner "Menambahkan repository nginx..." bash -c "echo 'deb http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        run_with_spinner "Menambahkan kunci nginx..." curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
+        
+        # Update again after adding nginx repo
+        run_with_spinner "Memperbarui package list..." apt update
+    fi
+    
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
     echo -e "${green}│${bold_white}      PROCESS INSTALLED SSH & OPENVPN${neutral}     ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
@@ -639,7 +692,7 @@ cd
 iinfo
 
 echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
+echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                    ${green}│${NC}"
 echo -e "${green}└────────────────────────────────────────────┘${NC}"
 echo ""
 sleep 4
