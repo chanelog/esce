@@ -1,3 +1,9 @@
+#!/bin/bash
+#
+# PeyxDev Auto Installer
+# Fixed for Debian 13 with Safety Features
+#
+
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1
 sysctl -w net.ipv6.conf.default.disable_ipv6=1 >/dev/null 2>&1
 REPO="https://raw.githubusercontent.com/PeyxDev/esce/main/"
@@ -14,6 +20,48 @@ bold_white="\e[1;37m"
 pink="\e[38;5;205m"
 reset="\e[0m"
 gray="\e[38;5;245m"
+
+# Safety checks
+function safety_check() {
+    echo -e "${yellow}Melakukan safety check...${neutral}"
+    
+    # Check available memory
+    MEM_AVAILABLE=$(free -m | awk 'NR==2{print $7}')
+    if [ "$MEM_AVAILABLE" -lt 200 ]; then
+        echo -e "${red}Warning: Memory available hanya ${MEM_AVAILABLE}MB, disarankan minimal 200MB${neutral}"
+        echo -e "${yellow}Lanjutkan? (y/n): ${neutral}"
+        read -r answer
+        if [ "$answer" != "y" ]; then
+            exit 1
+        fi
+    fi
+    
+    # Check disk space
+    DISK_AVAILABLE=$(df / | awk 'NR==2{print $4}')
+    if [ "$DISK_AVAILABLE" -lt 1048576 ]; then
+        echo -e "${red}Warning: Disk space rendah, mungkin menyebabkan masalah${neutral}"
+    fi
+    
+    # Check internet connectivity
+    if ! ping -c 1 8.8.8.8 &>/dev/null; then
+        echo -e "${red}Error: Tidak ada koneksi internet${neutral}"
+        exit 1
+    fi
+}
+
+function cleanup_on_failure() {
+    echo -e "${red}Cleanup on failure...${neutral}"
+    # Restore original resolv.conf if exists
+    if [ -f /etc/resolv.conf.bak ]; then
+        cp /etc/resolv.conf.bak /etc/resolv.conf
+    fi
+    
+    # Reset sysctl to safe values
+    sysctl -w net.ipv4.ip_forward=1 >/dev/null 2>&1
+    sysctl -p >/dev/null 2>&1
+    
+    echo -e "${yellow}System restored to safe state${neutral}"
+}
 
 # Spinner definitions
 SPINNER=("⣷" "⣯" "⣟" "⡿" "⢿" "⣻" "⣽" "⣾")
@@ -36,8 +84,10 @@ function run_with_spinner() {
     spinner "$msg" &
     local spinner_pid=$!
     
-    # Execute command
-    "${cmd[@]}" >/dev/null 2>&1
+    # Execute command with timeout
+    timeout 300 "${cmd[@]}" >/dev/null 2>&1
+    
+    local exit_code=$?
     
     # Kill spinner
     kill $spinner_pid 2>/dev/null
@@ -45,7 +95,16 @@ function run_with_spinner() {
     
     # Clear spinner line
     echo -ne "\r\033[K"
-    echo -e "\r$msg ${green}✓${neutral}"
+    
+    if [ $exit_code -eq 0 ]; then
+        echo -e "\r$msg ${green}✓${neutral}"
+    elif [ $exit_code -eq 124 ]; then
+        echo -e "\r$msg ${red}✗ (Timeout)${neutral}"
+    else
+        echo -e "\r$msg ${red}✗ (Error: $exit_code)${neutral}"
+    fi
+    
+    return $exit_code
 }
 
 function CEKIP () {
@@ -79,6 +138,9 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
     exit 1
 fi
 
+# Safety check first
+safety_check
+
 # Check Debian version
 DEBIAN_VERSION=$(cat /etc/debian_version 2>/dev/null | cut -d'.' -f1)
 if [[ $DEBIAN_VERSION -ge 12 ]]; then
@@ -91,6 +153,9 @@ dart=$(cat /etc/hosts | grep -w `hostname` | awk '{print $2}')
 if [[ "$hst" != "$dart" ]]; then
     echo "$localip $(hostname)" >> /etc/hosts
 fi
+
+# Backup original resolv.conf
+cp /etc/resolv.conf /etc/resolv.conf.bak 2>/dev/null || true
 
 secs_to_human() {
     echo "Installation time : $(( ${1} / 3600 )) hours $(( (${1} / 60) % 60 )) minute's $(( ${1} % 60 )) seconds"
@@ -406,17 +471,29 @@ function Installasi(){
     }
     
     res2() {
-        run_with_spinner "Menginstall SSH & OpenVPN..." wget ${REPO}install/ssh-vpn.sh -O ssh-vpn.sh && chmod +x ssh-vpn.sh && ./ssh-vpn.sh
+        if run_with_spinner "Menginstall SSH & OpenVPN..." wget ${REPO}install/ssh-vpn.sh -O ssh-vpn.sh && chmod +x ssh-vpn.sh && timeout 600 ./ssh-vpn.sh; then
+            echo -e "${green}SSH & OpenVPN installed successfully${neutral}"
+        else
+            echo -e "${red}SSH & OpenVPN installation had issues, continuing...${neutral}"
+        fi
         clear
     }
     
     res3() {
-        run_with_spinner "Menginstall Xray..." wget ${REPO}install/ins-xray.sh -O ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
+        if run_with_spinner "Menginstall Xray..." wget ${REPO}install/ins-xray.sh -O ins-xray.sh && chmod +x ins-xray.sh && timeout 600 ./ins-xray.sh; then
+            echo -e "${green}Xray installed successfully${neutral}"
+        else
+            echo -e "${red}Xray installation had issues, continuing...${neutral}"
+        fi
         clear
     }
     
     res4() {
-        run_with_spinner "Menginstall WebSocket SSH..." wget ${REPO}sshws/insshws.sh -O insshws.sh && chmod +x insshws.sh && ./insshws.sh
+        if run_with_spinner "Menginstall WebSocket SSH..." wget ${REPO}sshws/insshws.sh -O insshws.sh && chmod +x insshws.sh && timeout 300 ./insshws.sh; then
+            echo -e "${green}WebSocket SSH installed successfully${neutral}"
+        else
+            echo -e "${red}WebSocket SSH installation had issues, continuing...${neutral}"
+        fi
         clear
     }
     
@@ -436,12 +513,20 @@ function Installasi(){
     }
     
     res8() {
-        run_with_spinner "Menginstall SlowDNS..." wget ${REPO}slowdns/installsl.sh -O installsl.sh && chmod +x installsl.sh && bash installsl.sh
+        if run_with_spinner "Menginstall SlowDNS..." wget ${REPO}slowdns/installsl.sh -O installsl.sh && chmod +x installsl.sh && timeout 300 bash installsl.sh; then
+            echo -e "${green}SlowDNS installed successfully${neutral}"
+        else
+            echo -e "${red}SlowDNS installation had issues, continuing...${neutral}"
+        fi
         clear
     }
     
     res9() {
-        run_with_spinner "Menginstall UDP Custom..." wget ${REPO}install/udp-custom.sh -O udp-custom.sh && chmod +x udp-custom.sh && bash udp-custom.sh
+        if run_with_spinner "Menginstall UDP Custom..." wget ${REPO}install/udp-custom.sh -O udp-custom.sh && chmod +x udp-custom.sh && timeout 300 bash udp-custom.sh; then
+            echo -e "${green}UDP Custom installed successfully${neutral}"
+        else
+            echo -e "${red}UDP Custom installation had issues, continuing...${neutral}"
+        fi
         clear
     }
     
@@ -464,20 +549,13 @@ function Installasi(){
 function setup_debian(){
     # Additional fixes for Debian 13
     if [[ $DEBIAN_VERSION -ge 12 ]]; then
-        echo -e "${yellow}Menerapkan fix untuk Debian ${DEBIAN_VERSION}...${neutral}"
+        echo -e "${yellow}Menerapkan safety measures untuk Debian ${DEBIAN_VERSION}...${neutral}"
         
-        # Install required packages for newer Debian (FIXED: removed software-properties-common)
-        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2
+        # Install minimal dependencies only
+        run_with_spinner "Menginstall dependencies minimal..." apt install -y dirmngr gnupg2
         
-        # Fix for nginx on Debian 13 - using new method without apt-key
-        run_with_spinner "Menambahkan repository nginx..." bash -c "echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
-        
-        # Download and install nginx key using new method
-        run_with_spinner "Mendownload kunci nginx..." curl -fsSL https://nginx.org/keys/nginx_signing.key -o /tmp/nginx_signing.key
-        run_with_spinner "Menginstall kunci nginx..." bash -c "gpg --dearmor /tmp/nginx_signing.key | tee /usr/share/keyrings/nginx-keyring.gpg > /dev/null"
-        
-        # Update again after adding nginx repo
-        run_with_spinner "Memperbarui package list..." apt update
+        # Skip problematic nginx repo for stability
+        echo -e "${yellow}Menggunakan nginx dari repository default untuk stabilitas...${neutral}"
     fi
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
@@ -627,24 +705,29 @@ key2
 CEKIP
 Installasi
 
-# FIXED SYSTEMD-RESOLVED SECTION
+# FIXED SYSTEMD-RESOLVED SECTION - More safe approach
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 
-# Check if systemd-resolved exists and handle accordingly
-if systemctl list-unit-files | grep -q systemd-resolved.service; then
-    run_with_spinner "Menghentikan systemd-resolved..." systemctl stop systemd-resolved
-    run_with_spinner "Menonaktifkan systemd-resolved..." systemctl disable systemd-resolved
-else
-    echo -e "systemd-resolved tidak terdeteksi, melanjutkan..."
+# Safe DNS configuration
+if [ -f /etc/resolv.conf ]; then
+    run_with_spinner "Backup resolv.conf..." cp /etc/resolv.conf /etc/resolv.conf.backup.script
 fi
 
-# Configure DNS manually
-run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf'
+# Configure DNS manually - don't make immutable immediately
+run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1" > /etc/resolv.conf'
 
-# Make resolv.conf immutable to prevent changes
-run_with_spinner "Mengunci file resolv.conf..." chattr +i /etc/resolv.conf
+# Test DNS first before making immutable
+if nslookup google.com >/dev/null 2>&1; then
+    run_with_spinner "DNS working, locking configuration..." chattr +i /etc/resolv.conf
+else
+    echo -e "${yellow}DNS test failed, skipping immutable attribute${neutral}"
+    # Restore backup if DNS test fails
+    if [ -f /etc/resolv.conf.backup.script ]; then
+        cp /etc/resolv.conf.backup.script /etc/resolv.conf
+    fi
+fi
 
 cat> /root/.profile << END
 if [ "$BASH" ]; then
@@ -694,6 +777,42 @@ echo ""
 cd
 iinfo
 
+# Final safety check
+echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+echo -e "${green}│${bold_white}           FINAL SAFETY CHECK${neutral}           ${green}│${NC}"
+echo -e "${green}└──────────────────────────────────────────┘${NC}"
+
+# Check critical services
+if systemctl is-active --quiet ssh; then
+    echo -e "${green}✓ SSH service is running${neutral}"
+else
+    echo -e "${red}✗ SSH service is not running${neutral}"
+    echo -e "${yellow}Mencoba restart SSH...${neutral}"
+    systemctl restart ssh
+fi
+
+# Check network
+if ping -c 1 8.8.8.8 &>/dev/null; then
+    echo -e "${green}✓ Network connectivity OK${neutral}"
+else
+    echo -e "${red}✗ No network connectivity${neutral}"
+fi
+
+# Check memory
+MEM_USED=$(free -m | awk 'NR==2{printf "%.1f%%", $3*100/$2}')
+echo -e "${yellow}Memory usage: ${MEM_USED}${neutral}"
+
+# Check failed services
+FAILED_SERVICES=$(systemctl --failed --no-legend | wc -l)
+if [ "$FAILED_SERVICES" -gt 0 ]; then
+    echo -e "${red}⚠️  $FAILED_SERVICES services failed${neutral}"
+    systemctl --failed --no-legend
+else
+    echo -e "${green}✓ All services running properly${neutral}"
+fi
+
+echo -e "${green}Installation completed with safety checks${neutral}"
+
 echo -e "${green}┌────────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
 echo -e "${green}└────────────────────────────────────────────┘${NC}"
@@ -703,7 +822,10 @@ sleep 4
 echo -e "[ ${yellow}WARNING${NC} ] Do you want to reboot now ? (y/n)? "
 read answer
 if [ "$answer" == "${answer#[Yy]}" ] ;then
+    echo -e "${yellow}Reboot dibatalkan. System tetap berjalan.${neutral}"
     exit 0
 else
+    echo -e "${yellow}Rebooting system...${neutral}"
+    sleep 2
     reboot
 fi
