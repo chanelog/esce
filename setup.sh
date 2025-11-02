@@ -466,12 +466,15 @@ function setup_debian(){
     if [[ $DEBIAN_VERSION -ge 12 ]]; then
         echo -e "${yellow}Menerapkan fix untuk Debian ${DEBIAN_VERSION}...${neutral}"
         
-        # Install required packages for newer Debian
-        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2 software-properties-common
+        # Install required packages for newer Debian (FIXED: removed software-properties-common)
+        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2
         
-        # Fix for nginx on Debian 13
-        run_with_spinner "Menambahkan repository nginx..." bash -c "echo 'deb http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
-        run_with_spinner "Menambahkan kunci nginx..." curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
+        # Fix for nginx on Debian 13 - using new method without apt-key
+        run_with_spinner "Menambahkan repository nginx..." bash -c "echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        
+        # Download and install nginx key using new method
+        run_with_spinner "Mendownload kunci nginx..." curl -fsSL https://nginx.org/keys/nginx_signing.key -o /tmp/nginx_signing.key
+        run_with_spinner "Menginstall kunci nginx..." bash -c "gpg --dearmor /tmp/nginx_signing.key | tee /usr/share/keyrings/nginx-keyring.gpg > /dev/null"
         
         # Update again after adding nginx repo
         run_with_spinner "Memperbarui package list..." apt update
@@ -692,7 +695,7 @@ cd
 iinfo
 
 echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                    ${green}│${NC}"
+echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
 echo -e "${green}└────────────────────────────────────────────┘${NC}"
 echo ""
 sleep 4
