@@ -1,9 +1,8 @@
-#!/bin/bash
-#
-# PeyxDev Auto Installer
-# Fixed for Debian 13 with Safety Features
-#
+# AUTOSCRIPT MOD BY PEYXDEV 2025
+# ==================================================
 
+
+#!/bin/bash
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1
 sysctl -w net.ipv6.conf.default.disable_ipv6=1 >/dev/null 2>&1
 REPO="https://raw.githubusercontent.com/PeyxDev/esce/main/"
@@ -20,48 +19,6 @@ bold_white="\e[1;37m"
 pink="\e[38;5;205m"
 reset="\e[0m"
 gray="\e[38;5;245m"
-
-# Safety checks
-function safety_check() {
-    echo -e "${yellow}Melakukan safety check...${neutral}"
-    
-    # Check available memory
-    MEM_AVAILABLE=$(free -m | awk 'NR==2{print $7}')
-    if [ "$MEM_AVAILABLE" -lt 200 ]; then
-        echo -e "${red}Warning: Memory available hanya ${MEM_AVAILABLE}MB, disarankan minimal 200MB${neutral}"
-        echo -e "${yellow}Lanjutkan? (y/n): ${neutral}"
-        read -r answer
-        if [ "$answer" != "y" ]; then
-            exit 1
-        fi
-    fi
-    
-    # Check disk space
-    DISK_AVAILABLE=$(df / | awk 'NR==2{print $4}')
-    if [ "$DISK_AVAILABLE" -lt 1048576 ]; then
-        echo -e "${red}Warning: Disk space rendah, mungkin menyebabkan masalah${neutral}"
-    fi
-    
-    # Check internet connectivity
-    if ! ping -c 1 8.8.8.8 &>/dev/null; then
-        echo -e "${red}Error: Tidak ada koneksi internet${neutral}"
-        exit 1
-    fi
-}
-
-function cleanup_on_failure() {
-    echo -e "${red}Cleanup on failure...${neutral}"
-    # Restore original resolv.conf if exists
-    if [ -f /etc/resolv.conf.bak ]; then
-        cp /etc/resolv.conf.bak /etc/resolv.conf
-    fi
-    
-    # Reset sysctl to safe values
-    sysctl -w net.ipv4.ip_forward=1 >/dev/null 2>&1
-    sysctl -p >/dev/null 2>&1
-    
-    echo -e "${yellow}System restored to safe state${neutral}"
-}
 
 # Spinner definitions
 SPINNER=("⣷" "⣯" "⣟" "⡿" "⢿" "⣻" "⣽" "⣾")
@@ -84,10 +41,8 @@ function run_with_spinner() {
     spinner "$msg" &
     local spinner_pid=$!
     
-    # Execute command with timeout
-    timeout 300 "${cmd[@]}" >/dev/null 2>&1
-    
-    local exit_code=$?
+    # Execute command
+    "${cmd[@]}" >/dev/null 2>&1
     
     # Kill spinner
     kill $spinner_pid 2>/dev/null
@@ -95,16 +50,7 @@ function run_with_spinner() {
     
     # Clear spinner line
     echo -ne "\r\033[K"
-    
-    if [ $exit_code -eq 0 ]; then
-        echo -e "\r$msg ${green}✓${neutral}"
-    elif [ $exit_code -eq 124 ]; then
-        echo -e "\r$msg ${red}✗ (Timeout)${neutral}"
-    else
-        echo -e "\r$msg ${red}✗ (Error: $exit_code)${neutral}"
-    fi
-    
-    return $exit_code
+    echo -e "\r$msg ${green}✓${neutral}"
 }
 
 function CEKIP () {
@@ -138,14 +84,20 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
     exit 1
 fi
 
-# Safety check first
-safety_check
-
-# Check Debian version
-DEBIAN_VERSION=$(cat /etc/debian_version 2>/dev/null | cut -d'.' -f1)
-if [[ $DEBIAN_VERSION -ge 12 ]]; then
-    echo -e "${yellow}Debian ${DEBIAN_VERSION} detected - applying compatibility fixes...${neutral}"
+# Improved Debian version detection
+if [ -f /etc/debian_version ]; then
+    DEBIAN_VERSION=$(cat /etc/debian_version | cut -d'.' -f1)
+    if [[ $DEBIAN_VERSION -ge 12 ]]; then
+        echo -e "${yellow}Debian ${DEBIAN_VERSION} detected - applying compatibility fixes...${neutral}"
+    fi
+else
+    # Fallback for systems without /etc/debian_version
+    DEBIAN_VERSION=11
 fi
+
+# Additional OS detection
+OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' 2>/dev/null || echo "debian")
+OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' 2>/dev/null || echo "11")
 
 localip=$(hostname -I | cut -d\  -f1)
 hst=( `hostname` )
@@ -153,9 +105,6 @@ dart=$(cat /etc/hosts | grep -w `hostname` | awk '{print $2}')
 if [[ "$hst" != "$dart" ]]; then
     echo "$localip $(hostname)" >> /etc/hosts
 fi
-
-# Backup original resolv.conf
-cp /etc/resolv.conf /etc/resolv.conf.bak 2>/dev/null || true
 
 secs_to_human() {
     echo "Installation time : $(( ${1} / 3600 )) hours $(( (${1} / 60) % 60 )) minute's $(( ${1} % 60 )) seconds"
@@ -191,15 +140,25 @@ echo ""
 
 function update_system() {
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}         UPDATING SYSTEM DEBIAN ${DEBIAN_VERSION}${neutral}    ${green}│${NC}"
+    echo -e "${green}│${bold_white}         UPDATING SYSTEM ${OS_ID} ${OS_VERSION}${neutral}    ${green}│${NC}"
     echo -e "${green}└──────────────────────────────────────────┘${NC}"
     
     run_with_spinner "Memperbarui package list..." apt update
     
-    # Fix for Debian 13 - install keyring first
-    if [[ $DEBIAN_VERSION -ge 12 ]]; then
+    # Enhanced fixes for Debian 12+ - including Debian 13
+    if [[ $DEBIAN_VERSION -ge 12 ]] || [[ $OS_ID == "debian" && $OS_VERSION -ge 12 ]]; then
+        echo -e "${yellow}Menerapkan fix khusus untuk Debian ${DEBIAN_VERSION}...${neutral}"
+        
         run_with_spinner "Menginstall debian-archive-keyring..." apt install -y debian-archive-keyring
         run_with_spinner "Menginstall apt-transport-https..." apt install -y apt-transport-https ca-certificates
+        run_with_spinner "Menginstall gnupg2..." apt install -y gnupg2 dirmngr
+        
+        # Fix for nginx repository - modern approach without apt-key
+        run_with_spinner "Mengatur repository nginx..." bash -c "mkdir -p /etc/apt/keyrings && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx.gpg"
+        run_with_spinner "Menambahkan nginx repository..." bash -c "echo 'deb [signed-by=/etc/apt/keyrings/nginx.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        
+        # Update again after adding repositories
+        run_with_spinner "Memperbarui package list setelah menambah repository..." apt update
     fi
     
     run_with_spinner "Mengupgrade system..." apt upgrade -y
@@ -429,12 +388,14 @@ function Pasang(){
     update_system
     
     run_with_spinner "Menginstall git dan curl..." apt install git curl -y
-    run_with_spinner "Menginstall python..." apt install python -y
     
-    # Fix for Debian 13 - install python3 if python not available
+    # Enhanced Python handling for Debian 13
     if ! command -v python &> /dev/null; then
         run_with_spinner "Menginstall python3..." apt install python3 -y
-        ln -sf /usr/bin/python3 /usr/bin/python
+        # Create python symlink if it doesn't exist
+        if [[ ! -f /usr/bin/python ]]; then
+            run_with_spinner "Membuat symlink python3..." ln -sf /usr/bin/python3 /usr/bin/python
+        fi
     fi
 }
 
@@ -471,29 +432,17 @@ function Installasi(){
     }
     
     res2() {
-        if run_with_spinner "Menginstall SSH & OpenVPN..." wget ${REPO}install/ssh-vpn.sh -O ssh-vpn.sh && chmod +x ssh-vpn.sh && timeout 600 ./ssh-vpn.sh; then
-            echo -e "${green}SSH & OpenVPN installed successfully${neutral}"
-        else
-            echo -e "${red}SSH & OpenVPN installation had issues, continuing...${neutral}"
-        fi
+        run_with_spinner "Menginstall SSH & OpenVPN..." wget ${REPO}install/ssh-vpn.sh -O ssh-vpn.sh && chmod +x ssh-vpn.sh && ./ssh-vpn.sh
         clear
     }
     
     res3() {
-        if run_with_spinner "Menginstall Xray..." wget ${REPO}install/ins-xray.sh -O ins-xray.sh && chmod +x ins-xray.sh && timeout 600 ./ins-xray.sh; then
-            echo -e "${green}Xray installed successfully${neutral}"
-        else
-            echo -e "${red}Xray installation had issues, continuing...${neutral}"
-        fi
+        run_with_spinner "Menginstall Xray..." wget ${REPO}install/ins-xray.sh -O ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
         clear
     }
     
     res4() {
-        if run_with_spinner "Menginstall WebSocket SSH..." wget ${REPO}sshws/insshws.sh -O insshws.sh && chmod +x insshws.sh && timeout 300 ./insshws.sh; then
-            echo -e "${green}WebSocket SSH installed successfully${neutral}"
-        else
-            echo -e "${red}WebSocket SSH installation had issues, continuing...${neutral}"
-        fi
+        run_with_spinner "Menginstall WebSocket SSH..." wget ${REPO}sshws/insshws.sh -O insshws.sh && chmod +x insshws.sh && ./insshws.sh
         clear
     }
     
@@ -513,27 +462,16 @@ function Installasi(){
     }
     
     res8() {
-        if run_with_spinner "Menginstall SlowDNS..." wget ${REPO}slowdns/installsl.sh -O installsl.sh && chmod +x installsl.sh && timeout 300 bash installsl.sh; then
-            echo -e "${green}SlowDNS installed successfully${neutral}"
-        else
-            echo -e "${red}SlowDNS installation had issues, continuing...${neutral}"
-        fi
+        run_with_spinner "Menginstall SlowDNS..." wget ${REPO}slowdns/installsl.sh -O installsl.sh && chmod +x installsl.sh && bash installsl.sh
         clear
     }
     
     res9() {
-        if run_with_spinner "Menginstall UDP Custom..." wget ${REPO}install/udp-custom.sh -O udp-custom.sh && chmod +x udp-custom.sh && timeout 300 bash udp-custom.sh; then
-            echo -e "${green}UDP Custom installed successfully${neutral}"
-        else
-            echo -e "${red}UDP Custom installation had issues, continuing...${neutral}"
-        fi
+        run_with_spinner "Menginstall UDP Custom..." wget ${REPO}install/udp-custom.sh -O udp-custom.sh && chmod +x udp-custom.sh && bash udp-custom.sh
         clear
     }
     
-    # Fix for Debian 13 detection
-    OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
-    OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
-    
+    # Enhanced OS detection
     if [[ $OS_ID == "ubuntu" ]]; then
         echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
         setup_ubuntu
@@ -543,19 +481,28 @@ function Installasi(){
         setup_debian
     else
         echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
+        # Fallback to Debian setup
+        setup_debian
     fi
 }
 
 function setup_debian(){
-    # Additional fixes for Debian 13
-    if [[ $DEBIAN_VERSION -ge 12 ]]; then
-        echo -e "${yellow}Menerapkan safety measures untuk Debian ${DEBIAN_VERSION}...${neutral}"
+    # Additional fixes for Debian 12+
+    if [[ $DEBIAN_VERSION -ge 12 ]] || [[ $OS_VERSION -ge 12 ]]; then
+        echo -e "${yellow}Menerapkan fix khusus untuk Debian ${DEBIAN_VERSION}...${neutral}"
         
-        # Install minimal dependencies only
-        run_with_spinner "Menginstall dependencies minimal..." apt install -y dirmngr gnupg2
+        # Install required packages for newer Debian
+        run_with_spinner "Menginstall dependencies tambahan..." apt install -y dirmngr gnupg2 software-properties-common
         
-        # Skip problematic nginx repo for stability
-        echo -e "${yellow}Menggunakan nginx dari repository default untuk stabilitas...${neutral}"
+        # Enhanced nginx fix for Debian 13
+        run_with_spinner "Mengatur repository nginx..." bash -c "mkdir -p /etc/apt/keyrings && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx.gpg"
+        run_with_spinner "Menambahkan nginx repository..." bash -c "echo 'deb [signed-by=/etc/apt/keyrings/nginx.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx' > /etc/apt/sources.list.d/nginx.list"
+        
+        # Update again after adding nginx repo
+        run_with_spinner "Memperbarui package list..." apt update
+        
+        # Install nginx from repository
+        run_with_spinner "Menginstall nginx..." apt install -y nginx
     fi
     
     echo -e "${green}┌──────────────────────────────────────────┐${NC}"
@@ -653,84 +600,54 @@ function iinfo(){
     TIME=$(date +'%Y-%m-%d %H:%M:%S')
     RAMMS=$(free -m | awk 'NR==2 {print $2}')
     MODEL2=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
+    MODEL=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
+    OSARCH=$(uname -m)
+    RELEASE=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://raw.githubusercontent.com/PeyxDev/esce/main/ipx | grep $MYIP | awk '{print $3}' )
-    d1=$(date -d "$IZIN" +%s)
-    d2=$(date -d "$today" +%s)
-    EXP=$(( (d1 - d2) / 86400 ))
+    NAMA=$(cat /etc/xray/username)
     TEXT="
-<code>━━━━━━━━━━━━━━━━━━━━</code>
-<code>⚠️ PEYX AUTOSCRIPT PREMIUM ⚠️</code>
-<code>━━━━━━━━━━━━━━━━━━━━</code>
-<code>NAME : </code><code>${author}</code>
-<code>TIME : </code><code>${TIME} WIB</code>
-<code>DOMAIN : </code><code>${domain}</code>
-<code>IP : </code><code>${MYIP}</code>
-<code>ISP : </code><code>${ISP} $CITY</code>
-<code>OS LINUX : </code><code>${MODEL2}</code>
-<code>RAM : </code><code>${RAMMS} MB</code>
-<code>EXP SCRIPT : </code><code>$EXP Days</code>
-<code>━━━━━━━━━━━━━━━━━━━━</code>
-<i> Notifikasi Installer Script...</i>
-"'&reply_markup={"inline_keyboard":[[{"text":"🔥ᴏʀᴅᴇʀ","url":"https://t.me/frel01"},{"text":"🔥GRUP","url":"https://t.me/pxstoree"}]]}'
-    curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
-    clear
+<code>─────────────────────</code>
+<b>⚠️ AUTOSCRIPT INSTALLER ⚠️</b>
+<code>─────────────────────</code>
+<code>ID     : </code><code>$NAMA</code>
+<code>Domain : </code><code>$domain</code>
+<code>Date   : </code><code>$TIME</code>
+<code>OS     : </code><code>$MODEL</code>
+<code>Kernel : </code><code>$MODEL2</code>
+<code>Arch   : </code><code>$OSARCH</code>
+<code>RAM    : </code><code>$RAMMS MB</code>
+<code>ISP    : </code><code>$ISP</code>
+<code>CITY   : </code><code>$CITY</code>
+<code>IP     : </code><code>$MYIP</code>
+<code>─────────────────────</code>
+<i>Success Installation AutoScript</i>
+"
+    
+    curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null 2>&1
 }
 
-NEW_FILE_MAX=65535
-NF_CONNTRACK_MAX="net.netfilter.nf_conntrack_max=262144"
-NF_CONNTRACK_TIMEOUT="net.netfilter.nf_conntrack_tcp_timeout_time_wait=30"
-SYSCTL_CONF="/etc/sysctl.conf"
-CURRENT_FILE_MAX=$(grep "^fs.file-max" "$SYSCTL_CONF" | awk '{print $3}' 2>/dev/null)
+function finish() {
+    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
+    echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
+    echo -e "${green}└──────────────────────────────────────────┘${NC}"
 
-if [ "$CURRENT_FILE_MAX" != "$NEW_FILE_MAX" ]; then
-    if grep -q "^fs.file-max" "$SYSCTL_CONF"; then
-        sed -i "s/^fs.file-max.*/fs.file-max = $NEW_FILE_MAX/" "$SYSCTL_CONF" >/dev/null 2>&1
+    # Check if systemd-resolved exists and handle accordingly
+    if systemctl list-unit-files | grep -q systemd-resolved.service; then
+        run_with_spinner "Menghentikan systemd-resolved..." systemctl stop systemd-resolved
+        run_with_spinner "Menonaktifkan systemd-resolved..." systemctl disable systemd-resolved
     else
-        echo "fs.file-max = $NEW_FILE_MAX" >> "$SYSCTL_CONF" 2>/dev/null
+        echo -e "systemd-resolved tidak terdeteksi, melanjutkan..."
     fi
-fi
 
-if ! grep -q "^net.netfilter.nf_conntrack_max" "$SYSCTL_CONF"; then
-    echo "$NF_CONNTRACK_MAX" >> "$SYSCTL_CONF" 2>/dev/null
-fi
+    # Configure DNS manually
+    run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf'
 
-if ! grep -q "^net.netfilter.nf_conntrack_tcp_timeout_time_wait" "$SYSCTL_CONF"; then
-    echo "$NF_CONNTRACK_TIMEOUT" >> "$SYSCTL_CONF" 2>/dev/null
-fi
+    # Make resolv.conf immutable to prevent changes
+    run_with_spinner "Mengunci file resolv.conf..." chattr +i /etc/resolv.conf
 
-sysctl -p >/dev/null 2>&1
-
-key2
-CEKIP
-Installasi
-
-# FIXED SYSTEMD-RESOLVED SECTION - More safe approach
-echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
-echo -e "${green}└──────────────────────────────────────────┘${NC}"
-
-# Safe DNS configuration
-if [ -f /etc/resolv.conf ]; then
-    run_with_spinner "Backup resolv.conf..." cp /etc/resolv.conf /etc/resolv.conf.backup.script
-fi
-
-# Configure DNS manually - don't make immutable immediately
-run_with_spinner "Mengatur DNS manual..." bash -c 'echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1" > /etc/resolv.conf'
-
-# Test DNS first before making immutable
-if nslookup google.com >/dev/null 2>&1; then
-    run_with_spinner "DNS working, locking configuration..." chattr +i /etc/resolv.conf
-else
-    echo -e "${yellow}DNS test failed, skipping immutable attribute${neutral}"
-    # Restore backup if DNS test fails
-    if [ -f /etc/resolv.conf.backup.script ]; then
-        cp /etc/resolv.conf.backup.script /etc/resolv.conf
-    fi
-fi
-
-cat> /root/.profile << END
-if [ "$BASH" ]; then
+    # Create .profile
+    cat> /root/.profile << END
+if [ "\$BASH" ]; then
     if [ -f ~/.bashrc ]; then
         . ~/.bashrc
     fi
@@ -740,92 +657,53 @@ clear
 welcome
 END
 
-chmod 644 /root/.profile
+    run_with_spinner "Mengatur permissions .profile..." chmod 644 /root/.profile
 
-if [ -f "/root/log-install.txt" ]; then
-    rm /root/log-install.txt > /dev/null 2>&1
-fi
+    # Clean up files
+    run_with_spinner "Membersihkan file log..." rm -f /root/log-install.txt /etc/afak.conf
+    
+    # Clear history
+    run_with_spinner "Membersihkan history..." history -c
+    
+    # Get server version and set daily reboot
+    run_with_spinner "Mengatur konfigurasi sistem..." bash -c "
+        serverV=\$(curl -sS ${REPO}versi)
+        echo \$serverV > /opt/.ver
+        echo '00' > /home/daily_reboot
+    "
+    
+    # Get IP and location info
+    run_with_spinner "Mendapatkan informasi IP dan lokasi..." bash -c "
+        curl -sS ifconfig.me > /etc/myipvps
+        curl -s ipinfo.io/city?token=75082b4831f909 > /etc/xray/city
+        curl -s ipinfo.io/org?token=75082b4831f909 | cut -d ' ' -f 2-10 > /etc/xray/isp
+    "
 
-if [ -f "/etc/afak.conf" ]; then
-    rm /etc/afak.conf > /dev/null 2>&1
-fi
+    # Clean up installation files
+    run_with_spinner "Membersihkan file instalasi sementara..." rm -f /root/tools.sh /root/setup.sh /root/pointing.sh /root/ssh-vpn.sh /root/ins-xray.sh /root/insshws.sh /root/set-br.sh /root/ohp.sh /root/update.sh /root/installsl.sh /root/udp-custom.sh
 
-history -c
-serverV=$( curl -sS ${REPO}versi  )
-echo $serverV > /opt/.ver
-echo "00" > /home/daily_reboot
-aureb=$(cat /home/daily_reboot)
-b=11
-if [ $aureb -gt $b ]
-then
-    gg="PM"
-else
-    gg="AM"
-fi
+    # Show installation time
+    echo ""
+    secs_to_human "$(($(date +%s) - ${start}))" | tee -a log-install.txt
+    sleep 3
+    echo ""
+    
+    # Send notification
+    iinfo
 
-cd
-curl -sS ifconfig.me > /etc/myipvps
-curl -s ipinfo.io/city?token=75082b4831f909 >> /etc/xray/city
-curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 >> /etc/xray/isp
-
-# Clean up files
-run_with_spinner "Membersihkan file sementara..." rm -f /root/tools.sh /root/setup.sh /root/pointing.sh /root/ssh-vpn.sh /root/ins-xray.sh /root/insshws.sh /root/set-br.sh /root/ohp.sh /root/update.sh /root/installsl.sh /root/udp-custom.sh
-
-secs_to_human "$(($(date +%s) - ${start}))" | tee -a log-install.txt
-sleep 3
-echo ""
-cd
-iinfo
-
-# Final safety check
-echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}           FINAL SAFETY CHECK${neutral}           ${green}│${NC}"
-echo -e "${green}└──────────────────────────────────────────┘${NC}"
-
-# Check critical services
-if systemctl is-active --quiet ssh; then
-    echo -e "${green}✓ SSH service is running${neutral}"
-else
-    echo -e "${red}✗ SSH service is not running${neutral}"
-    echo -e "${yellow}Mencoba restart SSH...${neutral}"
-    systemctl restart ssh
-fi
-
-# Check network
-if ping -c 1 8.8.8.8 &>/dev/null; then
-    echo -e "${green}✓ Network connectivity OK${neutral}"
-else
-    echo -e "${red}✗ No network connectivity${neutral}"
-fi
-
-# Check memory
-MEM_USED=$(free -m | awk 'NR==2{printf "%.1f%%", $3*100/$2}')
-echo -e "${yellow}Memory usage: ${MEM_USED}${neutral}"
-
-# Check failed services
-FAILED_SERVICES=$(systemctl --failed --no-legend | wc -l)
-if [ "$FAILED_SERVICES" -gt 0 ]; then
-    echo -e "${red}⚠️  $FAILED_SERVICES services failed${neutral}"
-    systemctl --failed --no-legend
-else
-    echo -e "${green}✓ All services running properly${neutral}"
-fi
-
-echo -e "${green}Installation completed with safety checks${neutral}"
-
-echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
-echo -e "${green}└────────────────────────────────────────────┘${NC}"
-echo ""
-sleep 4
-
-echo -e "[ ${yellow}WARNING${NC} ] Do you want to reboot now ? (y/n)? "
-read answer
-if [ "$answer" == "${answer#[Yy]}" ] ;then
-    echo -e "${yellow}Reboot dibatalkan. System tetap berjalan.${neutral}"
-    exit 0
-else
-    echo -e "${yellow}Rebooting system...${neutral}"
+    echo -e "${green}┌────────────────────────────────────────────┐${NC}"
+    echo -e "${green}│${bold_white}  INSTALL SCRIPT SELESAI..${neutral}                  ${green}│${NC}"
+    echo -e "${green}└────────────────────────────────────────────┘${NC}"
+    echo ""
     sleep 2
-    reboot
-fi
+
+    echo -e "[ ${yellow}WARNING${NC} ] Do you want to reboot now ? (y/n)? "
+    read answer
+    if [ "$answer" == "${answer#[Yy]}" ] ;then
+        echo -e "${yellow}System will continue without reboot.${NC}"
+        exit 0
+    else
+        echo -e "${green}Rebooting system...${NC}"
+        reboot
+    fi
+}
