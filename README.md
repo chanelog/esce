@@ -30,7 +30,7 @@
 ---
 
 ### INSTALL SCRIPT UBUNTU
-<pre><code>apt install -y screen dos2unix && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && ./setup.sh
+<pre><code>apt update && apt install -y screen && apt install -y dos2unix && wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/setup.sh && chmod +x setup.sh && dos2unix setup.sh && ./setup.sh
 </code></pre>
 
 ---
