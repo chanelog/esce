@@ -47,7 +47,7 @@ function run_with_spinner() {
 }
 
 echo -e "${purple}Ohp Script${neutral}"
-echo -e "${yellow}Mod By hunter${neutral}"
+echo -e "${yellow}Mod By PeyxDev${neutral}"
 echo -e "${blue}==========================================${neutral}"
 
 # Download File Ohp
