@@ -160,7 +160,7 @@ function key2(){
     git add ipx
     git commit -m register >/dev/null 2>&1
     git branch -M ipuk >/dev/null 2>&1
-    git remote add origin https://github.com/${USERGIT}/izinvps >/dev/null 2>&1
+    git remote add origin https://github.com/${USERGIT}/izinvps2 >/dev/null 2>&1
     
     run_with_spinner "Mengupload data izin..." git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps >/dev/null 2>&1
     
