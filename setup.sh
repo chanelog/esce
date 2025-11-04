@@ -629,7 +629,7 @@ Installasi
 
 # FIXED SYSTEMD-RESOLVED SECTION
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}        ${green}│${NC}"
+echo -e "${green}│${bold_white}        CONFIGURING DNS RESOLVER${neutral}          ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 
 # Check if systemd-resolved exists and handle accordingly
