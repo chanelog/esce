@@ -1,57 +1,20 @@
 #!/bin/bash
-
-# Color definitions
-green="\e[38;5;82m"
-red="\e[38;5;196m"
-neutral="\e[0m"
-orange="\e[38;5;130m"
-blue="\e[38;5;39m"
-yellow="\e[38;5;226m"
-purple="\e[38;5;141m"
-bold_white="\e[1;37m"
-pink="\e[38;5;205m"
-reset="\e[0m"
-gray="\e[38;5;245m"
-
-# Spinner definitions
-SPINNER=("⣷" "⣯" "⣟" "⡿" "⢿" "⣻" "⣽" "⣾")
-
-function spinner() {
-    while true; do
-        for i in "${SPINNER[@]}"; do
-            echo -ne "\r$1 ${yellow}$i${neutral} "
-            sleep 0.1
-        done
-    done
-}
-
-function run_with_spinner() {
-    local msg="$1"
-    shift
-    local cmd=("$@")
-    
-    # Start spinner
-    spinner "$msg" &
-    local spinner_pid=$!
-    
-    # Execute command
-    "${cmd[@]}" >/dev/null 2>&1
-    
-    # Kill spinner
-    kill $spinner_pid 2>/dev/null
-    wait $spinner_pid 2>/dev/null
-    
-    # Clear spinner line
-    echo -ne "\r\033[K"
-    echo -e "\r$msg ${green}✓${neutral}"
-}
-
-echo -e "${purple}✨ FILE ENC BY PeyxDev${neutral}"
-echo -e "${blue}==========================================${neutral}"
-
+echo "✨ FILE ENC BY PeyxDev"
+# ==========================================
+# Color
+RED='\033[0;31m'
+NC='\033[0m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+LIGHT='\033[0;37m'
+# ==========================================
 # Getting
 REPO="https://raw.githubusercontent.com/PeyxDev/esce/main/"
-echo -e ""
+echo -e "
+"
 date
 echo ""
 cd
@@ -60,24 +23,25 @@ domain=$(cat /etc/xray/domain)
 else
 domain=$(cat /etc/xray/domain) 
 fi
-
-run_with_spinner "Checking system..." sleep 0.1
-
-run_with_spinner "Installing iptables..." apt install iptables iptables-persistent -y
-
-run_with_spinner "Setting ntpdate..." ntpdate pool.ntp.org
+sleep 0.1
+echo -e "[ ${green}INFO${NC} ] Checking... "
+apt install iptables iptables-persistent -y
+sleep 0.1
+echo -e "[ ${green}INFO$NC ] Setting ntpdate"
+ntpdate pool.ntp.org
 timedatectl set-ntp true
-
-run_with_spinner "Enabling chrony..." systemctl enable chrony
+sleep 0.1
+echo -e "[ ${green}INFO$NC ] Enable chrony"
+systemctl enable chrony
 systemctl restart chrony
 timedatectl set-timezone Asia/Jakarta
-
-run_with_spinner "Setting chrony tracking..." chronyc sourcestats -v
+sleep 0.1
+echo -e "[ ${green}INFO$NC ] Setting chrony tracking"
+chronyc sourcestats -v
 chronyc tracking -v
-
-run_with_spinner "Updating packages..." apt clean all && apt update
-
-run_with_spinner "Installing dependencies..." apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y
+echo -e "[ ${green}INFO$NC ] Setting dll"
+apt clean all && apt update
+apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y
 apt install socat cron bash-completion ntpdate -y
 ntpdate pool.ntp.org
 apt -y install chrony
@@ -85,11 +49,12 @@ apt install zip -y
 apt install curl pwgen openssl cron -y
 
 # install xray
-run_with_spinner "Downloading & Installing xray core..." domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
+sleep 0.1
+echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
+domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
 chown www-data.www-data $domainSock_dir
-
 # Make Folder XRay
-run_with_spinner "Creating Xray directories..." mkdir -p /var/log/xray
+mkdir -p /var/log/xray
 mkdir -p /etc/xray
 chown www-data.www-data /var/log/xray
 chmod +x /var/log/xray
@@ -97,16 +62,14 @@ touch /var/log/xray/access.log
 touch /var/log/xray/error.log
 touch /var/log/xray/access2.log
 touch /var/log/xray/error2.log
-
 # / / Ambil Xray Core Version Terbaru
-run_with_spinner "Installing Xray core..." latest_version="24.11.30"
+latest_version="24.11.30"
 bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
 
 ## crt xray
-run_with_spinner "Stopping services..." systemctl stop nginx
+systemctl stop nginx
 systemctl stop haproxy
-
-run_with_spinner "Setting up SSL certificate..." mkdir /root/.acme.sh
+mkdir /root/.acme.sh
 curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
 chmod +x /root/.acme.sh/acme.sh
 /root/.acme.sh/acme.sh --upgrade --auto-upgrade
@@ -115,7 +78,7 @@ chmod +x /root/.acme.sh/acme.sh
 ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
 
 # nginx renew ssl
-run_with_spinner "Setting up SSL renewal..." echo -n '#!/bin/bash
+echo -n '#!/bin/bash
 /etc/init.d/nginx stop
 "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
 /etc/init.d/nginx start
@@ -124,13 +87,13 @@ run_with_spinner "Setting up SSL renewal..." echo -n '#!/bin/bash
 chmod +x /usr/local/bin/ssl_renew.sh
 if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
 
-run_with_spinner "Creating web directory..." mkdir -p /home/vps/public_html
+mkdir -p /home/vps/public_html
 
 # set uuid
-run_with_spinner "Generating UUID..." uuid=$(cat /proc/sys/kernel/random/uuid)
-
+# set uuid
+uuid=$(cat /proc/sys/kernel/random/uuid)
 # xray config
-run_with_spinner "Configuring Xray..." cat > /etc/xray/config.json << END
+cat > /etc/xray/config.json << END
 {
   "log" : {
     "access": "/var/log/xray/access.log",
@@ -383,11 +346,9 @@ run_with_spinner "Configuring Xray..." cat > /etc/xray/config.json << END
   }
 }
 END
-
-run_with_spinner "Cleaning up service files..." rm -rf /etc/systemd/system/xray.service.d
+rm -rf /etc/systemd/system/xray.service.d
 rm -rf /etc/systemd/system/xray@.service
-
-run_with_spinner "Creating Xray service..." cat <<EOF> /etc/systemd/system/xray.service
+cat <<EOF> /etc/systemd/system/xray.service
 Description=Xray Service
 Documentation=https://github.com/xtls
 After=network.target nss-lookup.target
@@ -407,8 +368,7 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 
 EOF
-
-run_with_spinner "Creating run service..." cat > /etc/systemd/system/runn.service <<EOF
+cat > /etc/systemd/system/runn.service <<EOF
 [Unit]
 Description=casper9
 After=network.target
@@ -424,39 +384,32 @@ WantedBy=multi-user.target
 EOF
 
 #nginx config
-run_with_spinner "Downloading configuration files..." wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf"
+wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf"
 wget -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg"
 sed -i 's/xxx/$domain/' /etc/nginx/conf.d/xray.conf
 sed -i 's/xxx/$domain/' /etc/haproxy/haproxy.cfg
 cat /etc/xray/xray.key /etc/xray/xray.crt | tee /etc/haproxy/hap.pem
-
-echo -e "${yellow}Restarting All Services${neutral}"
+echo -e "$yell[SERVICE]$NC Restart All service"
 systemctl daemon-reload
-
-run_with_spinner "Enabling & restarting Xray..." systemctl daemon-reload
+sleep 0.1
+echo -e "[ ${green}ok${NC} ] Enable & restart xray "
+systemctl daemon-reload
 systemctl enable xray
 systemctl restart xray
-
-run_with_spinner "Restarting Nginx..." systemctl restart nginx
-
-run_with_spinner "Enabling & restarting HAProxy..." systemctl enable haproxy
+systemctl restart nginx
+systemctl enable haproxy
 systemctl restart haproxy
-
-run_with_spinner "Enabling & restarting run service..." systemctl enable runn
+systemctl enable runn
 systemctl restart runn
 
-run_with_spinner "Finalizing setup..." mv /root/domain /etc/xray/
+sleep 0.1
+yellow() { echo -e "\\033[33;1m${*}\\033[0m"; }
+yellow "xray/Vmess"
+yellow "xray/Vless"
+
+mv /root/domain /etc/xray/
 if [ -f /root/scdomain ];then
 rm /root/scdomain > /dev/null 2>&1
 fi
-
-echo -e "${purple}==========================================${neutral}"
-echo -e "${green}Xray Installation Completed Successfully!${neutral}"
-echo -e "${blue}Protocols installed:${neutral}"
-echo -e "${yellow}• xray/Vmess${neutral}"
-echo -e "${yellow}• xray/Vless${neutral}"
-echo -e "${purple}==========================================${neutral}"
-
-run_with_spinner "Cleaning up..." rm -r ins-xray.sh
-
-echo -e "${green}✅ All done! Script cleanup completed.${neutral}"
+clear
+rm -r ins-xray.sh
