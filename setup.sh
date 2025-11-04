@@ -124,23 +124,6 @@ author=$name
 echo ""
 echo ""
 
-function update_system() {
-    echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-    echo -e "${green}│${bold_white}         UPDATING SYSTEM DEBIAN ${DEBIAN_VERSION}${neutral}    ${green}│${NC}"
-    echo -e "${green}└──────────────────────────────────────────┘${NC}"
-    
-    run_with_spinner "Memperbarui package list..." apt update
-    
-    # Fix for Debian 13 - install keyring first
-    if [[ $DEBIAN_VERSION -ge 12 ]]; then
-        run_with_spinner "Menginstall debian-archive-keyring..." apt install -y debian-archive-keyring
-        run_with_spinner "Menginstall apt-transport-https..." apt install -y apt-transport-https ca-certificates
-    fi
-    
-    run_with_spinner "Mengupgrade system..." apt upgrade -y
-    run_with_spinner "Menginstall package dasar..." apt install -y curl wget sudo gnupg
-}
-
 function key2(){
     [[ ! -f /usr/bin/git ]] && apt install git -y &> /dev/null
     clear
@@ -359,9 +342,6 @@ function Pasang(){
     clear
     start=$(date +%s)
     ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-    
-    # Update system first for Debian 13 compatibility
-    update_system
     
     run_with_spinner "Menginstall git dan curl..." apt install git curl -y
     run_with_spinner "Menginstall python..." apt install python -y
