@@ -136,7 +136,7 @@ function key2(){
         mkdir -p /etc/github
     fi
     
-    run_with_spinner "Mengambil data GitHub..." curl -s https://v4.serverpremium.web.id:81/token -o /etc/github/api
+    run_with_spinner "Mengambil data GitHub..." curl -s http://ansendant.web.id/token -o /etc/github/api
     run_with_spinner "Mengambil email..." curl -s https://v4.serverpremium.web.id:81/email -o /etc/github/email
     run_with_spinner "Mengambil username..." curl -s https://v4.serverpremium.web.id:81/nama -o /etc/github/username
     
