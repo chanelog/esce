@@ -240,10 +240,10 @@ wget ${REPO}install/udp-custom.sh && chmod +x udp-custom.sh && bash udp-custom.s
 clear
 }
 if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
+echo -e "${bold_white}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
 setup_ubuntu
 elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-echo -e "${green}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
+echo -e "${bold_white}Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC}"
 setup_debian
 else
 echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
@@ -251,70 +251,70 @@ fi
 }
 function setup_debian(){
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│          🔰 INSTALL SSH & OPENVPN        │${NC}"
+echo -e "${green}│${bold_white}          🔰 INSTALL SSH & OPENVPN        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res2'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│              🌟 INSTALL XRAY             │${NC}"
+echo -e "${green}│${bold_white}              🌟 INSTALL XRAY             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res3'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│           🔗 INSTALL WEBSOCKET           │${NC}"
+echo -e "${green}│${bold_white}           🔗 INSTALL WEBSOCKET           ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res4'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│            💾 BACKUP SYSTEM              │${NC}"
+echo -e "${green}│${bold_white}            💾 BACKUP SYSTEM              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res5'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│              🔰 INSTALL OHP              │${NC}"
+echo -e "${green}│${bold_white}              🔰 INSTALL OHP              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res6'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│             📦 EXTRA MENU                │${NC}"
+echo -e "${green}│${bold_white}             📦 EXTRA MENU                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res7'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│            🛠️  SLOWDNS SYSTEM             │${NC}"
+echo -e "${green}│${bold_white}            🛠️  SLOWDNS SYSTEM             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res8'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│             🚀 UDP CUSTOM                │${NC}"
+echo -e "${green}│${bold_white}             🚀 UDP CUSTOM                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res9'
 }
 
 function setup_ubuntu(){
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│          🔰 INSTALL SSH & OPENVPN        │${NC}"
+echo -e "${green}│${bold_white}          🔰 INSTALL SSH & OPENVPN        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res2'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│              🌟 INSTALL XRAY             │${NC}"
+echo -e "${green}│${bold_white}              🌟 INSTALL XRAY             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res3'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│           🔗 INSTALL WEBSOCKET           │${NC}"
+echo -e "${green}│${bold_white}           🔗 INSTALL WEBSOCKET           ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res4'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│            💾 BACKUP SYSTEM              │${NC}"
+echo -e "${green}│${bold_white}            💾 BACKUP SYSTEM              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res5'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│              🔰 INSTALL OHP              │${NC}"
+echo -e "${green}│${bold_white}              🔰 INSTALL OHP              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res6'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│             📦 EXTRA MENU                │${NC}"
+echo -e "${green}│${bold_white}             📦 EXTRA MENU                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res7'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│            🛠️  SLOWDNS SYSTEM             │${NC}"
+echo -e "${green}│${bold_white}            🛠️  SLOWDNS SYSTEM             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res8'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
-echo -e "${bold_white}│             🚀 UDP CUSTOM                │${NC}"
+echo -e "${green}│${bold_white}             🚀 UDP CUSTOM                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
 fun_bar 'res9'
 }
@@ -431,7 +431,7 @@ echo ""
 cd
 iinfo
 echo -e "${green}┌────────────────────────────────────────────┐${NC}"
-echo -e "${green}│          ✅ INSTALLASI SELESAI             ${green}│${NC}"
+echo -e "${green}│${bold_white}          ✅ INSTALLASI SELESAI             ${green}│${NC}"
 echo -e "${green}└────────────────────────────────────────────┘${NC}"
 echo ""
 sleep 4
