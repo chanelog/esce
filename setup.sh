@@ -63,7 +63,7 @@ ${CMD[1]} -y >/dev/null 2>&1
 touch $HOME/fim
 ) >/dev/null 2>&1 &
 tput civis
-echo -ne "  ${yellow}🔄 Update Domain.. ${bold_white}- ${bold_white}["
+echo -ne "  ${bold_white}🔄 Update Domain.. ${bold_white}- ${bold_white}["
 while true; do
 for ((i = 0; i < 18; i++)); do
 echo -ne "${green}#"
@@ -74,9 +74,9 @@ echo -e "${bold_white}]"
 sleep 1s
 tput cuu1
 tput dl1
-echo -ne "  ${yellow}🔄 Update Domain... ${bold_white}- ${bold_white}["
+echo -ne "  ${bold_white}🔄 Update Domain... ${bold_white}- ${bold_white}["
 done
-echo -e "${yellow}]${bold_white} -${green} ✅ Sukses !${bold_white}"
+echo -e "${bold_white}]${bold_white} -${green} ✅ Sukses !${bold_white}"
 tput cnorm
 }
 res1() {
