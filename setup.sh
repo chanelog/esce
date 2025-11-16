@@ -253,70 +253,70 @@ function setup_debian(){
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}          🔰 INSTALL SSH & OPENVPN        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res2'
+res2
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🌟 INSTALL XRAY             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res3'
+res3
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}           🔗 INSTALL WEBSOCKET           ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res4'
+res4
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            💾 BACKUP SYSTEM              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res5'
+res5
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🔰 INSTALL OHP              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res6'
+res6
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             📦 EXTRA MENU                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res7'
+res7
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            🛠️  SLOWDNS SYSTEM             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res8'
+res8
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             🚀 UDP CUSTOM                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res9'
+res9
 }
 
 function setup_ubuntu(){
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}          🔰 INSTALL SSH & OPENVPN        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res2'
+res2
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🌟 INSTALL XRAY             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res3'
+res3
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}           🔗 INSTALL WEBSOCKET           ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res4'
+res4
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            💾 BACKUP SYSTEM              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res5'
+res5
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🔰 INSTALL OHP              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res6'
+res6
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             📦 EXTRA MENU                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res7'
+res7
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            🛠️  SLOWDNS SYSTEM             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res8'
+res8
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             🚀 UDP CUSTOM                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-fun_bar 'res9'
+res9
 }
 function iinfo(){
 domain=$(cat /etc/xray/domain)
