@@ -253,35 +253,35 @@ function setup_debian(){
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}          🔰 INSTALL SSH & OPENVPN        ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res2
+fun_bar 'res2'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🌟 INSTALL XRAY             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res3
+fun_bar 'res3'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}           🔗 INSTALL WEBSOCKET           ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res4
+fun_bar 'res4'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            💾 BACKUP SYSTEM              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res5
+fun_bar 'res5'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}              🔰 INSTALL OHP              ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res6
+fun_bar 'res6'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             📦 EXTRA MENU                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res7
+fun_bar 'res7'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}            🛠️  SLOWDNS SYSTEM             ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res8
+fun_bar 'res8'
 echo -e "${green}┌──────────────────────────────────────────┐${NC}"
 echo -e "${green}│${bold_white}             🚀 UDP CUSTOM                ${green}│${NC}"
 echo -e "${green}└──────────────────────────────────────────┘${NC}"
-res9
+fun_bar 'res9'
 }
 
 function setup_ubuntu(){
