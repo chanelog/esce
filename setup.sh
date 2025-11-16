@@ -1,6 +1,7 @@
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1
 sysctl -w net.ipv6.conf.default.disable_ipv6=1 >/dev/null 2>&1
 REPO="https://cloud.peyx.site:81/esce/"
+REPO2="https://raw.githubusercontent.com/PeyxDev/esce/main/"
 green="\e[38;5;82m"
 red="\e[38;5;196m"
 neutral="\e[0m"
@@ -168,7 +169,7 @@ fi
 }
 function Pasang(){
 cd
-wget ${REPO}tools.sh &> /dev/null
+wget ${REPO2}tools.sh &> /dev/null
 chmod +x tools.sh
 bash tools.sh
 clear
