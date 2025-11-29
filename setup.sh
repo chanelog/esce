@@ -223,7 +223,7 @@ fi
 }
 function Pasang(){
 cd
-wget ${REPO2}tools.sh &> /dev/null
+wget ${REPO}tools.sh &> /dev/null
 chmod +x tools.sh
 bash tools.sh
 clear
