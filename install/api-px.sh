@@ -69,6 +69,20 @@ fi
 
 echo -e "${green}✅ api-px.js downloaded successfully${neutral}"
 
+# Download and extract bot.zip
+echo -e "${yellow}Downloading and extracting bot.zip...${neutral}"
+cd /usr/bin
+curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/bot/bot.zip" -o bot.zip
+
+if [ -f /usr/bin/bot.zip ]; then
+    7z x bot.zip -p@Peyx23
+    rm -f bot.zip
+    chmod +x peyx-api/*
+    echo -e "${green}✅ bot.zip downloaded and extracted successfully${neutral}"
+else
+    echo -e "${red}Failed to download bot.zip${neutral}"
+fi
+
 # Install required npm packages
 echo -e "${yellow}Installing required npm packages...${neutral}"
 if ! npm list --prefix /usr/bin/peyx-api express child_process >/dev/null 2>&1; then
@@ -153,15 +167,6 @@ systemctl restart apisellvpn.service >/dev/null 2>&1
 
 printf "\033[5A\033[0J"
 echo -e "Status Server is "$(cek_status apisellvpn.service)""
-
-# Hapus tes koneksi API
-# echo -e "${yellow}Testing API connection...${neutral}"
-# sleep 3
-# if curl -s "http://localhost:5888/trialssh?auth=$NEW_AUTH_KEY" | grep -q "status"; then
-#     echo -e "${green}✅ API berhasil dijalankan dan merespons${neutral}"
-# else
-#     echo -e "${red}❌ API tidak merespons, cek log: journalctl -u apisellvpn.service -f${neutral}"
-# fi
 
 rm -f api.sh
 }
