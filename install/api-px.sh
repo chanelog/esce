@@ -168,7 +168,7 @@ systemctl restart apisellvpn.service >/dev/null 2>&1
 printf "\033[5A\033[0J"
 echo -e "Status Server is "$(cek_status apisellvpn.service)""
 
-rm api-px.sh
+rm -f api-px.sh
 }
 
 # Main execution
