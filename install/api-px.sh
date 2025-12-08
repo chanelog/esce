@@ -75,9 +75,24 @@ cd /usr/bin
 curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/bot/bot.zip" -o bot.zip
 
 if [ -f /usr/bin/bot.zip ]; then
-    7z x bot.zip -p@Peyx23
+    # Ekstrak dengan opsi -o untuk menentukan direktori output
+    7z x bot.zip -p@Peyx23 -y -o/usr/bin
+    
+    # Hapus folder bot jika terbuat
+    if [ -d "/usr/bin/bot" ]; then
+        mv /usr/bin/bot/* /usr/bin/ 2>/dev/null
+        rm -rf /usr/bin/bot
+    fi
+    
     rm -f bot.zip
+    
+    # Beri permission executable pada semua file yang diekstrak
+    # Cari semua file (bukan folder) dan beri chmod +x
+    find /usr/bin -maxdepth 1 -type f -name "*" -exec chmod +x {} \; 2>/dev/null
+    
+    # Juga beri permission pada folder peyx-api dan isinya
     chmod +x peyx-api/*
+    
     echo -e "${green}✅ bot.zip downloaded and extracted successfully${neutral}"
 else
     echo -e "${red}Failed to download bot.zip${neutral}"
