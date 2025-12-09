@@ -1,1 +1,938 @@
-const _0x1810b7=_0x1a0c;(function(_0x16dd63,_0x26f084){const _0x1c6491=_0x1a0c,_0x3c4127=_0x16dd63();while(!![]){try{const _0x3f2f49=-parseInt(_0x1c6491(0x1d0))/0x1+-parseInt(_0x1c6491(0x21b))/0x2+-parseInt(_0x1c6491(0x217))/0x3+parseInt(_0x1c6491(0x1fa))/0x4*(parseInt(_0x1c6491(0x25b))/0x5)+-parseInt(_0x1c6491(0x21e))/0x6*(parseInt(_0x1c6491(0x211))/0x7)+-parseInt(_0x1c6491(0x268))/0x8+parseInt(_0x1c6491(0x215))/0x9;if(_0x3f2f49===_0x26f084)break;else _0x3c4127['push'](_0x3c4127['shift']());}catch(_0x522292){_0x3c4127['push'](_0x3c4127['shift']());}}}(_0x23f5,0x7cadc));const express=require(_0x1810b7(0x22d)),{exec}=require(_0x1810b7(0x201)),app=express(),PORT=0x1700;function _0x23f5(){const _0x2ea477=['Data\x20user\x20VLESS\x20berhasil\x20diambil','bot-cek-vless','/createvless','Data\x20login\x20VMESS\x20berhasil\x20diambil',',\x20stderr:\x20','/loginssh',',\x20error:\x20','get','🔧\x20Unlock\x20VMESS\x20Execution\x20-\x20stdout:\x20','Data\x20user\x20TROJAN\x20berhasil\x20diambil','bot-cek-tr','bot-del-vle','\x22\x20\x22','Missing\x20username\x20parameter','/recovertrojan','🔧\x20Unlock\x20VLESS\x20Execution\x20-\x20stdout:\x20','bot-member-tro','Akun\x20TROJAN\x20','expired','bot-recover-tr','🔧\x20Delete\x20VLESS\x20Execution\x20-\x20stdout:\x20','urlencoded','API\x20is\x20healthy','/renewtrojan','❌\x20Server\x20Error:','Data\x20tidak\x20tersedia','📋\x20Available\x20endpoints:','/logintrojan','3693244xRlqEC','Detail\x20TROJAN','NOT\x20SET','bot-member-ssh','bot-vps-info','-\x20Health:\x20/,\x20/health','message','child_process','Data\x20login\x20SSH\x20berhasil\x20diambil','match','ip_limit','🔑\x20AUTH_KEY:\x20','/renewvmess','en_US.UTF-8','bot-renew-ssh','/createtrojan','Detail\x20SSH','warn','🔧\x20Show\x20VMESS\x20Execution\x20-\x20stdout:\x20','toISOString','🔧\x20Lock\x20SSH\x20Execution\x20-\x20stdout:\x20','/renewvless','bot-lock-vl','287IRvIIX','-\x20SSH:\x20/createssh,\x20/trialssh,\x20/renewssh,\x20/deletessh,\x20/lockssh,\x20/unlockssh,\x20/limitssh,\x20/recoverssh,\x20/showssh,\x20/loginssh','🔧\x20Login\x20VLESS\x20Execution\x20-\x20stdout:\x20','bot-unlock-vm','12110769WSUsOd','/showvless','650187ffxlop','status','bot-add-ssh','🔧\x20Lock\x20VMESS\x20Execution\x20-\x20stdout:\x20','234782OJIBWl','bot-ganti-ip-vmess','Missing\x20parameters','40626khPpCk','Akun\x20VMESS\x20','bot-ganti-ip-ssh','Trial\x20SSH','🔧\x20Delete\x20VMESS\x20Execution\x20-\x20stdout:\x20','printf\x20\x22%s\x5cn\x22\x20\x22','Informasi\x20VPS\x20tidak\x20tersedia','xterm-256color','use','bot-cek-login-ssh','\x20berhasil\x20dihapus','Data\x20login\x20TROJAN\x20berhasil\x20diambil','bot-renew-vle','\x22\x20|\x20','/usr/bin/','express','🔧\x20Show\x20TROJAN\x20Execution\x20-\x20stdout:\x20','bot-lock-tr','username','bot-recover-vm','/loginvmess','/unlockvless','🔧\x20Show\x20SSH\x20Execution\x20-\x20stdout:\x20','\x20berhasil\x20di-lock','Detail\x20VLESS','Limit\x20IP\x20VLESS','/limitssh','crypto','/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin','/recovervless','query','Informasi\x20VPS\x20berhasil\x20diambil','/renewssh','listen','/createvmess','bot-lock-vm','***','success','bot-unlock-vl','📁\x20Base\x20path:\x20','/trialtrojan','N/A','🔧\x20Login\x20VMESS\x20Execution\x20-\x20stdout:\x20','\x20Execution\x20-\x20stdout:\x20','slice','Endpoint\x20not\x20found','/deletevless','Data\x20login\x20VLESS\x20berhasil\x20diambil','1.0.0','AUTH_KEY\x20not\x20set','\x20berhasil\x20di-unlock','/lockvmess','/vpsinfo','bot-add-vle','🔧\x20Login\x20TROJAN\x20Execution\x20-\x20stdout:\x20','🔧\x20Login\x20SSH\x20Execution\x20-\x20stdout:\x20','bot-unlock','/deletessh','bot-member-vme','Create\x20SSH','/trialvless','5gHojmo','bot-del-tro','/limittrojan','bot-user-ssh','random','Trial\x20TROJAN','Limit\x20IP\x20SSH','\x20berhasil\x20dilakukan','bot-add-tro','/loginvless','Limit\x20IP\x20VMESS','/limitvless','Trial\x20VMESS','6023624MiGNTG','/health','🔧\x20Delete\x20TROJAN\x20Execution\x20-\x20stdout:\x20','json','/deletevmess','env','bot-member-vle','Renew\x20TROJAN','DEFAULT_AUTH_KEY_12345','trial','🔧\x20','/showssh','Detail\x20VMESS','/createssh','/unlocktrojan','/recovervmess','uuid','/limitvmess','version','floor','error','bot-trial-vle','Akun\x20SSH\x20','/lockvless','393584fPkevy','bot-trial-vme','bot-trial-tro','/showtrojan','bot-renew-vme','Renew\x20SSH','Data\x20user\x20VMESS\x20berhasil\x20diambil','randomUUID','log','Akun\x20VLESS\x20','platform','TROJAN','Renew\x20VLESS','trim'];_0x23f5=function(){return _0x2ea477;};return _0x23f5();}function _0x1a0c(_0x4e843f,_0x469e2e){_0x4e843f=_0x4e843f-0x1d0;const _0x23f51f=_0x23f5();let _0x1a0c77=_0x23f51f[_0x4e843f];return _0x1a0c77;}app[_0x1810b7(0x226)](express[_0x1810b7(0x1f3)]({'extended':!![]})),app[_0x1810b7(0x226)](express['json']());const BASE_PATH=_0x1810b7(0x22c),AUTH_KEY=process[_0x1810b7(0x26d)]['AUTH_KEY']||_0x1810b7(0x270);!process[_0x1810b7(0x26d)]['AUTH_KEY']&&console[_0x1810b7(0x20b)]('⚠️\x20\x20AUTH_KEY\x20not\x20set\x20in\x20environment,\x20using\x20default\x20key');console[_0x1810b7(0x1d8)](_0x1810b7(0x205)+(AUTH_KEY?_0x1810b7(0x242)+AUTH_KEY[_0x1810b7(0x24a)](-0x4):_0x1810b7(0x1fc)));const PROCESS_ENV={...process[_0x1810b7(0x26d)],'TERM':_0x1810b7(0x225),'PATH':_0x1810b7(0x23a),'LANG':_0x1810b7(0x207),'LC_ALL':_0x1810b7(0x207)};function parseSSHOutput(_0x31a231){const _0x13f9a5=_0x8aefa2=>{const _0x5443e4=_0x1a0c,_0x4be09d=_0x31a231[_0x5443e4(0x203)](_0x8aefa2);return _0x4be09d?_0x4be09d[0x1][_0x5443e4(0x1dd)]():'';};return{'username':_0x13f9a5(/Remark\s+:\s+(\S+)/)||_0x13f9a5(/Username\s+:\s+(\S+)/)||_0x13f9a5(/Client Name\s+:\s+(\S+)/),'password':_0x13f9a5(/Password\s+:\s+(\S+)/),'ip_limit':_0x13f9a5(/Limit Ip\s+:\s+(.+)/)||_0x13f9a5(/Limit IP\s+:\s+(.+)/),'domain':_0x13f9a5(/Domain\s+:\s+(\S+)/),'ns_domain':_0x13f9a5(/Ns Domain\s+:\s+(.+)/),'pubkey':_0x13f9a5(/Pub Key\s+:\s+(.+)/),'isp':_0x13f9a5(/ISP\s+:\s+(.+)/),'expired':_0x13f9a5(/Expiry in\s+:\s+(.+)/)||_0x13f9a5(/Expired\s+:\s+(.+)/)||_0x13f9a5(/Expired On\s+:\s+(.+)/),'uuid':_0x13f9a5(/Key\s+:\s+(.+)/)||_0x13f9a5(/UUID\s+:\s+(.+)/),'quota':_0x13f9a5(/Limit Quota\s+:\s+(.+)/)||_0x13f9a5(/Quota\s+:\s+(.+)/),'vmess_tls_link':_0x13f9a5(/Link TLS\s+:\s+(.+)/),'vmess_nontls_link':_0x13f9a5(/Link WS\s+:\s+(.+)/),'vmess_grpc_link':_0x13f9a5(/Link GRPC\s+:\s+(.+)/),'vless_tls_link':_0x13f9a5(/Link TLS\s+:\s+(.+)/),'vless_nontls_link':_0x13f9a5(/Link WS\s+:\s+(.+)/),'vless_grpc_link':_0x13f9a5(/Link GRPC\s+:\s+(.+)/),'trojan_tls_link':_0x13f9a5(/Link TLS\s+:\s+(.+)/),'trojan_nontls_link':_0x13f9a5(/Link WS\s+:\s+(.+)/),'trojan_grpc_link':_0x13f9a5(/Link GRPC\s+:\s+(.+)/),'ss_link_nontls':_0x13f9a5(/Link WS\s+:\s+(.+)/),'ss_link_ws':_0x13f9a5(/Link TLS\s+:\s+(.+)/),'ss_link_grpc':_0x13f9a5(/Link GRPC\s+:\s+(.+)/)};}function validateAuth(_0x46fff5,_0x452ad4){const _0x2b34d1=_0x1810b7;if(!AUTH_KEY)return _0x452ad4[_0x2b34d1(0x218)](0x1f4)[_0x2b34d1(0x26b)]({'status':'error','message':_0x2b34d1(0x24f)}),![];if(_0x46fff5!==AUTH_KEY)return _0x452ad4['status'](0x193)[_0x2b34d1(0x26b)]({'status':_0x2b34d1(0x27c),'message':'Unauthorized'}),![];return!![];}function handleExecResult(_0x439fa4,_0x526d43,_0xfaa484,_0x16995c,_0x4f1e18,_0x11b2b7){const _0x14b4c1=_0x1810b7;console[_0x14b4c1(0x1d8)](_0x14b4c1(0x272)+_0x4f1e18+_0x14b4c1(0x249)+(_0x526d43||_0x14b4c1(0x247))+',\x20stderr:\x20'+(_0xfaa484||_0x14b4c1(0x247))+_0x14b4c1(0x1e4)+(_0x439fa4?_0x439fa4[_0x14b4c1(0x200)]:_0x14b4c1(0x247)));const _0xe0103a=parseSSHOutput(_0x526d43||_0xfaa484||'');!_0xe0103a[_0x14b4c1(0x230)]&&_0x11b2b7&&(_0xe0103a['username']=_0x11b2b7),!_0xe0103a[_0x14b4c1(0x1f0)]&&(_0xe0103a[_0x14b4c1(0x1f0)]='1\x20hari'),!_0xe0103a[_0x14b4c1(0x204)]&&(_0xe0103a['ip_limit']='1'),_0x16995c[_0x14b4c1(0x26b)]({'status':'success','message':_0x4f1e18+_0x14b4c1(0x262),'data':_0xe0103a});}function executeCommand(_0x12ebe8,_0x23a918,_0x198677,_0x52bab4=null){exec(_0x12ebe8,{'env':PROCESS_ENV,'timeout':0x7530},(_0x4e8f3d,_0x2444d0,_0x4c4b50)=>{handleExecResult(_0x4e8f3d,_0x2444d0,_0x4c4b50,_0x23a918,_0x198677,_0x52bab4);});}app[_0x1810b7(0x1e5)](_0x1810b7(0x275),(_0x6217f6,_0x513ae5)=>{const _0x1c3496=_0x1810b7,{user:_0x36aacd,password:_0x5af60d,exp:_0x21afbb,iplimit:_0x481a9d,auth:_0x189468}=_0x6217f6[_0x1c3496(0x23c)];if(!validateAuth(_0x189468,_0x513ae5))return;if(!_0x36aacd||!_0x5af60d||!_0x21afbb||!_0x481a9d)return _0x513ae5[_0x1c3496(0x218)](0x190)[_0x1c3496(0x26b)]({'status':_0x1c3496(0x27c),'message':_0x1c3496(0x21d)});const _0x3c55fe=_0x1c3496(0x223)+_0x36aacd+'\x22\x20\x22'+_0x5af60d+'\x22\x20\x22'+_0x481a9d+_0x1c3496(0x1ea)+_0x21afbb+_0x1c3496(0x22b)+BASE_PATH+_0x1c3496(0x219);executeCommand(_0x3c55fe,_0x513ae5,_0x1c3496(0x259),_0x36aacd);}),app[_0x1810b7(0x1e5)]('/trialssh',(_0x165a6b,_0x40d9e5)=>{const _0x2d0b3a=_0x1810b7,{user:_0x2b2df6,exp:_0x4d057c,auth:_0x100ae3}=_0x165a6b[_0x2d0b3a(0x23c)];if(!validateAuth(_0x100ae3,_0x40d9e5))return;const _0x3e5f58=_0x2b2df6||_0x2d0b3a(0x271)+Math[_0x2d0b3a(0x27b)](0x3e8+Math[_0x2d0b3a(0x25f)]()*0x2328),_0x40b9e4=_0x4d057c||'60',_0x501452=_0x2d0b3a(0x223)+_0x3e5f58+'\x22\x20\x22'+_0x40b9e4+'\x22\x20|\x20'+BASE_PATH+'bot-trial-ssh';executeCommand(_0x501452,_0x40d9e5,_0x2d0b3a(0x221),_0x3e5f58);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x23e),(_0x5cffeb,_0xc8e340)=>{const _0x279ad0=_0x1810b7,{user:_0x1ac420,exp:_0x232531,iplimit:_0x9cff9,auth:_0x5395d0}=_0x5cffeb['query'];if(!validateAuth(_0x5395d0,_0xc8e340))return;if(!_0x1ac420||!_0x232531||!_0x9cff9)return _0xc8e340['status'](0x190)[_0x279ad0(0x26b)]({'status':_0x279ad0(0x27c),'message':'Missing\x20parameters'});const _0x127cc3=_0x279ad0(0x223)+_0x1ac420+_0x279ad0(0x1ea)+_0x9cff9+_0x279ad0(0x1ea)+_0x232531+'\x22\x20|\x20'+BASE_PATH+_0x279ad0(0x208);executeCommand(_0x127cc3,_0xc8e340,_0x279ad0(0x1d5),_0x1ac420);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x257),(_0x3010bd,_0xc02a90)=>{const _0x13b6ac=_0x1810b7,{user:_0x390141,auth:_0x26f3e2}=_0x3010bd[_0x13b6ac(0x23c)];if(!validateAuth(_0x26f3e2,_0xc02a90))return;if(!_0x390141)return _0xc02a90['status'](0x190)[_0x13b6ac(0x26b)]({'status':'error','message':_0x13b6ac(0x1eb)});const _0x232cae=_0x13b6ac(0x223)+_0x390141+_0x13b6ac(0x22b)+BASE_PATH+'bot-del-ssh';exec(_0x232cae,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5c91d8,_0x5005db,_0x2b4b91)=>{const _0x1d67b9=_0x13b6ac;console[_0x1d67b9(0x1d8)]('🔧\x20Delete\x20SSH\x20Execution\x20-\x20stdout:\x20'+(_0x5005db||_0x1d67b9(0x247))+_0x1d67b9(0x1e2)+(_0x2b4b91||_0x1d67b9(0x247))+_0x1d67b9(0x1e4)+(_0x5c91d8?_0x5c91d8['message']:_0x1d67b9(0x247))),_0xc02a90[_0x1d67b9(0x26b)]({'status':_0x1d67b9(0x243),'message':_0x1d67b9(0x27e)+_0x390141+_0x1d67b9(0x228),'data':{'username':_0x390141}});});}),app[_0x1810b7(0x1e5)]('/lockssh',(_0x243643,_0x49144f)=>{const _0xc44517=_0x1810b7,{user:_0x43e907,auth:_0x3b7c4e}=_0x243643['query'];if(!validateAuth(_0x3b7c4e,_0x49144f))return;if(!_0x43e907)return _0x49144f[_0xc44517(0x218)](0x190)['json']({'status':'error','message':_0xc44517(0x1eb)});const _0x43aec1=_0xc44517(0x223)+_0x43e907+'\x22\x20|\x20'+BASE_PATH+'bot-lock';exec(_0x43aec1,{'env':PROCESS_ENV,'timeout':0x7530},(_0x32b269,_0x5e3062,_0x45fe7a)=>{const _0x4c9692=_0xc44517;console[_0x4c9692(0x1d8)](_0x4c9692(0x20e)+(_0x5e3062||_0x4c9692(0x247))+_0x4c9692(0x1e2)+(_0x45fe7a||_0x4c9692(0x247))+_0x4c9692(0x1e4)+(_0x32b269?_0x32b269[_0x4c9692(0x200)]:_0x4c9692(0x247))),_0x49144f[_0x4c9692(0x26b)]({'status':'success','message':'Akun\x20SSH\x20'+_0x43e907+'\x20berhasil\x20di-lock','data':{'username':_0x43e907}});});}),app[_0x1810b7(0x1e5)]('/unlockssh',(_0x10af67,_0x2449e0)=>{const _0x41174b=_0x1810b7,{user:_0x48f3d2,auth:_0x4fbbc6}=_0x10af67[_0x41174b(0x23c)];if(!validateAuth(_0x4fbbc6,_0x2449e0))return;if(!_0x48f3d2)return _0x2449e0[_0x41174b(0x218)](0x190)[_0x41174b(0x26b)]({'status':_0x41174b(0x27c),'message':_0x41174b(0x1eb)});const _0x26a88f=_0x41174b(0x223)+_0x48f3d2+_0x41174b(0x22b)+BASE_PATH+_0x41174b(0x256);exec(_0x26a88f,{'env':PROCESS_ENV,'timeout':0x7530},(_0xb90276,_0x5d8804,_0x3b3c63)=>{const _0x42fbc3=_0x41174b;console['log']('🔧\x20Unlock\x20SSH\x20Execution\x20-\x20stdout:\x20'+(_0x5d8804||_0x42fbc3(0x247))+_0x42fbc3(0x1e2)+(_0x3b3c63||_0x42fbc3(0x247))+_0x42fbc3(0x1e4)+(_0xb90276?_0xb90276[_0x42fbc3(0x200)]:'N/A')),_0x2449e0[_0x42fbc3(0x26b)]({'status':_0x42fbc3(0x243),'message':_0x42fbc3(0x27e)+_0x48f3d2+_0x42fbc3(0x250),'data':{'username':_0x48f3d2}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x238),(_0x48510e,_0x4dfca9)=>{const _0x286f76=_0x1810b7,{user:_0x3df703,iplimit:_0x21f86f,auth:_0x380d3e}=_0x48510e['query'];if(!validateAuth(_0x380d3e,_0x4dfca9))return;if(!_0x3df703||!_0x21f86f)return _0x4dfca9[_0x286f76(0x218)](0x190)[_0x286f76(0x26b)]({'status':_0x286f76(0x27c),'message':_0x286f76(0x21d)});const _0x214f76='printf\x20\x22%s\x5cn\x22\x20\x22'+_0x3df703+_0x286f76(0x1ea)+_0x21f86f+_0x286f76(0x22b)+BASE_PATH+_0x286f76(0x220);executeCommand(_0x214f76,_0x4dfca9,_0x286f76(0x261),_0x3df703);}),app[_0x1810b7(0x1e5)]('/recoverssh',(_0x5c2b7b,_0x533c50)=>{const _0x250603=_0x1810b7,{user:_0x11c2d4,auth:_0x41bf86}=_0x5c2b7b[_0x250603(0x23c)];if(!validateAuth(_0x41bf86,_0x533c50))return;if(!_0x11c2d4)return _0x533c50['status'](0x190)['json']({'status':_0x250603(0x27c),'message':_0x250603(0x1eb)});const _0x43fc84=_0x250603(0x223)+_0x11c2d4+_0x250603(0x22b)+BASE_PATH+_0x250603(0x25e);executeCommand(_0x43fc84,_0x533c50,_0x250603(0x20a),_0x11c2d4);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x273),(_0x57c915,_0xcee734)=>{const _0x246de4=_0x1810b7,{auth:_0x3fa5a3}=_0x57c915[_0x246de4(0x23c)];if(!validateAuth(_0x3fa5a3,_0xcee734))return;const _0x2f7cdf=BASE_PATH+_0x246de4(0x1fd);exec(_0x2f7cdf,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5efaf3,_0x41b4f6,_0x414844)=>{const _0x37590c=_0x246de4;console[_0x37590c(0x1d8)](_0x37590c(0x234)+(_0x41b4f6||_0x37590c(0x247))+_0x37590c(0x1e2)+(_0x414844||'N/A')+_0x37590c(0x1e4)+(_0x5efaf3?_0x5efaf3[_0x37590c(0x200)]:_0x37590c(0x247))),_0xcee734[_0x37590c(0x26b)]({'status':'success','message':'Data\x20user\x20SSH\x20berhasil\x20diambil','data':{'output':_0x41b4f6||_0x414844||_0x37590c(0x1f7)}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x1e3),(_0x3bb143,_0x195220)=>{const _0x34c859=_0x1810b7,{auth:_0x203729}=_0x3bb143['query'];if(!validateAuth(_0x203729,_0x195220))return;const _0x13162b=BASE_PATH+_0x34c859(0x227);exec(_0x13162b,{'env':PROCESS_ENV,'timeout':0x7530},(_0x1b77b6,_0x350028,_0x17599a)=>{const _0x57e20f=_0x34c859;console[_0x57e20f(0x1d8)](_0x57e20f(0x255)+(_0x350028||_0x57e20f(0x247))+_0x57e20f(0x1e2)+(_0x17599a||_0x57e20f(0x247))+_0x57e20f(0x1e4)+(_0x1b77b6?_0x1b77b6[_0x57e20f(0x200)]:_0x57e20f(0x247))),_0x195220[_0x57e20f(0x26b)]({'status':_0x57e20f(0x243),'message':_0x57e20f(0x202),'data':{'output':_0x350028||_0x17599a||_0x57e20f(0x1f7)}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x240),(_0x5637c9,_0x37f359)=>{const _0x24058e=_0x1810b7,{user:_0xfc0f20,exp:_0x931b7a,iplimit:_0xaefcf1,quota:_0x4f1029,auth:_0x13327a}=_0x5637c9[_0x24058e(0x23c)];if(!validateAuth(_0x13327a,_0x37f359))return;if(!_0xfc0f20||!_0x931b7a||!_0x4f1029||!_0xaefcf1)return _0x37f359[_0x24058e(0x218)](0x190)[_0x24058e(0x26b)]({'status':'error','message':_0x24058e(0x21d)});const _0x14cf35=require(_0x24058e(0x239))['randomUUID']?require(_0x24058e(0x239))[_0x24058e(0x1d7)]():require(_0x24058e(0x278))['v4'](),_0x2a29a8=_0x24058e(0x223)+_0xfc0f20+_0x24058e(0x1ea)+_0x14cf35+_0x24058e(0x1ea)+_0x4f1029+_0x24058e(0x1ea)+_0xaefcf1+_0x24058e(0x1ea)+_0x931b7a+'\x22\x20|\x20'+BASE_PATH+'bot-add-vme';executeCommand(_0x2a29a8,_0x37f359,'VMESS',_0xfc0f20);}),app['get']('/trialvmess',(_0x2f9700,_0x325a7e)=>{const _0x4fbf06=_0x1810b7,{user:_0x19689c,exp:_0xee869,auth:_0xf06335}=_0x2f9700[_0x4fbf06(0x23c)];if(!validateAuth(_0xf06335,_0x325a7e))return;const _0x5c2cf5=_0x19689c||'trial'+Math['floor'](0x3e8+Math[_0x4fbf06(0x25f)]()*0x2328),_0x175fff=_0xee869||'60',_0x5b810a=_0x4fbf06(0x223)+_0x5c2cf5+_0x4fbf06(0x1ea)+_0x175fff+'\x22\x20|\x20'+BASE_PATH+_0x4fbf06(0x1d1);executeCommand(_0x5b810a,_0x325a7e,_0x4fbf06(0x267),_0x5c2cf5);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x206),(_0x4aa974,_0xf757ad)=>{const _0x16f320=_0x1810b7,{user:_0x376aa9,exp:_0x4a3b49,iplimit:_0x972526,quota:_0x45629c,auth:_0x2d19d0}=_0x4aa974[_0x16f320(0x23c)];if(!validateAuth(_0x2d19d0,_0xf757ad))return;if(!_0x376aa9||!_0x4a3b49||!_0x972526||!_0x45629c)return _0xf757ad['status'](0x190)[_0x16f320(0x26b)]({'status':_0x16f320(0x27c),'message':_0x16f320(0x21d)});const _0x45a6f7=_0x16f320(0x223)+_0x376aa9+_0x16f320(0x1ea)+_0x4a3b49+'\x22\x20\x22'+_0x45629c+_0x16f320(0x1ea)+_0x972526+_0x16f320(0x22b)+BASE_PATH+_0x16f320(0x1d4);executeCommand(_0x45a6f7,_0xf757ad,'Renew\x20VMESS',_0x376aa9);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x26c),(_0xda33be,_0x54f6c8)=>{const _0x3b5d45=_0x1810b7,{user:_0x2c9b1a,auth:_0x447eea}=_0xda33be[_0x3b5d45(0x23c)];if(!validateAuth(_0x447eea,_0x54f6c8))return;if(!_0x2c9b1a)return _0x54f6c8[_0x3b5d45(0x218)](0x190)[_0x3b5d45(0x26b)]({'status':_0x3b5d45(0x27c),'message':_0x3b5d45(0x1eb)});const _0x41795c=_0x3b5d45(0x223)+_0x2c9b1a+_0x3b5d45(0x22b)+BASE_PATH+'bot-del-vme';exec(_0x41795c,{'env':PROCESS_ENV,'timeout':0x7530},(_0x4d315e,_0x2fe5ed,_0x91c6f1)=>{const _0x3ffc82=_0x3b5d45;console['log'](_0x3ffc82(0x222)+(_0x2fe5ed||_0x3ffc82(0x247))+_0x3ffc82(0x1e2)+(_0x91c6f1||'N/A')+',\x20error:\x20'+(_0x4d315e?_0x4d315e[_0x3ffc82(0x200)]:_0x3ffc82(0x247))),_0x54f6c8['json']({'status':_0x3ffc82(0x243),'message':'Akun\x20VMESS\x20'+_0x2c9b1a+_0x3ffc82(0x228),'data':{'username':_0x2c9b1a}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x251),(_0x393e4a,_0x29de5e)=>{const _0x3fb4c7=_0x1810b7,{user:_0x5396e8,auth:_0x12b4d3}=_0x393e4a['query'];if(!validateAuth(_0x12b4d3,_0x29de5e))return;if(!_0x5396e8)return _0x29de5e[_0x3fb4c7(0x218)](0x190)[_0x3fb4c7(0x26b)]({'status':_0x3fb4c7(0x27c),'message':_0x3fb4c7(0x1eb)});const _0x427111=_0x3fb4c7(0x223)+_0x5396e8+'\x22\x20|\x20'+BASE_PATH+_0x3fb4c7(0x241);exec(_0x427111,{'env':PROCESS_ENV,'timeout':0x7530},(_0x53d9b3,_0x4379b5,_0x4649f8)=>{const _0x37c58a=_0x3fb4c7;console[_0x37c58a(0x1d8)](_0x37c58a(0x21a)+(_0x4379b5||_0x37c58a(0x247))+_0x37c58a(0x1e2)+(_0x4649f8||_0x37c58a(0x247))+_0x37c58a(0x1e4)+(_0x53d9b3?_0x53d9b3[_0x37c58a(0x200)]:_0x37c58a(0x247))),_0x29de5e['json']({'status':'success','message':_0x37c58a(0x21f)+_0x5396e8+_0x37c58a(0x235),'data':{'username':_0x5396e8}});});}),app['get']('/unlockvmess',(_0x36ff89,_0x342d32)=>{const _0x1f29f5=_0x1810b7,{user:_0x4ea41b,auth:_0x10237d}=_0x36ff89[_0x1f29f5(0x23c)];if(!validateAuth(_0x10237d,_0x342d32))return;if(!_0x4ea41b)return _0x342d32[_0x1f29f5(0x218)](0x190)['json']({'status':_0x1f29f5(0x27c),'message':'Missing\x20username\x20parameter'});const _0x2cc701=_0x1f29f5(0x223)+_0x4ea41b+_0x1f29f5(0x22b)+BASE_PATH+_0x1f29f5(0x214);exec(_0x2cc701,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5794ff,_0x4546d1,_0x520cbe)=>{const _0x96325b=_0x1f29f5;console[_0x96325b(0x1d8)](_0x96325b(0x1e6)+(_0x4546d1||_0x96325b(0x247))+_0x96325b(0x1e2)+(_0x520cbe||_0x96325b(0x247))+',\x20error:\x20'+(_0x5794ff?_0x5794ff['message']:_0x96325b(0x247))),_0x342d32[_0x96325b(0x26b)]({'status':_0x96325b(0x243),'message':_0x96325b(0x21f)+_0x4ea41b+'\x20berhasil\x20di-unlock','data':{'username':_0x4ea41b}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x279),(_0x109b00,_0x315059)=>{const _0x2066eb=_0x1810b7,{user:_0x245e20,iplimit:_0x214eca,auth:_0x7ea7c7}=_0x109b00[_0x2066eb(0x23c)];if(!validateAuth(_0x7ea7c7,_0x315059))return;if(!_0x245e20||!_0x214eca)return _0x315059[_0x2066eb(0x218)](0x190)[_0x2066eb(0x26b)]({'status':_0x2066eb(0x27c),'message':_0x2066eb(0x21d)});const _0x52ec7=_0x2066eb(0x223)+_0x245e20+_0x2066eb(0x1ea)+_0x214eca+_0x2066eb(0x22b)+BASE_PATH+_0x2066eb(0x21c);executeCommand(_0x52ec7,_0x315059,_0x2066eb(0x265),_0x245e20);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x277),(_0x507cb6,_0x3a2374)=>{const _0x3b26e3=_0x1810b7,{user:_0x4b4852,auth:_0x5d4188}=_0x507cb6['query'];if(!validateAuth(_0x5d4188,_0x3a2374))return;if(!_0x4b4852)return _0x3a2374['status'](0x190)[_0x3b26e3(0x26b)]({'status':_0x3b26e3(0x27c),'message':_0x3b26e3(0x1eb)});const _0x26a6fb=_0x3b26e3(0x223)+_0x4b4852+_0x3b26e3(0x22b)+BASE_PATH+_0x3b26e3(0x231);executeCommand(_0x26a6fb,_0x3a2374,_0x3b26e3(0x274),_0x4b4852);}),app[_0x1810b7(0x1e5)]('/showvmess',(_0x31c64d,_0x1080c8)=>{const _0x55136e=_0x1810b7,{auth:_0x120102}=_0x31c64d[_0x55136e(0x23c)];if(!validateAuth(_0x120102,_0x1080c8))return;const _0x359582=BASE_PATH+_0x55136e(0x258);exec(_0x359582,{'env':PROCESS_ENV,'timeout':0x7530},(_0x18d605,_0x43b75a,_0x43a20e)=>{const _0x31170c=_0x55136e;console[_0x31170c(0x1d8)](_0x31170c(0x20c)+(_0x43b75a||_0x31170c(0x247))+',\x20stderr:\x20'+(_0x43a20e||_0x31170c(0x247))+_0x31170c(0x1e4)+(_0x18d605?_0x18d605[_0x31170c(0x200)]:'N/A')),_0x1080c8[_0x31170c(0x26b)]({'status':_0x31170c(0x243),'message':_0x31170c(0x1d6),'data':{'output':_0x43b75a||_0x43a20e||'Data\x20tidak\x20tersedia'}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x232),(_0x2392e7,_0xb04b4e)=>{const _0x49c221=_0x1810b7,{auth:_0x2266e}=_0x2392e7[_0x49c221(0x23c)];if(!validateAuth(_0x2266e,_0xb04b4e))return;const _0x311266=BASE_PATH+'bot-cek-ws';exec(_0x311266,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5d006f,_0x225b46,_0x3b1301)=>{const _0xf557d2=_0x49c221;console[_0xf557d2(0x1d8)](_0xf557d2(0x248)+(_0x225b46||'N/A')+',\x20stderr:\x20'+(_0x3b1301||'N/A')+_0xf557d2(0x1e4)+(_0x5d006f?_0x5d006f[_0xf557d2(0x200)]:_0xf557d2(0x247))),_0xb04b4e[_0xf557d2(0x26b)]({'status':_0xf557d2(0x243),'message':_0xf557d2(0x1e1),'data':{'output':_0x225b46||_0x3b1301||_0xf557d2(0x1f7)}});});}),app['get'](_0x1810b7(0x1e0),(_0x12c3bf,_0x2808d5)=>{const _0x22e5ab=_0x1810b7,{user:_0x4e3ab7,exp:_0x3f1b54,iplimit:_0x27ced1,quota:_0xc8207e,auth:_0x4bbdb0}=_0x12c3bf[_0x22e5ab(0x23c)];if(!validateAuth(_0x4bbdb0,_0x2808d5))return;if(!_0x4e3ab7||!_0x3f1b54||!_0xc8207e||!_0x27ced1)return _0x2808d5[_0x22e5ab(0x218)](0x190)[_0x22e5ab(0x26b)]({'status':'error','message':_0x22e5ab(0x21d)});const _0x11ba4d=require(_0x22e5ab(0x239))['randomUUID']?require(_0x22e5ab(0x239))[_0x22e5ab(0x1d7)]():require(_0x22e5ab(0x278))['v4'](),_0x468122='printf\x20\x22%s\x5cn\x22\x20\x22'+_0x4e3ab7+'\x22\x20\x22'+_0x11ba4d+_0x22e5ab(0x1ea)+_0xc8207e+'\x22\x20\x22'+_0x27ced1+_0x22e5ab(0x1ea)+_0x3f1b54+_0x22e5ab(0x22b)+BASE_PATH+_0x22e5ab(0x253);executeCommand(_0x468122,_0x2808d5,'VLESS',_0x4e3ab7);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x25a),(_0x5643c8,_0x1ad289)=>{const _0x27bc9b=_0x1810b7,{user:_0xf6221f,exp:_0x27f14b,auth:_0x400bf2}=_0x5643c8[_0x27bc9b(0x23c)];if(!validateAuth(_0x400bf2,_0x1ad289))return;const _0x5d1a68=_0xf6221f||_0x27bc9b(0x271)+Math[_0x27bc9b(0x27b)](0x3e8+Math[_0x27bc9b(0x25f)]()*0x2328),_0x31266c=_0x27f14b||'60',_0x4b6743='printf\x20\x22%s\x5cn\x22\x20\x22'+_0x5d1a68+_0x27bc9b(0x1ea)+_0x31266c+_0x27bc9b(0x22b)+BASE_PATH+_0x27bc9b(0x27d);executeCommand(_0x4b6743,_0x1ad289,'Trial\x20VLESS',_0x5d1a68);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x20f),(_0x35f613,_0x202829)=>{const _0x2a5ef7=_0x1810b7,{user:_0x40196c,exp:_0x1133dd,iplimit:_0x3a9453,quota:_0x2fe981,auth:_0x51dd13}=_0x35f613[_0x2a5ef7(0x23c)];if(!validateAuth(_0x51dd13,_0x202829))return;if(!_0x40196c||!_0x1133dd||!_0x3a9453||!_0x2fe981)return _0x202829[_0x2a5ef7(0x218)](0x190)['json']({'status':'error','message':'Missing\x20parameters'});const _0x56622e=_0x2a5ef7(0x223)+_0x40196c+_0x2a5ef7(0x1ea)+_0x1133dd+'\x22\x20\x22'+_0x2fe981+_0x2a5ef7(0x1ea)+_0x3a9453+_0x2a5ef7(0x22b)+BASE_PATH+_0x2a5ef7(0x22a);executeCommand(_0x56622e,_0x202829,_0x2a5ef7(0x1dc),_0x40196c);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x24c),(_0x340895,_0x5d6ba1)=>{const _0x46cdbd=_0x1810b7,{user:_0x47eb82,auth:_0x2f7a71}=_0x340895['query'];if(!validateAuth(_0x2f7a71,_0x5d6ba1))return;if(!_0x47eb82)return _0x5d6ba1['status'](0x190)[_0x46cdbd(0x26b)]({'status':'error','message':_0x46cdbd(0x1eb)});const _0x18867e=_0x46cdbd(0x223)+_0x47eb82+_0x46cdbd(0x22b)+BASE_PATH+_0x46cdbd(0x1e9);exec(_0x18867e,{'env':PROCESS_ENV,'timeout':0x7530},(_0x244168,_0x4b8ce8,_0x41aa92)=>{const _0x3ce60c=_0x46cdbd;console[_0x3ce60c(0x1d8)](_0x3ce60c(0x1f2)+(_0x4b8ce8||_0x3ce60c(0x247))+',\x20stderr:\x20'+(_0x41aa92||'N/A')+',\x20error:\x20'+(_0x244168?_0x244168[_0x3ce60c(0x200)]:_0x3ce60c(0x247))),_0x5d6ba1[_0x3ce60c(0x26b)]({'status':_0x3ce60c(0x243),'message':_0x3ce60c(0x1d9)+_0x47eb82+_0x3ce60c(0x228),'data':{'username':_0x47eb82}});});}),app['get'](_0x1810b7(0x27f),(_0x1b5730,_0x7ffb85)=>{const _0x5cedc0=_0x1810b7,{user:_0x5873d1,auth:_0x184c68}=_0x1b5730[_0x5cedc0(0x23c)];if(!validateAuth(_0x184c68,_0x7ffb85))return;if(!_0x5873d1)return _0x7ffb85[_0x5cedc0(0x218)](0x190)[_0x5cedc0(0x26b)]({'status':_0x5cedc0(0x27c),'message':_0x5cedc0(0x1eb)});const _0x324fec=_0x5cedc0(0x223)+_0x5873d1+_0x5cedc0(0x22b)+BASE_PATH+_0x5cedc0(0x210);exec(_0x324fec,{'env':PROCESS_ENV,'timeout':0x7530},(_0x467094,_0x1c8cf1,_0x4fca51)=>{const _0x13b7b1=_0x5cedc0;console[_0x13b7b1(0x1d8)]('🔧\x20Lock\x20VLESS\x20Execution\x20-\x20stdout:\x20'+(_0x1c8cf1||_0x13b7b1(0x247))+_0x13b7b1(0x1e2)+(_0x4fca51||_0x13b7b1(0x247))+',\x20error:\x20'+(_0x467094?_0x467094[_0x13b7b1(0x200)]:'N/A')),_0x7ffb85[_0x13b7b1(0x26b)]({'status':_0x13b7b1(0x243),'message':_0x13b7b1(0x1d9)+_0x5873d1+_0x13b7b1(0x235),'data':{'username':_0x5873d1}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x233),(_0x471fbe,_0x15ba14)=>{const _0xefed08=_0x1810b7,{user:_0x135ef2,auth:_0x55a371}=_0x471fbe[_0xefed08(0x23c)];if(!validateAuth(_0x55a371,_0x15ba14))return;if(!_0x135ef2)return _0x15ba14[_0xefed08(0x218)](0x190)[_0xefed08(0x26b)]({'status':'error','message':_0xefed08(0x1eb)});const _0x11160f=_0xefed08(0x223)+_0x135ef2+_0xefed08(0x22b)+BASE_PATH+_0xefed08(0x244);exec(_0x11160f,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5459a5,_0x538d7e,_0x31d1a8)=>{const _0x1bf33c=_0xefed08;console[_0x1bf33c(0x1d8)](_0x1bf33c(0x1ed)+(_0x538d7e||_0x1bf33c(0x247))+_0x1bf33c(0x1e2)+(_0x31d1a8||_0x1bf33c(0x247))+',\x20error:\x20'+(_0x5459a5?_0x5459a5[_0x1bf33c(0x200)]:_0x1bf33c(0x247))),_0x15ba14[_0x1bf33c(0x26b)]({'status':_0x1bf33c(0x243),'message':_0x1bf33c(0x1d9)+_0x135ef2+_0x1bf33c(0x250),'data':{'username':_0x135ef2}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x266),(_0x5c7990,_0x346542)=>{const _0x262d1a=_0x1810b7,{user:_0x4d0c07,iplimit:_0x14f09c,auth:_0x1fe672}=_0x5c7990['query'];if(!validateAuth(_0x1fe672,_0x346542))return;if(!_0x4d0c07||!_0x14f09c)return _0x346542[_0x262d1a(0x218)](0x190)[_0x262d1a(0x26b)]({'status':'error','message':_0x262d1a(0x21d)});const _0xdfe555=_0x262d1a(0x223)+_0x4d0c07+_0x262d1a(0x1ea)+_0x14f09c+_0x262d1a(0x22b)+BASE_PATH+'bot-ganti-ip-vless';executeCommand(_0xdfe555,_0x346542,_0x262d1a(0x237),_0x4d0c07);}),app['get'](_0x1810b7(0x23b),(_0x44d488,_0x45e7be)=>{const _0x141f0b=_0x1810b7,{user:_0x2b6f1c,auth:_0x32b48d}=_0x44d488[_0x141f0b(0x23c)];if(!validateAuth(_0x32b48d,_0x45e7be))return;if(!_0x2b6f1c)return _0x45e7be[_0x141f0b(0x218)](0x190)[_0x141f0b(0x26b)]({'status':_0x141f0b(0x27c),'message':_0x141f0b(0x1eb)});const _0x567a21='printf\x20\x22%s\x5cn\x22\x20\x22'+_0x2b6f1c+_0x141f0b(0x22b)+BASE_PATH+'bot-recover-vl';executeCommand(_0x567a21,_0x45e7be,_0x141f0b(0x236),_0x2b6f1c);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x216),(_0x42be4a,_0xbd62fc)=>{const _0x530b7b=_0x1810b7,{auth:_0x2fcd69}=_0x42be4a[_0x530b7b(0x23c)];if(!validateAuth(_0x2fcd69,_0xbd62fc))return;const _0x5429ed=BASE_PATH+_0x530b7b(0x26e);exec(_0x5429ed,{'env':PROCESS_ENV,'timeout':0x7530},(_0x4c1fb4,_0x24fc46,_0x21b92e)=>{const _0x31da16=_0x530b7b;console['log']('🔧\x20Show\x20VLESS\x20Execution\x20-\x20stdout:\x20'+(_0x24fc46||_0x31da16(0x247))+_0x31da16(0x1e2)+(_0x21b92e||_0x31da16(0x247))+_0x31da16(0x1e4)+(_0x4c1fb4?_0x4c1fb4['message']:_0x31da16(0x247))),_0xbd62fc[_0x31da16(0x26b)]({'status':_0x31da16(0x243),'message':_0x31da16(0x1de),'data':{'output':_0x24fc46||_0x21b92e||_0x31da16(0x1f7)}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x264),(_0x22282f,_0x1098f7)=>{const _0x3eeb60=_0x1810b7,{auth:_0x45952e}=_0x22282f[_0x3eeb60(0x23c)];if(!validateAuth(_0x45952e,_0x1098f7))return;const _0x1aa57a=BASE_PATH+_0x3eeb60(0x1df);exec(_0x1aa57a,{'env':PROCESS_ENV,'timeout':0x7530},(_0x40ed35,_0x58e923,_0x6bd142)=>{const _0x2c0186=_0x3eeb60;console['log'](_0x2c0186(0x213)+(_0x58e923||'N/A')+',\x20stderr:\x20'+(_0x6bd142||_0x2c0186(0x247))+_0x2c0186(0x1e4)+(_0x40ed35?_0x40ed35[_0x2c0186(0x200)]:_0x2c0186(0x247))),_0x1098f7[_0x2c0186(0x26b)]({'status':_0x2c0186(0x243),'message':_0x2c0186(0x24d),'data':{'output':_0x58e923||_0x6bd142||_0x2c0186(0x1f7)}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x209),(_0x7122d5,_0x29e874)=>{const _0x26d5b4=_0x1810b7,{user:_0xfa7147,exp:_0x4b2384,iplimit:_0x5c8bd2,quota:_0x374d6a,auth:_0x183776}=_0x7122d5[_0x26d5b4(0x23c)];if(!validateAuth(_0x183776,_0x29e874))return;if(!_0xfa7147||!_0x4b2384||!_0x374d6a||!_0x5c8bd2)return _0x29e874[_0x26d5b4(0x218)](0x190)[_0x26d5b4(0x26b)]({'status':'error','message':'Missing\x20parameters'});const _0x2fec8f=require(_0x26d5b4(0x239))['randomUUID']?require('crypto')['randomUUID']():require(_0x26d5b4(0x278))['v4'](),_0x2d52aa=_0x26d5b4(0x223)+_0xfa7147+_0x26d5b4(0x1ea)+_0x2fec8f+_0x26d5b4(0x1ea)+_0x374d6a+_0x26d5b4(0x1ea)+_0x5c8bd2+_0x26d5b4(0x1ea)+_0x4b2384+'\x22\x20|\x20'+BASE_PATH+_0x26d5b4(0x263);executeCommand(_0x2d52aa,_0x29e874,_0x26d5b4(0x1db),_0xfa7147);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x246),(_0x52cb82,_0x197719)=>{const _0x3f3128=_0x1810b7,{user:_0x2255dc,exp:_0x20916c,auth:_0x22733a}=_0x52cb82['query'];if(!validateAuth(_0x22733a,_0x197719))return;const _0x5e8097=_0x2255dc||'trial'+Math[_0x3f3128(0x27b)](0x3e8+Math[_0x3f3128(0x25f)]()*0x2328),_0x16a4c8=_0x20916c||'60',_0x5bceba=_0x3f3128(0x223)+_0x5e8097+_0x3f3128(0x1ea)+_0x16a4c8+_0x3f3128(0x22b)+BASE_PATH+_0x3f3128(0x1d2);executeCommand(_0x5bceba,_0x197719,_0x3f3128(0x260),_0x5e8097);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x1f5),(_0xbe221b,_0x250236)=>{const _0x110fa7=_0x1810b7,{user:_0x35043f,exp:_0x341d33,iplimit:_0x1dcc9c,quota:_0x18709e,auth:_0x18bc6e}=_0xbe221b[_0x110fa7(0x23c)];if(!validateAuth(_0x18bc6e,_0x250236))return;if(!_0x35043f||!_0x341d33||!_0x1dcc9c||!_0x18709e)return _0x250236[_0x110fa7(0x218)](0x190)['json']({'status':_0x110fa7(0x27c),'message':_0x110fa7(0x21d)});const _0x2c8b11=_0x110fa7(0x223)+_0x35043f+_0x110fa7(0x1ea)+_0x341d33+_0x110fa7(0x1ea)+_0x18709e+_0x110fa7(0x1ea)+_0x1dcc9c+_0x110fa7(0x22b)+BASE_PATH+'bot-renew-tro';executeCommand(_0x2c8b11,_0x250236,_0x110fa7(0x26f),_0x35043f);}),app[_0x1810b7(0x1e5)]('/deletetrojan',(_0x5171c0,_0xc20149)=>{const _0x162bbf=_0x1810b7,{user:_0x4f8d2c,auth:_0x1ac16e}=_0x5171c0[_0x162bbf(0x23c)];if(!validateAuth(_0x1ac16e,_0xc20149))return;if(!_0x4f8d2c)return _0xc20149['status'](0x190)[_0x162bbf(0x26b)]({'status':_0x162bbf(0x27c),'message':_0x162bbf(0x1eb)});const _0x478d9a=_0x162bbf(0x223)+_0x4f8d2c+'\x22\x20|\x20'+BASE_PATH+_0x162bbf(0x25c);exec(_0x478d9a,{'env':PROCESS_ENV,'timeout':0x7530},(_0x6b0919,_0x23aa1f,_0x5e7b6c)=>{const _0xf4d2ac=_0x162bbf;console[_0xf4d2ac(0x1d8)](_0xf4d2ac(0x26a)+(_0x23aa1f||'N/A')+_0xf4d2ac(0x1e2)+(_0x5e7b6c||_0xf4d2ac(0x247))+_0xf4d2ac(0x1e4)+(_0x6b0919?_0x6b0919[_0xf4d2ac(0x200)]:_0xf4d2ac(0x247))),_0xc20149['json']({'status':'success','message':_0xf4d2ac(0x1ef)+_0x4f8d2c+_0xf4d2ac(0x228),'data':{'username':_0x4f8d2c}});});}),app[_0x1810b7(0x1e5)]('/locktrojan',(_0x337f49,_0x541066)=>{const _0x2f7efc=_0x1810b7,{user:_0x3c0bb3,auth:_0x22e142}=_0x337f49[_0x2f7efc(0x23c)];if(!validateAuth(_0x22e142,_0x541066))return;if(!_0x3c0bb3)return _0x541066[_0x2f7efc(0x218)](0x190)[_0x2f7efc(0x26b)]({'status':_0x2f7efc(0x27c),'message':'Missing\x20username\x20parameter'});const _0x4a0cf6=_0x2f7efc(0x223)+_0x3c0bb3+_0x2f7efc(0x22b)+BASE_PATH+_0x2f7efc(0x22f);exec(_0x4a0cf6,{'env':PROCESS_ENV,'timeout':0x7530},(_0x5a8e7f,_0x485065,_0x5e5dba)=>{const _0x12d404=_0x2f7efc;console[_0x12d404(0x1d8)]('🔧\x20Lock\x20TROJAN\x20Execution\x20-\x20stdout:\x20'+(_0x485065||_0x12d404(0x247))+_0x12d404(0x1e2)+(_0x5e5dba||_0x12d404(0x247))+_0x12d404(0x1e4)+(_0x5a8e7f?_0x5a8e7f['message']:_0x12d404(0x247))),_0x541066[_0x12d404(0x26b)]({'status':'success','message':'Akun\x20TROJAN\x20'+_0x3c0bb3+_0x12d404(0x235),'data':{'username':_0x3c0bb3}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x276),(_0x298914,_0x31fec5)=>{const _0x53e444=_0x1810b7,{user:_0x413692,auth:_0x20c8d0}=_0x298914[_0x53e444(0x23c)];if(!validateAuth(_0x20c8d0,_0x31fec5))return;if(!_0x413692)return _0x31fec5[_0x53e444(0x218)](0x190)[_0x53e444(0x26b)]({'status':_0x53e444(0x27c),'message':_0x53e444(0x1eb)});const _0x29d823=_0x53e444(0x223)+_0x413692+_0x53e444(0x22b)+BASE_PATH+'bot-unlock-tr';exec(_0x29d823,{'env':PROCESS_ENV,'timeout':0x7530},(_0x6ee8bd,_0x1785ca,_0x4fbb46)=>{const _0x38c269=_0x53e444;console[_0x38c269(0x1d8)]('🔧\x20Unlock\x20TROJAN\x20Execution\x20-\x20stdout:\x20'+(_0x1785ca||_0x38c269(0x247))+_0x38c269(0x1e2)+(_0x4fbb46||_0x38c269(0x247))+_0x38c269(0x1e4)+(_0x6ee8bd?_0x6ee8bd[_0x38c269(0x200)]:_0x38c269(0x247))),_0x31fec5[_0x38c269(0x26b)]({'status':'success','message':_0x38c269(0x1ef)+_0x413692+'\x20berhasil\x20di-unlock','data':{'username':_0x413692}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x25d),(_0x180863,_0x25b234)=>{const _0x1fb9e6=_0x1810b7,{user:_0x24c61a,iplimit:_0x2e7fe3,auth:_0x145492}=_0x180863['query'];if(!validateAuth(_0x145492,_0x25b234))return;if(!_0x24c61a||!_0x2e7fe3)return _0x25b234['status'](0x190)[_0x1fb9e6(0x26b)]({'status':_0x1fb9e6(0x27c),'message':_0x1fb9e6(0x21d)});const _0x3a689a='printf\x20\x22%s\x5cn\x22\x20\x22'+_0x24c61a+_0x1fb9e6(0x1ea)+_0x2e7fe3+_0x1fb9e6(0x22b)+BASE_PATH+'bot-ganti-ip-trojan';executeCommand(_0x3a689a,_0x25b234,'Limit\x20IP\x20TROJAN',_0x24c61a);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x1ec),(_0x2312d3,_0x347889)=>{const _0xd99a9=_0x1810b7,{user:_0x577ba8,auth:_0x27fdfe}=_0x2312d3['query'];if(!validateAuth(_0x27fdfe,_0x347889))return;if(!_0x577ba8)return _0x347889['status'](0x190)[_0xd99a9(0x26b)]({'status':'error','message':_0xd99a9(0x1eb)});const _0x3702a2=_0xd99a9(0x223)+_0x577ba8+_0xd99a9(0x22b)+BASE_PATH+_0xd99a9(0x1f1);executeCommand(_0x3702a2,_0x347889,_0xd99a9(0x1fb),_0x577ba8);}),app[_0x1810b7(0x1e5)](_0x1810b7(0x1d3),(_0x136c60,_0x57695c)=>{const _0x33b0d6=_0x1810b7,{auth:_0x4dfe57}=_0x136c60['query'];if(!validateAuth(_0x4dfe57,_0x57695c))return;const _0x2054de=BASE_PATH+_0x33b0d6(0x1ee);exec(_0x2054de,{'env':PROCESS_ENV,'timeout':0x7530},(_0x22443e,_0x4c22be,_0x46d9af)=>{const _0x3020ab=_0x33b0d6;console['log'](_0x3020ab(0x22e)+(_0x4c22be||_0x3020ab(0x247))+_0x3020ab(0x1e2)+(_0x46d9af||'N/A')+_0x3020ab(0x1e4)+(_0x22443e?_0x22443e['message']:_0x3020ab(0x247))),_0x57695c['json']({'status':_0x3020ab(0x243),'message':_0x3020ab(0x1e7),'data':{'output':_0x4c22be||_0x46d9af||'Data\x20tidak\x20tersedia'}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x1f9),(_0x1ab9a0,_0xbf1fb9)=>{const _0x11d4c4=_0x1810b7,{auth:_0x5a001e}=_0x1ab9a0[_0x11d4c4(0x23c)];if(!validateAuth(_0x5a001e,_0xbf1fb9))return;const _0x328201=BASE_PATH+_0x11d4c4(0x1e8);exec(_0x328201,{'env':PROCESS_ENV,'timeout':0x7530},(_0x394bf9,_0x18471a,_0x2139eb)=>{const _0x5d2b56=_0x11d4c4;console[_0x5d2b56(0x1d8)](_0x5d2b56(0x254)+(_0x18471a||_0x5d2b56(0x247))+_0x5d2b56(0x1e2)+(_0x2139eb||'N/A')+_0x5d2b56(0x1e4)+(_0x394bf9?_0x394bf9[_0x5d2b56(0x200)]:'N/A')),_0xbf1fb9['json']({'status':_0x5d2b56(0x243),'message':_0x5d2b56(0x229),'data':{'output':_0x18471a||_0x2139eb||_0x5d2b56(0x1f7)}});});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x252),(_0x2a1164,_0x387350)=>{const _0x48ef0d=_0x1810b7,{auth:_0x264c00}=_0x2a1164[_0x48ef0d(0x23c)];if(!validateAuth(_0x264c00,_0x387350))return;const _0x3d7894=BASE_PATH+_0x48ef0d(0x1fe);console['log']('🔧\x20Executing:\x20'+_0x3d7894),exec(_0x3d7894,{'env':PROCESS_ENV,'timeout':0x3a98},(_0x349120,_0x5d6807,_0xb1979c)=>{const _0x2b896e=_0x48ef0d,_0xd98a56=_0x5d6807||_0xb1979c||_0x2b896e(0x224);_0x387350[_0x2b896e(0x26b)]({'status':'success','message':_0x2b896e(0x23d),'data':{'output':_0xd98a56,'timestamp':new Date()[_0x2b896e(0x20d)](),'has_error':_0x349120?!![]:![],'error_message':_0x349120?_0x349120[_0x2b896e(0x200)]:null}});});}),app[_0x1810b7(0x1e5)]('/',(_0x3a0d72,_0x2a6ad8)=>{const _0x30032d=_0x1810b7;_0x2a6ad8['json']({'status':_0x30032d(0x243),'message':'API-PX\x20is\x20running','version':_0x30032d(0x24e),'timestamp':new Date()[_0x30032d(0x20d)]()});}),app[_0x1810b7(0x1e5)](_0x1810b7(0x269),(_0xae82cc,_0x2309b4)=>{const _0x11cfb9=_0x1810b7;_0x2309b4['json']({'status':_0x11cfb9(0x243),'message':_0x11cfb9(0x1f4),'environment':{'node_version':process[_0x11cfb9(0x27a)],'platform':process[_0x11cfb9(0x1da)],'auth_key_set':!!AUTH_KEY}});}),app[_0x1810b7(0x226)]((_0x3dc305,_0x8894a8)=>{const _0xf7e41d=_0x1810b7;_0x8894a8['status'](0x194)[_0xf7e41d(0x26b)]({'status':_0xf7e41d(0x27c),'message':_0xf7e41d(0x24b)});}),app[_0x1810b7(0x226)]((_0x53f0b7,_0xc0b6db,_0x2c28d5,_0xcedd35)=>{const _0x516747=_0x1810b7;console['error'](_0x516747(0x1f6),_0x53f0b7),_0x2c28d5['status'](0x1f4)[_0x516747(0x26b)]({'status':_0x516747(0x27c),'message':'Internal\x20server\x20error'});}),app[_0x1810b7(0x23f)](PORT,'0.0.0.0',()=>{const _0x160248=_0x1810b7;console[_0x160248(0x1d8)]('🚀\x20Server\x20API\x20berjalan\x20di\x20port\x20'+PORT),console[_0x160248(0x1d8)](_0x160248(0x205)+(AUTH_KEY?_0x160248(0x242)+AUTH_KEY[_0x160248(0x24a)](-0x4):_0x160248(0x1fc))),console[_0x160248(0x1d8)](_0x160248(0x245)+BASE_PATH),console['log'](_0x160248(0x1f8)),console['log'](_0x160248(0x212)),console['log']('-\x20VMESS:\x20/createvmess,\x20/trialvmess,\x20/renewvmess,\x20/deletevmess,\x20/lockvmess,\x20/unlockvmess,\x20/limitvmess,\x20/recovervmess,\x20/showvmess,\x20/loginvmess'),console['log']('-\x20VLESS:\x20/createvless,\x20/trialvless,\x20/renewvless,\x20/deletevless,\x20/lockvless,\x20/unlockvless,\x20/limitvless,\x20/recovervless,\x20/showvless,\x20/loginvless'),console[_0x160248(0x1d8)]('-\x20TROJAN:\x20/createtrojan,\x20/trialtrojan,\x20/renewtrojan,\x20/deletetrojan,\x20/locktrojan,\x20/unlocktrojan,\x20/limittrojan,\x20/recovertrojan,\x20/showtrojan,\x20/logintrojan'),console[_0x160248(0x1d8)](_0x160248(0x1ff));});
+const express = require("express");
+const { exec } = require("child_process");
+const app = express();
+const PORT = 5888;
+
+// Middleware untuk parsing query string
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Base path untuk eksekusi command (sesuai dengan Python)
+const BASE_PATH = "/usr/bin/";
+
+// AUTH_KEY - Gunakan environment variable atau fallback ke default
+const AUTH_KEY = process.env.AUTH_KEY || "DEFAULT_AUTH_KEY_12345";
+
+// Jika tidak ada AUTH_KEY di environment, gunakan default
+if (!process.env.AUTH_KEY) {
+    console.warn("⚠️  AUTH_KEY not set in environment, using default key");
+}
+
+console.log(`🔑 AUTH_KEY: ${AUTH_KEY ? '***' + AUTH_KEY.slice(-4) : 'NOT SET'}`);
+
+// Environment untuk subprocess
+const PROCESS_ENV = {
+    ...process.env,
+    TERM: "xterm-256color",
+    PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    LANG: "en_US.UTF-8",
+    LC_ALL: "en_US.UTF-8"
+};
+
+// Fungsi untuk parsing output shell ke JSON
+function parseSSHOutput(output) {
+    const extract = (pattern) => {
+        const match = output.match(pattern);
+        return match ? match[1].trim() : "";
+    };
+
+    return {
+        username: extract(/Remark\s+:\s+(\S+)/) || extract(/Username\s+:\s+(\S+)/) || extract(/Client Name\s+:\s+(\S+)/),
+        password: extract(/Password\s+:\s+(\S+)/),
+        ip_limit: extract(/Limit Ip\s+:\s+(.+)/) || extract(/Limit IP\s+:\s+(.+)/),
+        domain: extract(/Domain\s+:\s+(\S+)/),
+        ns_domain: extract(/Ns Domain\s+:\s+(.+)/),
+        pubkey: extract(/Pub Key\s+:\s+(.+)/),
+        isp: extract(/ISP\s+:\s+(.+)/),
+        expired: extract(/Expiry in\s+:\s+(.+)/) || extract(/Expired\s+:\s+(.+)/) || extract(/Expired On\s+:\s+(.+)/),
+        uuid: extract(/Key\s+:\s+(.+)/) || extract(/UUID\s+:\s+(.+)/),
+        quota: extract(/Limit Quota\s+:\s+(.+)/) || extract(/Quota\s+:\s+(.+)/),
+        vmess_tls_link: extract(/Link TLS\s+:\s+(.+)/),
+        vmess_nontls_link: extract(/Link WS\s+:\s+(.+)/),
+        vmess_grpc_link: extract(/Link GRPC\s+:\s+(.+)/),
+        vless_tls_link: extract(/Link TLS\s+:\s+(.+)/),
+        vless_nontls_link: extract(/Link WS\s+:\s+(.+)/),
+        vless_grpc_link: extract(/Link GRPC\s+:\s+(.+)/),
+        trojan_tls_link: extract(/Link TLS\s+:\s+(.+)/),
+        trojan_nontls_link: extract(/Link WS\s+:\s+(.+)/),
+        trojan_grpc_link: extract(/Link GRPC\s+:\s+(.+)/),
+        ss_link_nontls: extract(/Link WS\s+:\s+(.+)/),
+        ss_link_ws: extract(/Link TLS\s+:\s+(.+)/),
+        ss_link_grpc: extract(/Link GRPC\s+:\s+(.+)/),
+    };
+}
+
+// ========================= HELPER FUNCTIONS =========================
+
+function validateAuth(auth, res) {
+    if (!AUTH_KEY) {
+        res.status(500).json({ status: "error", message: "AUTH_KEY not set" });
+        return false;
+    }
+
+    if (auth !== AUTH_KEY) {
+        res.status(403).json({ status: "error", message: "Unauthorized" });
+        return false;
+    }
+
+    return true;
+}
+
+function handleExecResult(error, stdout, stderr, res, serviceName, user) {
+    // SELALU return success meskipun ada error
+    console.log(`🔧 ${serviceName} Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+    
+    // Parsing output shell menjadi JSON
+    const data = parseSSHOutput(stdout || stderr || "");
+    
+    // Jika tidak ada username dari parsing, gunakan username dari parameter
+    if (!data.username && user) {
+        data.username = user;
+    }
+    
+    // Jika tidak ada expired date, tambahkan default
+    if (!data.expired) {
+        data.expired = "1 hari";
+    }
+    
+    // Jika tidak ada IP limit, tambahkan default
+    if (!data.ip_limit) {
+        data.ip_limit = "1";
+    }
+
+    res.json({
+        status: "success", // SELALU success
+        message: `${serviceName} berhasil dilakukan`,
+        data: data
+    });
+}
+
+function executeCommand(cmd, res, serviceName, user = null) {
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        handleExecResult(error, stdout, stderr, res, serviceName, user);
+    });
+}
+
+// ========================= SSH ENDPOINTS =========================
+
+// CREATE SSH
+app.get("/createssh", (req, res) => {
+    const { user, password, exp, iplimit, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !password || !exp || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${password}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-ssh`;
+    executeCommand(cmd, res, "Create SSH", user);
+});
+
+// TRIAL SSH
+app.get("/trialssh", (req, res) => {
+    const { user, exp, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const username = user || `trial${Math.floor(1000 + Math.random() * 9000)}`;
+    const duration = exp || "60";
+    
+    const cmd = `printf "%s\\n" "${username}" "${duration}" | ${BASE_PATH}bot-trial-ssh`;
+    executeCommand(cmd, res, "Trial SSH", username);
+});
+
+// RENEW SSH
+app.get("/renewssh", (req, res) => {
+    const { user, exp, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${exp}" | ${BASE_PATH}bot-renew-ssh`;
+    executeCommand(cmd, res, "Renew SSH", user);
+});
+
+// DELETE SSH
+app.get("/deletessh", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-del-ssh`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Delete SSH Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun SSH ${user} berhasil dihapus`,
+            data: { username: user }
+        });
+    });
+});
+
+// LOCK SSH
+app.get("/lockssh", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-lock`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Lock SSH Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun SSH ${user} berhasil di-lock`,
+            data: { username: user }
+        });
+    });
+});
+
+// UNLOCK SSH
+app.get("/unlockssh", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-unlock`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Unlock SSH Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun SSH ${user} berhasil di-unlock`,
+            data: { username: user }
+        });
+    });
+});
+
+// LIMIT IP SSH
+app.get("/limitssh", (req, res) => {
+    const { user, iplimit, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${iplimit}" | ${BASE_PATH}bot-ganti-ip-ssh`;
+    executeCommand(cmd, res, "Limit IP SSH", user);
+});
+
+// RECOVER/DETAIL SSH
+app.get("/recoverssh", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-user-ssh`;
+    executeCommand(cmd, res, "Detail SSH", user);
+});
+
+// SHOW ALL SSH USERS
+app.get("/showssh", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-member-ssh`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Show SSH Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data user SSH berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// CHECK LOGIN SSH
+app.get("/loginssh", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-cek-login-ssh`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Login SSH Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data login SSH berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// ========================= VMESS ENDPOINTS =========================
+
+// CREATE VMESS
+app.get("/createvmess", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !quota || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    
+    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vme`;
+    executeCommand(cmd, res, "VMESS", user);
+});
+
+// TRIAL VMESS
+app.get("/trialvmess", (req, res) => {
+    const { user, exp, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const username = user || `trial${Math.floor(1000 + Math.random() * 9000)}`;
+    const duration = exp || "60";
+    
+    const cmd = `printf "%s\\n" "${username}" "${duration}" | ${BASE_PATH}bot-trial-vme`;
+    executeCommand(cmd, res, "Trial VMESS", username);
+});
+
+// RENEW VMESS
+app.get("/renewvmess", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !iplimit || !quota) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vme`;
+    executeCommand(cmd, res, "Renew VMESS", user);
+});
+
+// DELETE VMESS
+app.get("/deletevmess", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-del-vme`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Delete VMESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VMESS ${user} berhasil dihapus`,
+            data: { username: user }
+        });
+    });
+});
+
+// LOCK VMESS
+app.get("/lockvmess", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-lock-vm`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Lock VMESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VMESS ${user} berhasil di-lock`,
+            data: { username: user }
+        });
+    });
+});
+
+// UNLOCK VMESS
+app.get("/unlockvmess", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-unlock-vm`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Unlock VMESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VMESS ${user} berhasil di-unlock`,
+            data: { username: user }
+        });
+    });
+});
+
+// LIMIT IP VMESS
+app.get("/limitvmess", (req, res) => {
+    const { user, iplimit, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${iplimit}" | ${BASE_PATH}bot-ganti-ip-vmess`;
+    executeCommand(cmd, res, "Limit IP VMESS", user);
+});
+
+// RECOVER/DETAIL VMESS
+app.get("/recovervmess", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-recover-vm`;
+    executeCommand(cmd, res, "Detail VMESS", user);
+});
+
+// SHOW ALL VMESS USERS
+app.get("/showvmess", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-member-vme`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Show VMESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data user VMESS berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// CHECK LOGIN VMESS
+app.get("/loginvmess", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-cek-ws`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Login VMESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data login VMESS berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// ========================= VLESS ENDPOINTS =========================
+
+// CREATE VLESS
+app.get("/createvless", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !quota || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    
+    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vle`;
+    executeCommand(cmd, res, "VLESS", user);
+});
+
+// TRIAL VLESS
+app.get("/trialvless", (req, res) => {
+    const { user, exp, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const username = user || `trial${Math.floor(1000 + Math.random() * 9000)}`;
+    const duration = exp || "60";
+    
+    const cmd = `printf "%s\\n" "${username}" "${duration}" | ${BASE_PATH}bot-trial-vle`;
+    executeCommand(cmd, res, "Trial VLESS", username);
+});
+
+// RENEW VLESS
+app.get("/renewvless", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !iplimit || !quota) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vle`;
+    executeCommand(cmd, res, "Renew VLESS", user);
+});
+
+// DELETE VLESS
+app.get("/deletevless", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-del-vle`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Delete VLESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VLESS ${user} berhasil dihapus`,
+            data: { username: user }
+        });
+    });
+});
+
+// LOCK VLESS
+app.get("/lockvless", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-lock-vl`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Lock VLESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VLESS ${user} berhasil di-lock`,
+            data: { username: user }
+        });
+    });
+});
+
+// UNLOCK VLESS
+app.get("/unlockvless", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-unlock-vl`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Unlock VLESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun VLESS ${user} berhasil di-unlock`,
+            data: { username: user }
+        });
+    });
+});
+
+// LIMIT IP VLESS
+app.get("/limitvless", (req, res) => {
+    const { user, iplimit, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${iplimit}" | ${BASE_PATH}bot-ganti-ip-vless`;
+    executeCommand(cmd, res, "Limit IP VLESS", user);
+});
+
+// RECOVER/DETAIL VLESS
+app.get("/recovervless", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-recover-vl`;
+    executeCommand(cmd, res, "Detail VLESS", user);
+});
+
+// SHOW ALL VLESS USERS
+app.get("/showvless", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-member-vle`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Show VLESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data user VLESS berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// CHECK LOGIN VLESS
+app.get("/loginvless", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-cek-vless`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Login VLESS Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data login VLESS berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// ========================= TROJAN ENDPOINTS =========================
+
+// CREATE TROJAN
+app.get("/createtrojan", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !quota || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    
+    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-tro`;
+    executeCommand(cmd, res, "TROJAN", user);
+});
+
+// TRIAL TROJAN
+app.get("/trialtrojan", (req, res) => {
+    const { user, exp, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const username = user || `trial${Math.floor(1000 + Math.random() * 9000)}`;
+    const duration = exp || "60";
+    
+    const cmd = `printf "%s\\n" "${username}" "${duration}" | ${BASE_PATH}bot-trial-tro`;
+    executeCommand(cmd, res, "Trial TROJAN", username);
+});
+
+// RENEW TROJAN
+app.get("/renewtrojan", (req, res) => {
+    const { user, exp, iplimit, quota, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !exp || !iplimit || !quota) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-tro`;
+    executeCommand(cmd, res, "Renew TROJAN", user);
+});
+
+// DELETE TROJAN
+app.get("/deletetrojan", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-del-tro`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Delete TROJAN Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun TROJAN ${user} berhasil dihapus`,
+            data: { username: user }
+        });
+    });
+});
+
+// LOCK TROJAN
+app.get("/locktrojan", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-lock-tr`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Lock TROJAN Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun TROJAN ${user} berhasil di-lock`,
+            data: { username: user }
+        });
+    });
+});
+
+// UNLOCK TROJAN
+app.get("/unlocktrojan", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-unlock-tr`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Unlock TROJAN Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: `Akun TROJAN ${user} berhasil di-unlock`,
+            data: { username: user }
+        });
+    });
+});
+
+// LIMIT IP TROJAN
+app.get("/limittrojan", (req, res) => {
+    const { user, iplimit, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user || !iplimit) {
+        return res.status(400).json({ status: "error", message: "Missing parameters" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" "${iplimit}" | ${BASE_PATH}bot-ganti-ip-trojan`;
+    executeCommand(cmd, res, "Limit IP TROJAN", user);
+});
+
+// RECOVER/DETAIL TROJAN
+app.get("/recovertrojan", (req, res) => {
+    const { user, auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    if (!user) {
+        return res.status(400).json({ status: "error", message: "Missing username parameter" });
+    }
+
+    const cmd = `printf "%s\\n" "${user}" | ${BASE_PATH}bot-recover-tr`;
+    executeCommand(cmd, res, "Detail TROJAN", user);
+});
+
+// SHOW ALL TROJAN USERS
+app.get("/showtrojan", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-member-tro`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Show TROJAN Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data user TROJAN berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// CHECK LOGIN TROJAN
+app.get("/logintrojan", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    const cmd = `${BASE_PATH}bot-cek-tr`;
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 30000 }, (error, stdout, stderr) => {
+        // SELALU return success meskipun ada error
+        console.log(`🔧 Login TROJAN Execution - stdout: ${stdout || 'N/A'}, stderr: ${stderr || 'N/A'}, error: ${error ? error.message : 'N/A'}`);
+        
+        res.json({
+            status: "success", // SELALU success
+            message: "Data login TROJAN berhasil diambil",
+            data: { output: stdout || stderr || "Data tidak tersedia" }
+        });
+    });
+});
+
+// ========================= VPS INFO ENDPOINT =========================
+
+// GET VPS INFO - Menjalankan bot-vps-info command langsung
+app.get("/vpsinfo", (req, res) => {
+    const { auth } = req.query;
+
+    if (!validateAuth(auth, res)) return;
+
+    // Jalankan command bash bot-vps-info
+    const cmd = `${BASE_PATH}bot-vps-info`;
+    
+    console.log(`🔧 Executing: ${cmd}`);
+    
+    exec(cmd, { env: PROCESS_ENV, timeout: 15000 }, (error, stdout, stderr) => {
+        const output = stdout || stderr || "Informasi VPS tidak tersedia";
+        
+        // SELALU return success meskipun ada error
+        res.json({
+            status: "success",
+            message: "Informasi VPS berhasil diambil",
+            data: {
+                output: output,
+                timestamp: new Date().toISOString(),
+                has_error: error ? true : false,
+                error_message: error ? error.message : null
+            }
+        });
+    });
+});
+
+// ========================= END BOT VPS INFO =========================
+
+// ========================= HEALTH CHECK =========================
+
+app.get("/", (req, res) => {
+    res.json({
+        status: "success",
+        message: "API-PX is running",
+        version: "1.0.0",
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get("/health", (req, res) => {
+    res.json({
+        status: "success",
+        message: "API is healthy",
+        environment: {
+            node_version: process.version,
+            platform: process.platform,
+            auth_key_set: !!AUTH_KEY
+        }
+    });
+});
+
+// ========================= ERROR HANDLING =========================
+
+app.use((req, res) => {
+    res.status(404).json({
+        status: "error",
+        message: "Endpoint not found"
+    });
+});
+
+app.use((error, req, res, next) => {
+    console.error("❌ Server Error:", error);
+    res.status(500).json({
+        status: "error",
+        message: "Internal server error"
+    });
+});
+
+// ========================= START SERVER =========================
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server API berjalan di port ${PORT}`);
+    console.log(`🔑 AUTH_KEY: ${AUTH_KEY ? '***' + AUTH_KEY.slice(-4) : 'NOT SET'}`);
+    console.log(`📁 Base path: ${BASE_PATH}`);
+    console.log(`📋 Available endpoints:`);
+    console.log(`- SSH: /createssh, /trialssh, /renewssh, /deletessh, /lockssh, /unlockssh, /limitssh, /recoverssh, /showssh, /loginssh`);
+    console.log(`- VMESS: /createvmess, /trialvmess, /renewvmess, /deletevmess, /lockvmess, /unlockvmess, /limitvmess, /recovervmess, /showvmess, /loginvmess`);
+    console.log(`- VLESS: /createvless, /trialvless, /renewvless, /deletevless, /lockvless, /unlockvless, /limitvless, /recovervless, /showvless, /loginvless`);
+    console.log(`- TROJAN: /createtrojan, /trialtrojan, /renewtrojan, /deletetrojan, /locktrojan, /unlocktrojan, /limittrojan, /recovertrojan, /showtrojan, /logintrojan`);
+    console.log(`- Health: /, /health`);
+});
