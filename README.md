@@ -15,13 +15,6 @@
 
 ---
 
-### 🔥 **Languages & Tools**
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=python,js,html,css,nodejs,react,linux,vscode,github,git&theme=dark" />
-</p>
-
----
-
 <h3 align="center">✨ Thanks for Visiting! ✨</h3>
 <p align="center">
   <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTFkOGJkNjMyNzYwNDQxNDg0ZTNiOGI5ZWM3ZmE4YWMxMGFlNGMwNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/gf7bMpF5rTPIs/giphy.gif" width="250px" alt="Thank You Anime"/>
