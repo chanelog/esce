@@ -298,9 +298,9 @@ app.get("/loginssh", (req, res) => {
 
 // ========================= VMESS ENDPOINTS =========================
 
-// CREATE VMESS
+// CREATE VMESS - DENGAN PARAMETER UUID (custom atau random dari Python)
 app.get("/createvmess", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -308,9 +308,10 @@ app.get("/createvmess", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    // Gunakan UUID dari parameter jika ada, jika tidak generate random
+    const finalUuid = uuid || (require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4());
     
-    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vme`;
+    const cmd = `printf "%s\\n" "${user}" "${finalUuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vme`;
     executeCommand(cmd, res, "VMESS", user);
 });
 
@@ -327,9 +328,9 @@ app.get("/trialvmess", (req, res) => {
     executeCommand(cmd, res, "Trial VMESS", username);
 });
 
-// RENEW VMESS
+// RENEW VMESS - DENGAN PARAMETER UUID (optional)
 app.get("/renewvmess", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -337,7 +338,16 @@ app.get("/renewvmess", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vme`;
+    // Jika ada UUID, kirim juga UUID ke command
+    let cmd;
+    if (uuid) {
+        // Format: user, uuid, exp, quota, iplimit
+        cmd = `printf "%s\\n" "${user}" "${uuid}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vme`;
+    } else {
+        // Format lama: user, exp, quota, iplimit
+        cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vme`;
+    }
+    
     executeCommand(cmd, res, "Renew VMESS", user);
 });
 
@@ -483,9 +493,9 @@ app.get("/loginvmess", (req, res) => {
 
 // ========================= VLESS ENDPOINTS =========================
 
-// CREATE VLESS
+// CREATE VLESS - DENGAN PARAMETER UUID
 app.get("/createvless", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -493,9 +503,10 @@ app.get("/createvless", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    // Gunakan UUID dari parameter jika ada, jika tidak generate random
+    const finalUuid = uuid || (require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4());
     
-    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vle`;
+    const cmd = `printf "%s\\n" "${user}" "${finalUuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-vle`;
     executeCommand(cmd, res, "VLESS", user);
 });
 
@@ -512,9 +523,9 @@ app.get("/trialvless", (req, res) => {
     executeCommand(cmd, res, "Trial VLESS", username);
 });
 
-// RENEW VLESS
+// RENEW VLESS - DENGAN PARAMETER UUID (optional)
 app.get("/renewvless", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -522,7 +533,14 @@ app.get("/renewvless", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vle`;
+    // Jika ada UUID, kirim juga UUID ke command
+    let cmd;
+    if (uuid) {
+        cmd = `printf "%s\\n" "${user}" "${uuid}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vle`;
+    } else {
+        cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-vle`;
+    }
+    
     executeCommand(cmd, res, "Renew VLESS", user);
 });
 
@@ -668,9 +686,9 @@ app.get("/loginvless", (req, res) => {
 
 // ========================= TROJAN ENDPOINTS =========================
 
-// CREATE TROJAN
+// CREATE TROJAN - DENGAN PARAMETER UUID
 app.get("/createtrojan", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -678,9 +696,10 @@ app.get("/createtrojan", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const uuid = require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4();
+    // Gunakan UUID dari parameter jika ada, jika tidak generate random
+    const finalUuid = uuid || (require('crypto').randomUUID ? require('crypto').randomUUID() : require('uuid').v4());
     
-    const cmd = `printf "%s\\n" "${user}" "${uuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-tro`;
+    const cmd = `printf "%s\\n" "${user}" "${finalUuid}" "${quota}" "${iplimit}" "${exp}" | ${BASE_PATH}bot-add-tro`;
     executeCommand(cmd, res, "TROJAN", user);
 });
 
@@ -697,9 +716,9 @@ app.get("/trialtrojan", (req, res) => {
     executeCommand(cmd, res, "Trial TROJAN", username);
 });
 
-// RENEW TROJAN
+// RENEW TROJAN - DENGAN PARAMETER UUID (optional)
 app.get("/renewtrojan", (req, res) => {
-    const { user, exp, iplimit, quota, auth } = req.query;
+    const { user, exp, iplimit, quota, auth, uuid } = req.query;
 
     if (!validateAuth(auth, res)) return;
 
@@ -707,7 +726,14 @@ app.get("/renewtrojan", (req, res) => {
         return res.status(400).json({ status: "error", message: "Missing parameters" });
     }
 
-    const cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-tro`;
+    // Jika ada UUID, kirim juga UUID ke command
+    let cmd;
+    if (uuid) {
+        cmd = `printf "%s\\n" "${user}" "${uuid}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-tro`;
+    } else {
+        cmd = `printf "%s\\n" "${user}" "${exp}" "${quota}" "${iplimit}" | ${BASE_PATH}bot-renew-tro`;
+    }
+    
     executeCommand(cmd, res, "Renew TROJAN", user);
 });
 
@@ -880,8 +906,6 @@ app.get("/vpsinfo", (req, res) => {
         });
     });
 });
-
-// ========================= END BOT VPS INFO =========================
 
 // ========================= HEALTH CHECK =========================
 
