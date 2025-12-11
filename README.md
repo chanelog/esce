@@ -1,19 +1,3 @@
----
-
-### ⚡ **GitHub Stats**
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=PeyxDev&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats"/>
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=PeyxDev&theme=tokyonight&hide_border=true" alt="GitHub Streak"/>
-</p>
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=PeyxDev&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages"/>
-</p>
----
-
 <h3 align="center">✨ Thanks for Visiting! ✨</h3>
 <p align="center">
   <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTFkOGJkNjMyNzYwNDQxNDg0ZTNiOGI5ZWM3ZmE4YWMxMGFlNGMwNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/gf7bMpF5rTPIs/giphy.gif" width="250px" alt="Thank You Anime"/>
