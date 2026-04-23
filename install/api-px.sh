@@ -99,7 +99,7 @@ mkdir -p /usr/bin/peyx-api
 
 # Download api-px.js from repo
 echo -e "${yellow}Downloading bot api.js...${neutral}"
-curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/api/api.js" -o /usr/bin/peyx-api/api.js
+curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/api/api-px.js" -o /usr/bin/peyx-api/api.js
 
 if [ ! -f /usr/bin/peyx-api/api.js ]; then
     echo -e "${red}Failed to download api.js${neutral}"
