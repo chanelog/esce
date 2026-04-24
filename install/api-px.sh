@@ -94,58 +94,43 @@ echo -e "${green}✅ VPN API AUTH_KEY generated: $VPN_AUTH_KEY${neutral}"
 }
 
 setup_bot_api() {
-# Create directory
 mkdir -p /usr/bin/peyx-api
 
-# Download api-px.js from repo
-echo -e "${yellow}Downloading bot api.js...${neutral}"
-curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/api/api-px.js" -o /usr/bin/peyx-api/api.js
+echo -e "${yellow}Downloading bot api.js from correct source...${neutral}"
 
-if [ ! -f /usr/bin/peyx-api/api.js ]; then
-    echo -e "${red}Failed to download api.js${neutral}"
-    exit 1
-fi
-
-echo -e "${green}✅ api.js downloaded successfully${neutral}"
-
-# Download and extract bot.zip
-echo -e "${yellow}Downloading and extracting bot.zip...${neutral}"
-cd /usr/bin
-curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/bot/bot.zip" -o bot.zip
-
-if [ -f /usr/bin/bot.zip ]; then
-    # Extract with password
-    7z x bot.zip -p@Peyx23 -y -o/usr/bin
-    
-    # Move files if bot folder exists
-    if [ -d "/usr/bin/bot" ]; then
-        mv /usr/bin/bot/* /usr/bin/ 2>/dev/null
-        rm -rf /usr/bin/bot
+# Download dengan retry dan timeout lebih lama
+for i in 1 2 3; do
+    echo -e "${yellow}Attempt $i/3...${neutral}"
+    if curl -sS --max-time 60 --retry 3 --retry-delay 2 \
+        "https://raw.githubusercontent.com/PeyxDev/esce/main/api/api-px.js" \
+        -o /usr/bin/peyx-api/api.js; then
+        
+        # Cek ukuran file
+        FILE_SIZE=$(stat -c%s /usr/bin/peyx-api/api.js 2>/dev/null || echo "0")
+        
+        if [ "$FILE_SIZE" -gt 100000 ]; then
+            echo -e "${green}✅ api.js downloaded successfully (${FILE_SIZE} bytes)${neutral}"
+            break
+        else
+            echo -e "${red}Downloaded file too small (${FILE_SIZE} bytes), retrying...${neutral}"
+            rm -f /usr/bin/peyx-api/api.js
+        fi
     fi
     
-    rm -f bot.zip
-    
-    # Set execute permissions
-    find /usr/bin -maxdepth 1 -type f -name "*" -exec chmod +x {} \; 2>/dev/null
-    chmod +x /usr/bin/peyx-api/api.js
-    chmod +x /usr/bin/peyx-api/*
-    
-    echo -e "${green}✅ bot.zip downloaded and extracted successfully${neutral}"
-else
-    echo -e "${red}Failed to download bot.zip${neutral}"
-fi
+    if [ $i -eq 3 ]; then
+        echo -e "${red}Failed to download after 3 attempts${neutral}"
+        exit 1
+    fi
+    sleep 2
+done
 
-# Install npm packages for bot API
-echo -e "${yellow}Installing npm packages for bot api...${neutral}"
+# Install npm packages
 cd /usr/bin/peyx-api
-if [ ! -d "node_modules" ]; then
-    npm install express child_process
-    echo -e "${green}✅ npm packages installed successfully${neutral}"
-else
-    echo -e "${green}✅ npm packages already installed${neutral}"
-fi
+npm install express --save
 
-# Generate AUTH_KEY for Bot API (7 chars with PX prefix)
+chmod +x /usr/bin/peyx-api/api.js
+
+# Generate AUTH_KEY
 RANDOM_CHARS=$(head /dev/urandom | tr -dc A-Z0-9 | head -c5)
 BOT_AUTH_KEY="PX${RANDOM_CHARS}"
 echo "$BOT_AUTH_KEY" > /usr/bin/peyx-api/px-auth
