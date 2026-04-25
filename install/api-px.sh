@@ -44,117 +44,64 @@ echo -e "${red}BAD${neutral}"
 fi
 }
 
-install_nodejs() {
-NODE_VERSION=$(node -v 2>/dev/null | grep -oP '(?<=v)\d+' || echo "0")
-rm /var/lib/dpkg/stato* 2>/dev/null
-rm /var/lib/dpkg/lock* 2>/dev/null
+# Main execution
+clear
+print_rainbow "════════════════════════════════════════════════════════════"
+print_rainbow "                   API INSTALL SCRIPT                       "
+print_rainbow "                    Created by PeyxDev                       "
+print_rainbow "════════════════════════════════════════════════════════════"
+echo ""
 
-if [ "$NODE_VERSION" -lt 18 ]; then
-echo -e "${yellow}Installing or upgrading Node.js to version 18+...${neutral}"
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - || echo -e "${red}Failed to download Node.js setup${neutral}"
-apt-get install -y nodejs || echo -e "${red}Failed to install Node.js${neutral}"
-npm install -g npm@latest
-else
-echo -e "${green}Node.js is already installed and up-to-date (v$NODE_VERSION), skipping...${neutral}"
-fi
-}
+# Install Node.js
+echo -e "${yellow}[1/7] Installing Node.js...${neutral}"
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash - >/dev/null 2>&1
+apt-get install -y nodejs >/dev/null 2>&1
+echo -e "${green}✅ Node.js installed${neutral}"
 
-setup_vpn_api() {
-# Create directory
+# Install npm
+echo -e "${yellow}[2/7] Installing npm...${neutral}"
+apt-get install -y npm >/dev/null 2>&1
+echo -e "${green}✅ npm installed${neutral}"
+
+# Setup directories
+echo -e "${yellow}[3/7] Creating directories...${neutral}"
 mkdir -p /etc/peyx-api
+mkdir -p /etc/peyx
+mkdir -p /etc/peyx/limit/trojan/ip
+mkdir -p /etc/peyx/limit/vless/ip
+mkdir -p /etc/peyx/limit/vmess/ip
+mkdir -p /etc/peyx/limit/ssh/ip
+echo -e "${green}✅ Directories created${neutral}"
 
 # Download server.js from repo
-echo -e "${yellow}Downloading vpn-api server.js...${neutral}"
+echo -e "${yellow}[4/7] Downloading server.js from repo...${neutral}"
 curl -sL "https://raw.githubusercontent.com/PeyxDev/esce/main/api/server.js" -o /etc/peyx-api/server.js
 
-if [ ! -f /etc/peyx-api/server.js ]; then
-    echo -e "${red}Failed to download server.js${neutral}"
+if [ -f /etc/peyx-api/server.js ]; then
+    echo -e "${green}✅ server.js downloaded successfully${neutral}"
+else
+    echo -e "${red}❌ Failed to download server.js${neutral}"
     exit 1
 fi
 
-echo -e "${green}✅ server.js downloaded successfully${neutral}"
-
-# Install npm packages
-echo -e "${yellow}Installing npm packages for vpn-api...${neutral}"
+# Install npm packages (express & axios)
+echo -e "${yellow}[5/7] Installing npm packages (express, axios)...${neutral}"
 cd /etc/peyx-api
-if [ ! -d "node_modules" ]; then
-    npm install express
-    echo -e "${green}✅ npm packages installed successfully${neutral}"
-else
-    echo -e "${green}✅ npm packages already installed${neutral}"
-fi
-
-chmod +x /etc/peyx-api/server.js
-
-# Generate AUTH_KEY for VPN API
-RANDOM_CHARS=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
-VPN_AUTH_KEY="PX-${RANDOM_CHARS}"
-echo "$VPN_AUTH_KEY" > /etc/peyx-api/px-auth
-echo -e "${green}✅ VPN API AUTH_KEY generated: $VPN_AUTH_KEY${neutral}"
-}
-
-setup_bot_api() {
-mkdir -p /usr/bin/peyx-api
-
-echo -e "${yellow}Downloading bot api.js from correct source...${neutral}"
-
-# Download dengan retry dan timeout lebih lama
-for i in 1 2 3; do
-    echo -e "${yellow}Attempt $i/3...${neutral}"
-    if curl -sS --max-time 60 --retry 3 --retry-delay 2 \
-        "https://raw.githubusercontent.com/PeyxDev/esce/main/api/api-px.js" \
-        -o /usr/bin/peyx-api/api.js; then
-        
-        # Cek ukuran file
-        FILE_SIZE=$(stat -c%s /usr/bin/peyx-api/api.js 2>/dev/null || echo "0")
-        
-        if [ "$FILE_SIZE" -gt 100000 ]; then
-            echo -e "${green}✅ api.js downloaded successfully (${FILE_SIZE} bytes)${neutral}"
-            break
-        else
-            echo -e "${red}Downloaded file too small (${FILE_SIZE} bytes), retrying...${neutral}"
-            rm -f /usr/bin/peyx-api/api.js
-        fi
-    fi
-    
-    if [ $i -eq 3 ]; then
-        echo -e "${red}Failed to download after 3 attempts${neutral}"
-        exit 1
-    fi
-    sleep 2
-done
-
-# Install npm packages
-cd /usr/bin/peyx-api
-npm install express --save
-
-chmod +x /usr/bin/peyx-api/api.js
+npm install express --save >/dev/null 2>&1
+npm install axios --save >/dev/null 2>&1
+echo -e "${green}✅ npm packages installed${neutral}"
 
 # Generate AUTH_KEY
-RANDOM_CHARS=$(head /dev/urandom | tr -dc A-Z0-9 | head -c5)
-BOT_AUTH_KEY="PX${RANDOM_CHARS}"
-echo "$BOT_AUTH_KEY" > /usr/bin/peyx-api/px-auth
-echo -e "${green}✅ Bot API AUTH_KEY generated: $BOT_AUTH_KEY${neutral}"
-}
+RANDOM_CHARS=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
+AUTH_KEY="PX-${RANDOM_CHARS}"
+echo "$AUTH_KEY" > /etc/peyx-api/px-auth
+echo -e "${green}✅ AUTH_KEY generated: $AUTH_KEY${neutral}"
 
-setup_environment() {
-# Remove existing AUTH_KEY entries
-sed -i '/export AUTH_KEY=/d' /etc/profile
-sed -i '/export AUTH_KEY=/d' /etc/environment
-
-# Add AUTH_KEY to both files (using bot API key as default)
-echo "export AUTH_KEY=\"$BOT_AUTH_KEY\"" >> /etc/profile
-echo "export AUTH_KEY=\"$BOT_AUTH_KEY\"" >> /etc/environment
-
-source /etc/profile
-source /etc/environment 2>/dev/null
-}
-
-create_services() {
-# Service untuk VPN API (Port 8585)
-cat >/etc/systemd/system/vpn-api.service <<EOF
+# Create service
+echo -e "${yellow}[6/7] Creating systemd service...${neutral}"
+cat > /etc/systemd/system/api.service << EOF
 [Unit]
-Description=VPN API Server Service
+Description=API Service
 After=network.target
 
 [Service]
@@ -163,136 +110,39 @@ ExecStart=/usr/bin/node /etc/peyx-api/server.js
 Restart=always
 RestartSec=3
 User=root
-Environment=AUTH_KEY=$VPN_AUTH_KEY
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
 WorkingDirectory=/etc/peyx-api
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Create environment file for VPN API service
-mkdir -p /etc/systemd/system/vpn-api.service.d
-cat > /etc/systemd/system/vpn-api.service.d/override.conf <<EOF
-[Service]
-Environment=AUTH_KEY=$VPN_AUTH_KEY
-EOF
-
-# Service untuk Bot API (Port 5888)
-cat >/etc/systemd/system/apisellvpn.service <<EOF
-[Unit]
-Description=App Bot sellvpn Service
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/node /usr/bin/peyx-api/api.js
-Restart=always
-RestartSec=3
-User=root
-Environment=AUTH_KEY=$BOT_AUTH_KEY
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
-WorkingDirectory=/usr/bin/peyx-api
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Create environment file for Bot API service
-mkdir -p /etc/systemd/system/apisellvpn.service.d
-cat > /etc/systemd/system/apisellvpn.service.d/override.conf <<EOF
-[Service]
-Environment=AUTH_KEY=$BOT_AUTH_KEY
-EOF
-
-# Close ports if running
-CEK_PORT_8585=$(lsof -i:8585 2>/dev/null | awk 'NR>1 {print $2}' | sort -u)
-if [[ ! -z "$CEK_PORT_8585" ]]; then
-    echo -e "${yellow}Closing process on port 8585...${neutral}"
-    echo "$CEK_PORT_8585" | xargs kill -9 2>/dev/null
-fi
-
-CEK_PORT_5888=$(lsof -i:5888 2>/dev/null | awk 'NR>1 {print $2}' | sort -u)
-if [[ ! -z "$CEK_PORT_5888" ]]; then
-    echo -e "${yellow}Closing process on port 5888...${neutral}"
-    echo "$CEK_PORT_5888" | xargs kill -9 2>/dev/null
-fi
-
-# Reload systemd and start services
-systemctl daemon-reload >/dev/null 2>&1
-
-# VPN API Service
-systemctl enable vpn-api.service >/dev/null 2>&1
-systemctl start vpn-api.service >/dev/null 2>&1
-sleep 1
-systemctl restart vpn-api.service >/dev/null 2>&1
-
-# Bot API Service
-systemctl enable apisellvpn.service >/dev/null 2>&1
-systemctl start apisellvpn.service >/dev/null 2>&1
-sleep 1
-systemctl restart apisellvpn.service >/dev/null 2>&1
-}
-
-# Main execution
-clear
-print_rainbow "════════════════════════════════════════════════════════════"
-print_rainbow "              ALL IN ONE API INSTALL SCRIPT                 "
-print_rainbow "                    Created by PeyxDev                       "
-print_rainbow "════════════════════════════════════════════════════════════"
-echo ""
-
-# Install Node.js if needed
-install_nodejs
-
-# Setup both APIs
-setup_vpn_api
-setup_bot_api
-setup_environment
-create_services
+systemctl daemon-reload
+systemctl enable api.service >/dev/null 2>&1
+systemctl restart api.service
+echo -e "${green}✅ Service created and started${neutral}"
 
 # Get server IP
-SERVER_IP=$(curl -s https://api.ipify.org 2>/dev/null || curl -s ip.dekaa.my.id 2>/dev/null)
-DOMAIN=$(cat /etc/xray/domain 2>/dev/null || echo "Domain tidak ditemukan")
+SERVER_IP=$(curl -s https://api.ipify.org 2>/dev/null)
 
-# Clear previous output
-printf "\033[5A\033[0J"
-
-# Display final information
+clear
+print_rainbow "════════════════════════════════════════════════════════════"
+print_rainbow "                  INSTALLATION COMPLETE                    "
+print_rainbow "════════════════════════════════════════════════════════════"
 echo ""
-echo -e "${purple}════════════════════════════════════════════════════════════${neutral}"
-echo -e "${bold_white}                  INSTALLATION COMPLETE                    ${neutral}"
-echo -e "${purple}════════════════════════════════════════════════════════════${neutral}"
-echo ""
-echo -e "${bold_white}📡 VPN API SERVER (Port 8585)${neutral}"
-echo -e "${blue}  🔑 AUTH_KEY: ${green}$VPN_AUTH_KEY${neutral}"
+echo -e "${bold_white}📡 API SERVER (Port 8585)${neutral}"
+echo -e "${blue}  🔑 AUTH_KEY: ${green}$AUTH_KEY${neutral}"
 echo -e "${blue}  🌐 API URL: ${green}http://$SERVER_IP:8585${neutral}"
 echo -e "${blue}  📁 Folder: ${green}/etc/peyx-api${neutral}"
-echo -e "${blue}  📊 Status: $(cek_status vpn-api.service)${neutral}"
-echo ""
-echo -e "${bold_white}🤖 BOT API SERVER (Port 5888)${neutral}"
-echo -e "${blue}  🔑 AUTH_KEY: ${green}$BOT_AUTH_KEY${neutral}"
-echo -e "${blue}  🌐 API URL: ${green}http://$SERVER_IP:5888${neutral}"
-echo -e "${blue}  📁 Folder: ${green}/usr/bin/peyx-api${neutral}"
-echo -e "${blue}  📊 Status: $(cek_status apisellvpn.service)${neutral}"
+echo -e "${blue}  📊 Status: $(cek_status api.service)${neutral}"
 echo ""
 echo -e "${purple}════════════════════════════════════════════════════════════${neutral}"
 echo -e "${yellow}📝 Useful Commands:${neutral}"
-echo -e "  systemctl status vpn-api      - Check VPN API service status"
-echo -e "  systemctl status apisellvpn   - Check Bot API service status"
-echo -e "  systemctl restart vpn-api     - Restart VPN API service"
-echo -e "  systemctl restart apisellvpn  - Restart Bot API service"
-echo -e "  journalctl -u vpn-api -f      - View VPN API logs"
-echo -e "  journalctl -u apisellvpn -f   - View Bot API logs"
-echo -e "  cat /etc/peyx-api/px-auth     - View VPN API AUTH_KEY"
-echo -e "  cat /usr/bin/peyx-api/px-auth - View Bot API AUTH_KEY"
+echo -e "  systemctl status api           - Check service status"
+echo -e "  systemctl restart api          - Restart service"
+echo -e "  systemctl stop api             - Stop service"
+echo -e "  journalctl -u api -f           - View logs"
+echo -e "  cat /etc/peyx-api/px-auth      - View AUTH_KEY"
 echo ""
-echo -e "${yellow}🧪 Test API endpoints:${neutral}"
-echo -e "  curl http://localhost:8585/health        - Test VPN API"
-echo -e "  curl http://localhost:5888/health        - Test Bot API"
+echo -e "${yellow}🧪 Test API:${neutral}"
+echo -e "  curl -H 'x-api-key: $AUTH_KEY' http://localhost:8585/api/health"
 echo -e "${purple}════════════════════════════════════════════════════════════${neutral}"
-
-# Clean up install script
-rm -f install-all-api.sh 2>/dev/null
