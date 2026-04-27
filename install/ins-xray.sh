@@ -1,6 +1,6 @@
 #!/bin/bash
 # Xray Mod PX Installer Script
-# Version: 3.0 - Mod PX
+# Version: 3.0 - Auto Fix HAProxy
 # Author: PEYX TUNNEL
 
 # ==================== KONFIGURASI WARNA MODERN ====================
@@ -107,8 +107,6 @@ check_command() {
     command -v "$1" &>/dev/null
 }
 
-# ==================== FUNGSI DOMAIN ====================
-
 get_domain() {
     if [[ -f $DOMAIN_FILE ]]; then
         domain=$(cat $DOMAIN_FILE)
@@ -132,7 +130,7 @@ install_dependencies() {
     run_task "Enabling chrony" "systemctl enable chrony && systemctl restart chrony"
     run_task "Setting timezone" "timedatectl set-timezone Asia/Jakarta"
     run_task "Installing core packages" "apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y"
-    run_task "Installing additional packages" "apt install socat cron bash-completion zip pwgen openssl net-tools jq -y"
+    run_task "Installing additional packages" "apt install socat cron bash-completion zip pwgen openssl net-tools jq haproxy -y"
     
     print_success "Dependencies installed"
 }
@@ -210,7 +208,6 @@ setup_ssl_renew() {
 /etc/init.d/nginx stop
 "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
 /etc/init.d/nginx start
-/etc/init.d/nginx status
 EOF
     
     run_task "Setting ssl_renew permission" "chmod +x /usr/local/bin/ssl_renew.sh"
@@ -250,8 +247,8 @@ generate_xray_config() {
       "tag": "api"
     },
     {
-      "listen": "127.0.0.1",
-      "port": 10001,
+      "listen": "0.0.0.0",
+      "port": 1010,
       "protocol": "vless",
       "settings": {
         "decryption": "none",
@@ -271,8 +268,8 @@ generate_xray_config() {
       "tag": "vless-ws"
     },
     {
-      "listen": "127.0.0.1",
-      "port": 10002,
+      "listen": "0.0.0.0",
+      "port": 1020,
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -292,8 +289,8 @@ generate_xray_config() {
       "tag": "vmess-ws"
     },
     {
-      "listen": "127.0.0.1",
-      "port": 10003,
+      "listen": "0.0.0.0",
+      "port": 1030,
       "protocol": "trojan",
       "settings": {
         "clients": [
@@ -310,110 +307,6 @@ generate_xray_config() {
         }
       },
       "tag": "trojan-ws"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10004,
-      "protocol": "shadowsocks",
-      "settings": {
-        "clients": [
-          {
-            "method": "aes-128-gcm",
-            "password": "$uuid"
-          }
-        ],
-        "network": "tcp,udp"
-      },
-      "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/ss-ws"
-        }
-      },
-      "tag": "shadowsocks-ws"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10005,
-      "protocol": "vless",
-      "settings": {
-        "decryption": "none",
-        "clients": [
-          {
-            "id": "$uuid",
-            "email": "vless1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "vless-grpc"
-        }
-      },
-      "tag": "vless-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10006,
-      "protocol": "vmess",
-      "settings": {
-        "clients": [
-          {
-            "id": "$uuid",
-            "alterId": 0,
-            "email": "vmess1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "vmess-grpc"
-        }
-      },
-      "tag": "vmess-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10007,
-      "protocol": "trojan",
-      "settings": {
-        "clients": [
-          {
-            "password": "$uuid",
-            "email": "trojan1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "trojan-grpc"
-        }
-      },
-      "tag": "trojan-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10008,
-      "protocol": "shadowsocks",
-      "settings": {
-        "clients": [
-          {
-            "method": "aes-128-gcm",
-            "password": "$uuid"
-          }
-        ],
-        "network": "tcp,udp"
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "ss-grpc"
-        }
-      },
-      "tag": "shadowsocks-grpc"
     }
   ],
   "outbounds": [
@@ -470,43 +363,152 @@ EOF
     print_success "Xray configuration generated"
 }
 
+# ==================== HAPROXY CONFIGURATION (AUTO FIX) ====================
+
+configure_haproxy() {
+    print_section_header "🔧 CONFIGURING HAPROXY"
+    
+    # Buat file PEM dari certificate
+    if [ -f /etc/xray/xray.crt ] && [ -f /etc/xray/xray.key ]; then
+        cat /etc/xray/xray.crt /etc/xray/xray.key > /etc/haproxy/hap.pem
+        chmod 644 /etc/haproxy/hap.pem
+        print_success "PEM file created"
+    else
+        print_warning "Certificate not found, creating self-signed"
+        openssl req -x509 -newkey rsa:4096 -keyout /etc/haproxy/hap.key -out /etc/haproxy/hap.crt -days 365 -nodes -subj "/CN=$domain"
+        cat /etc/haproxy/hap.crt /etc/haproxy/hap.key > /etc/haproxy/hap.pem
+        chmod 644 /etc/haproxy/hap.pem
+    fi
+    
+    # Buat konfigurasi HAProxy PX Store
+    cat > /etc/haproxy/haproxy.cfg << 'EOF'
+# CFG LOADBALANCER PX STORE
+global       
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 1d
+    
+    tune.h2.initial-window-size 2147483647
+    tune.ssl.default-dh-param 2048
+
+    pidfile /run/haproxy.pid
+    chroot /var/lib/haproxy
+
+    user haproxy
+    group haproxy
+    daemon
+
+    ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+    ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+    ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11
+
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+
+defaults
+    log global
+    mode tcp
+    option dontlognull
+    timeout connect 60s
+    timeout client 300s
+    timeout server 300s
+
+frontend http_frontend
+    mode tcp
+    bind *:80 tfo
+    bind *:8080 tfo
+    bind *:8880 tfo
+    bind *:2080 tfo
+    bind *:2082 tfo
+    
+    tcp-request inspect-delay 500ms
+    tcp-request content accept if HTTP
+    acl is_websocket hdr(Upgrade) -i websocket
+
+    use_backend ws_backend if is_websocket
+    default_backend dropbear_backend
+
+frontend https_frontend
+    bind *:443 ssl crt /etc/haproxy/hap.pem tfo
+    mode tcp
+    tcp-request inspect-delay 500ms
+    tcp-request content accept if { req.ssl_hello_type 1 }
+
+    acl is_websocket_ssl hdr(Upgrade) -i websocket
+    use_backend ws_backend if is_websocket_ssl
+    default_backend dropbear_backend
+
+backend dropbear_backend
+    mode tcp
+    server dropbear_server 127.0.0.1:58080 check
+
+backend ws_backend
+    mode tcp
+    server ws_server 127.0.0.1:1010 check
+EOF
+
+    # Test konfigurasi
+    if haproxy -c -f /etc/haproxy/haproxy.cfg 2>/dev/null; then
+        print_success "HAProxy configuration valid"
+    else
+        print_warning "Configuration test failed, using minimal config"
+        # Minimal config sebagai fallback
+        cat > /etc/haproxy/haproxy.cfg << EOF
+global
+    daemon
+
+defaults
+    mode tcp
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+
+frontend haproxy_in
+    bind *:443 ssl crt /etc/haproxy/hap.pem
+    mode tcp
+    default_backend xray_out
+
+backend xray_out
+    mode tcp
+    server xray 127.0.0.1:1010 check
+EOF
+    fi
+    
+    # Start HAProxy
+    run_task "Starting HAProxy" "systemctl start haproxy"
+    run_task "Enabling HAProxy" "systemctl enable haproxy"
+    
+    print_success "HAProxy configured"
+}
+
 # ==================== NGINX CONFIGURATION ====================
 
 configure_nginx() {
     print_section_header "🌐 CONFIGURING NGINX"
     
-    # Download konfigurasi nginx dari repo
-    run_task "Downloading nginx config" "wget -q -O /etc/nginx/conf.d/xray.conf ${REPO}install/xray.conf 2>/dev/null || true"
+    # Hentikan Nginx dulu
+    systemctl stop nginx
     
-    # Jika download gagal, buat manual
-    if [ ! -f /etc/nginx/conf.d/xray.conf ]; then
-        cat > /etc/nginx/conf.d/xray.conf << EOF
+    # Buat konfigurasi nginx
+    cat > /etc/nginx/sites-available/xray << EOF
 server {
-    listen 80;
-    server_name $domain;
-    return 301 https://\$server_name\$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
+    listen 127.0.0.1:8080;
     server_name $domain;
     
-    ssl_certificate /etc/xray/xray.crt;
-    ssl_certificate_key /etc/xray/xray.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
     
     location /vmess {
-        proxy_pass http://127.0.0.1:10002;
+        proxy_pass http://127.0.0.1:1020;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
     
     location /vless {
-        proxy_pass http://127.0.0.1:10001;
+        proxy_pass http://127.0.0.1:1010;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -514,7 +516,7 @@ server {
     }
     
     location /trojan {
-        proxy_pass http://127.0.0.1:10003;
+        proxy_pass http://127.0.0.1:1030;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -522,11 +524,13 @@ server {
     }
 }
 EOF
-    fi
+
+    ln -sf /etc/nginx/sites-available/xray /etc/nginx/sites-enabled/
+    rm -f /etc/nginx/sites-enabled/default
     
-    run_task "Setting domain in config" "sed -i \"s/xxx/${domain}/g\" /etc/nginx/conf.d/xray.conf 2>/dev/null || true"
-    run_task "Testing nginx config" "nginx -t"
-    run_task "Restarting nginx" "systemctl restart nginx"
+    # Test dan start nginx
+    nginx -t 2>/dev/null
+    run_task "Starting Nginx" "systemctl start nginx"
     
     print_success "Nginx configured"
 }
@@ -552,8 +556,6 @@ Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000
 LimitNOFILE=1000000
-StandardOutput=journal
-StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
@@ -570,7 +572,6 @@ EOF
     else
         print_error "Xray service failed to start"
         journalctl -u xray --no-pager -n 20
-        exit 1
     fi
 }
 
@@ -592,7 +593,7 @@ echo -e "${BLUE}═════════════════════�
 echo ""
 
 echo -e "${YELLOW}Service Status:${NC}"
-for service in xray nginx; do
+for service in xray nginx haproxy; do
     if systemctl is-active --quiet $service; then
         echo -e "  ${GREEN}✓ $service: Running${NC}"
     else
@@ -602,7 +603,7 @@ done
 
 echo ""
 echo -e "${YELLOW}Port Status:${NC}"
-for port in 80 443 10001 10002 10003; do
+for port in 80 443 1010 1020 1030 8080; do
     if netstat -tlnp 2>/dev/null | grep -q ":$port "; then
         echo -e "  ${GREEN}✓ Port $port: Active${NC}"
     else
@@ -610,14 +611,6 @@ for port in 80 443 10001 10002 10003; do
     fi
 done
 
-echo ""
-echo -e "${YELLOW}User Statistics:${NC}"
-for service in vmess vless trojan; do
-    if [[ -f /etc/peyx/$service.db ]]; then
-        count=$(grep -c "^###" /etc/peyx/$service.db 2>/dev/null || echo "0")
-        echo -e "  ${CYAN}› $service: $count users${NC}"
-    fi
-done
 echo -e "${BLUE}════════════════════════════════════════${NC}"
 EOF
 
@@ -659,7 +652,6 @@ EOF
 cleanup() {
     print_section_header "🧹 CLEANING UP"
     
-    # Hapus file temporary
     rm -f /root/ins-xray.sh 2>/dev/null
     rm -f /root/xray-new.sh 2>/dev/null
     
@@ -675,15 +667,18 @@ show_summary() {
     print_info "Config      : ${MODERN_CYAN}$XRAY_CONFIG${RESET_ALL}"
     print_info "Logs        : ${MODERN_CYAN}$XRAY_LOG${RESET_ALL}"
     print_info "Database    : ${MODERN_CYAN}$PEYX_DIR/${RESET_ALL}"
-    print_info "SSL Cert    : ${MODERN_CYAN}/etc/xray/xray.crt${RESET_ALL}"
     echo ""
     print_section_header "📝 AVAILABLE COMMANDS"
-    print_info "cek-xray              - Check Xray status"
-    print_info "systemctl status xray - Service details"
-    print_info "journalctl -u xray -f - Real-time logs"
+    print_info "cek-xray              - Check all services status"
+    print_info "systemctl status xray - Xray service details"
+    print_info "systemctl status haproxy - HAProxy details"
     echo ""
-    print_section_header "🔗 TEST URL"
-    print_info "https://$domain/status"
+    print_section_header "🔗 SERVICES"
+    print_info "HTTP Proxy   : port 80, 8080, 8880, 2080, 2082"
+    print_info "HTTPS Proxy  : port 443"
+    print_info "XRay VLess WS : port 1010"
+    print_info "XRay VMess WS : port 1020"
+    print_info "XRay Trojan WS: port 1030"
     echo ""
 }
 
@@ -708,6 +703,7 @@ main() {
     generate_xray_config
     configure_nginx
     create_xray_service
+    configure_haproxy
     create_monitoring_script
     create_test_endpoint
     cleanup
@@ -720,6 +716,7 @@ main() {
     
     systemctl is-active --quiet nginx && print_success "Nginx is running" || print_warning "Nginx is not running"
     systemctl is-active --quiet xray && print_success "Xray is running" || print_warning "Xray is not running"
+    systemctl is-active --quiet haproxy && print_success "HAProxy is running" || print_warning "HAProxy is not running"
     
     echo ""
     print_success "Xray Mod PX installation completed successfully!"
@@ -729,5 +726,6 @@ main() {
 # Jalankan main function
 main
 
+# Bersihkan file instalasi
 clear
-rm -r ins-xray.sh
+rm -f ins-xray.sh 2>/dev/null
