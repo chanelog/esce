@@ -245,61 +245,8 @@ else
 fi
 
 # Unduh file konfigurasi HAProxy
-# install haproxy
-echo "=== Install HAProxy ==="
-
-# Cek apakah HAProxy sudah terinstal
-if dpkg -l | grep -q haproxy; then
-    echo "HAProxy sudah terinstal. Melanjutkan ke langkah berikutnya..."
-else
-    echo "HAProxy belum terinstal. Menginstal HAProxy..."
-    apt install haproxy -y
-fi
-
-# Membuat file PEM untuk SSL
-echo "Membuat file PEM untuk SSL..."
-if [ -f /etc/xray/xray.crt ] && [ -f /etc/xray/xray.key ]; then
-    cat /etc/xray/xray.crt /etc/xray/xray.key > /etc/haproxy/hap.pem
-    echo "✓ Menggunakan certificate dari /etc/xray"
-else
-    openssl req -x509 -newkey rsa:4096 -keyout /etc/haproxy/hap.key -out /etc/haproxy/hap.crt -days 365 -nodes -subj "/CN=localhost" 2>/dev/null
-    cat /etc/haproxy/hap.crt /etc/haproxy/hap.key > /etc/haproxy/hap.pem
-    echo "✓ Membuat self-signed certificate baru"
-fi
-chmod 644 /etc/haproxy/hap.pem
-
-# Unduh file konfigurasi HAProxy dari repo
 echo "Mengunduh file konfigurasi HAProxy..."
-wget -q -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg"
-
-# Test konfigurasi
-echo "Menguji konfigurasi HAProxy..."
-if haproxy -c -f /etc/haproxy/haproxy.cfg 2>/dev/null; then
-    echo "✓ Konfigurasi HAProxy valid"
-else
-    echo "⚠ Konfigurasi error, menggunakan konfigurasi minimal..."
-    cat > /etc/haproxy/haproxy.cfg << EOF
-global
-    daemon
-
-defaults
-    mode tcp
-    timeout connect 5000
-    timeout client 50000
-    timeout server 50000
-
-frontend http_in
-    bind *:80
-    default_backend xray_ws
-
-frontend https_in
-    bind *:443 ssl crt /etc/haproxy/hap.pem
-    default_backend xray_ws
-
-backend xray_ws
-    server xray 127.0.0.1:1010 check
-EOF
-fi
+wget -O /etc/haproxy/haproxy.cfg "https://raw.githubusercontent.com/PeyxDev/esce/main/install/haproxy.cfg"
 
 # Reload daemon systemd
 echo "Memuat ulang daemon systemd..."
@@ -307,23 +254,13 @@ systemctl daemon-reload
 
 # Mengelola layanan HAProxy
 echo "Menghentikan layanan HAProxy (jika sedang berjalan)..."
-systemctl stop haproxy 2>/dev/null
+systemctl stop haproxy
 
 echo "Mengaktifkan layanan HAProxy untuk memulai secara otomatis saat boot..."
 systemctl enable haproxy
 
 echo "Memulai layanan HAProxy..."
 systemctl start haproxy
-
-sleep 2
-if systemctl is-active --quiet haproxy; then
-    echo "✓ HAProxy berhasil berjalan"
-    echo "  - Port HTTP: 80, 8080, 8880, 2080, 2082"
-    echo "  - Port HTTPS: 443"
-else
-    echo "⚠ HAProxy gagal berjalan, cek log:"
-    journalctl -u haproxy --no-pager -n 5
-fi
 
 echo "Selesai: HAProxy telah dikonfigurasi dan dijalankan."
 

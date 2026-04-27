@@ -1,6 +1,6 @@
 #!/bin/bash
 # Xray Mod PX Installer Script
-# Version: 3.0 - Mod PX
+# Version: 3.0 - Mod PX (Self-Signed SSL)
 # Author: PEYX TUNNEL
 
 # ==================== KONFIGURASI WARNA MODERN ====================
@@ -183,45 +183,31 @@ install_nginx() {
     fi
 }
 
-# ==================== SSL CERTIFICATE ====================
+# ==================== SSL CERTIFICATE (SELF-SIGNED) ====================
 
 setup_ssl_certificate() {
-    print_section_header "🔐 SETUP SSL CERTIFICATE"
+    print_section_header "🔐 SETUP SSL CERTIFICATE (SELF-SIGNED)"
     
+    # Stop services yang menggunakan port 80/443
     run_task "Stopping nginx" "systemctl stop nginx"
-    run_task "Stopping haproxy" "systemctl stop haproxy 2>/dev/null || true"
     
-    mkdir -p /root/.acme.sh
-    run_task "Downloading acme.sh" "curl -s https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh"
-    run_task "Setting acme.sh permission" "chmod +x /root/.acme.sh/acme.sh"
-    run_task "Upgrading acme.sh" "/root/.acme.sh/acme.sh --upgrade --auto-upgrade"
-    run_task "Setting default CA" "/root/.acme.sh/acme.sh --set-default-ca --server letsencrypt"
-    run_task "Issuing SSL certificate" "/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256"
-    run_task "Installing SSL certificate" "/root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc"
-    
-    print_success "SSL certificate configured"
-}
-
-setup_ssl_renew() {
-    print_section_header "🔄 SETUP SSL RENEW"
-    
-    cat > /usr/local/bin/ssl_renew.sh << 'EOF'
-#!/bin/bash
-/etc/init.d/nginx stop
-"/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
-/etc/init.d/nginx start
-/etc/init.d/nginx status
-EOF
-    
-    run_task "Setting ssl_renew permission" "chmod +x /usr/local/bin/ssl_renew.sh"
-    
-    if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root 2>/dev/null; then
-        (crontab -l 2>/dev/null; echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab -
+    # Backup certificate lama jika ada
+    if [ -f /etc/xray/xray.key ]; then
+        run_task "Backup old certificate" "cp /etc/xray/xray.key /etc/xray/xray.key.bak"
+    fi
+    if [ -f /etc/xray/xray.crt ]; then
+        run_task "Backup old certificate" "cp /etc/xray/xray.crt /etc/xray/xray.crt.bak"
     fi
     
-    run_task "Creating public_html" "mkdir -p /home/vps/public_html"
+    # Generate self-signed certificate dengan OpenSSL
+    print_info "Generating self-signed SSL certificate for $domain"
     
-    print_success "SSL renew configured"
+    run_task "Creating SSL certificate" "openssl req -x509 -newkey rsa:4096 -keyout /etc/xray/xray.key -out /etc/xray/xray.crt -days 365 -nodes -subj '/C=ID/ST=Jawa Barat/L=Sukabumi/O=PeyxDev/CN=$domain' 2>/dev/null"
+    
+    # Set permissions
+    run_task "Setting certificate permissions" "chmod 644 /etc/xray/xray.crt && chmod 640 /etc/xray/xray.key"
+    
+    print_success "SSL certificate generated successfully"
 }
 
 # ==================== XRAY CONFIGURATION ====================
@@ -310,110 +296,6 @@ generate_xray_config() {
         }
       },
       "tag": "trojan-ws"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10004,
-      "protocol": "shadowsocks",
-      "settings": {
-        "clients": [
-          {
-            "method": "aes-128-gcm",
-            "password": "$uuid"
-          }
-        ],
-        "network": "tcp,udp"
-      },
-      "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/ss-ws"
-        }
-      },
-      "tag": "shadowsocks-ws"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10005,
-      "protocol": "vless",
-      "settings": {
-        "decryption": "none",
-        "clients": [
-          {
-            "id": "$uuid",
-            "email": "vless1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "vless-grpc"
-        }
-      },
-      "tag": "vless-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10006,
-      "protocol": "vmess",
-      "settings": {
-        "clients": [
-          {
-            "id": "$uuid",
-            "alterId": 0,
-            "email": "vmess1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "vmess-grpc"
-        }
-      },
-      "tag": "vmess-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10007,
-      "protocol": "trojan",
-      "settings": {
-        "clients": [
-          {
-            "password": "$uuid",
-            "email": "trojan1-grpc"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "trojan-grpc"
-        }
-      },
-      "tag": "trojan-grpc"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10008,
-      "protocol": "shadowsocks",
-      "settings": {
-        "clients": [
-          {
-            "method": "aes-128-gcm",
-            "password": "$uuid"
-          }
-        ],
-        "network": "tcp,udp"
-      },
-      "streamSettings": {
-        "network": "grpc",
-        "grpcSettings": {
-          "serviceName": "ss-grpc"
-        }
-      },
-      "tag": "shadowsocks-grpc"
     }
   ],
   "outbounds": [
@@ -475,12 +357,8 @@ EOF
 configure_nginx() {
     print_section_header "🌐 CONFIGURING NGINX"
     
-    # Download konfigurasi nginx dari repo
-    run_task "Downloading nginx config" "wget -q -O /etc/nginx/conf.d/xray.conf ${REPO}install/xray.conf 2>/dev/null || true"
-    
-    # Jika download gagal, buat manual
-    if [ ! -f /etc/nginx/conf.d/xray.conf ]; then
-        cat > /etc/nginx/conf.d/xray.conf << EOF
+    # Buat konfigurasi nginx manual
+    cat > /etc/nginx/conf.d/xray.conf << EOF
 server {
     listen 80;
     server_name $domain;
@@ -511,6 +389,8 @@ server {
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
     
     location /trojan {
@@ -519,12 +399,17 @@ server {
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+    
+    location /status {
+        return 200 "OK";
+        add_header Content-Type text/plain;
     }
 }
 EOF
-    fi
-    
-    run_task "Setting domain in config" "sed -i \"s/xxx/${domain}/g\" /etc/nginx/conf.d/xray.conf 2>/dev/null || true"
+
     run_task "Testing nginx config" "nginx -t"
     run_task "Restarting nginx" "systemctl restart nginx"
     
@@ -552,8 +437,6 @@ Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000
 LimitNOFILE=1000000
-StandardOutput=journal
-StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
@@ -675,16 +558,19 @@ show_summary() {
     print_info "Config      : ${MODERN_CYAN}$XRAY_CONFIG${RESET_ALL}"
     print_info "Logs        : ${MODERN_CYAN}$XRAY_LOG${RESET_ALL}"
     print_info "Database    : ${MODERN_CYAN}$PEYX_DIR/${RESET_ALL}"
-    print_info "SSL Cert    : ${MODERN_CYAN}/etc/xray/xray.crt${RESET_ALL}"
+    print_info "SSL Cert    : ${MODERN_CYAN}/etc/xray/xray.crt (Self-Signed)${RESET_ALL}"
     echo ""
     print_section_header "📝 AVAILABLE COMMANDS"
     print_info "cek-xray              - Check Xray status"
     print_info "systemctl status xray - Service details"
     print_info "journalctl -u xray -f - Real-time logs"
+    print_info "nano $XRAY_CONFIG    - Edit config manually"
     echo ""
     print_section_header "🔗 TEST URL"
     print_info "https://$domain/status"
     echo ""
+    print_warning "SSL menggunakan Self-Signed Certificate"
+    print_info "Abaikan peringatan 'Not Secure' di browser"
 }
 
 # ==================== MAIN PROGRAM ====================
@@ -704,7 +590,6 @@ main() {
     install_nginx
     install_xray_core
     setup_ssl_certificate
-    setup_ssl_renew
     generate_xray_config
     configure_nginx
     create_xray_service
@@ -729,5 +614,6 @@ main() {
 # Jalankan main function
 main
 
+# Bersihkan file instalasi
 clear
-rm -r ins-xray.sh
+rm -f ins-xray.sh 2>/dev/null
