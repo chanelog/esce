@@ -481,10 +481,6 @@ res10() {
 run_task "Installing API Server" "wget -q ${REPO}install/api-px.sh && chmod +x api-px.sh && bash api-px.sh >/dev/null 2>&1"
 clear
 }
-res11() {
-run_task "Fix HAPROXY" "wget -q ${REPO}install/fixhap.sh && chmod +x fixhap.sh && bash fixhap.sh >/dev/null 2>&1"
-clear
-}
 
 if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
 print_info "Setup nginx For OS: $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
@@ -526,9 +522,6 @@ res9
 print_section_header "API SERVER"
 res10
 
-print_section_header "FIX HAPROXY"
-res11
-
 }
 
 # ==================== FUNCTION SETUP UBUNTU ====================
@@ -559,9 +552,6 @@ res9
 
 print_section_header "API SERVER"
 res10
-
-print_section_header "FIX HAPROXY"
-res11
 
 }
 
