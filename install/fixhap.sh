@@ -142,17 +142,14 @@ run_task "Setting PEM permissions" "chmod 644 /etc/haproxy/hap.pem"
 print_section_header "⚙️ CREATING HAPROXY CONFIG"
 
 cat > /etc/haproxy/haproxy.cfg << 'EOF'
-# CFG LOADBALANCER PX STORE
 global       
     stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
-    stats timeout 30s
+    stats timeout 1d
     
     tune.h2.initial-window-size 2147483647
     tune.ssl.default-dh-param 2048
 
-    pidfile /run/haproxy.pid
     chroot /var/lib/haproxy
-
     user haproxy
     group haproxy
     daemon
@@ -169,16 +166,16 @@ defaults
     mode tcp
     option dontlognull
     timeout connect 60s
-    timeout client 300s
-    timeout server 300s
+    timeout client  300s
+    timeout server  300s
 
 frontend http_frontend
     mode tcp
-    bind *:80
-    bind *:8080
-    bind *:8880
-    bind *:2080
-    bind *:2082
+    bind *:8080 tfo
+    bind *:8880 tfo
+    bind *:2080 tfo
+    bind *:2082 tfo
+    # HAPUS bind *:80 - biarkan Nginx yang handle port 80
     
     tcp-request inspect-delay 500ms
     tcp-request content accept if HTTP
@@ -188,7 +185,9 @@ frontend http_frontend
     default_backend dropbear_backend
 
 frontend https_frontend
-    bind *:443 ssl crt /etc/haproxy/hap.pem
+    bind *:8443 ssl crt /etc/haproxy/hap.pem tfo
+    bind *:2096 ssl crt /etc/haproxy/hap.pem tfo
+    # HAPUS bind *:443 - biarkan Nginx yang handle port 443
     mode tcp
     tcp-request inspect-delay 500ms
     tcp-request content accept if { req.ssl_hello_type 1 }
@@ -199,11 +198,11 @@ frontend https_frontend
 
 backend dropbear_backend
     mode tcp
-    server dropbear_server 127.0.0.1:58080 check inter 3000 rise 2 fall 3
+    server dropbear_server 127.0.0.1:58080 check
 
 backend ws_backend
     mode tcp
-    server ws_server 127.0.0.1:1010 check inter 3000 rise 2 fall 3
+    server ws_server 127.0.0.1:1010 check
 EOF
 
 print_success "HAProxy configuration created"
