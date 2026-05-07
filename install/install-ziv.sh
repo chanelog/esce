@@ -73,6 +73,14 @@ print_value() {
     printf "  ${MODERN_CYAN}${label}:${RESET_ALL} ${MODERN_BOLD}${WHITE}${value}${RESET_ALL}\n"
 }
 
+print_warning() {
+    echo -e "${MODERN_ORANGE}  ⚠${RESET_ALL} ${MODERN_BOLD}$1${RESET_ALL}"
+}
+
+print_error() {
+    echo -e "${MODERN_RED}  ${CROSS_ICON}${RESET_ALL} ${MODERN_BOLD}$1${RESET_ALL}"
+}
+
 # ==================== AMBIL DOMAIN DARI FILE YANG SUDAH ADA ====================
 if [ -f "$DOMAIN_FILE" ]; then
     domain=$(cat "$DOMAIN_FILE" | tr -d '\n\r')
@@ -82,7 +90,7 @@ else
         domain=$(cat /root/domain | tr -d '\n\r')
         print_warning "Domain loaded from /root/domain: $domain"
     else
-        print_error "Domain file not found!."
+        print_error "Domain file not found!"
         exit 1
     fi
 fi
@@ -92,8 +100,15 @@ if [ -f "$API_KEY_FILE" ]; then
     API_KEY=$(cat "$API_KEY_FILE" | tr -d '\n\r')
     print_success "API Key loaded from $API_KEY_FILE"
 else
-    print_error "API Key file not found!."
+    print_error "API Key file not found!"
     exit 1
+fi
+
+# ==================== CEK APAKAH UDP-CUSTOM TERINSTALL ====================
+UDP_CUSTOM_EXISTS=false
+if systemctl list-units --full -all | grep -q "udp-custom.service"; then
+    UDP_CUSTOM_EXISTS=true
+    print_warning "UDP-Custom service detected! Will configure priority rules."
 fi
 
 # ==================== MULAI INSTALL ZIVPN CORE ====================
@@ -107,11 +122,12 @@ run_task "Downloading ZiVPN Core" "wget -q https://github.com/zahidbd2/udp-zivpn
 
 # Create directories
 mkdir -p /etc/zivpn
-# HAPUS: echo "$domain" > /etc/zivpn/domain
 echo "[]" > /etc/zivpn/users.json
 
-# Download config
+# Download config.json dari repo (BAWAAN, TIDAK DIUBAH)
 run_task "Downloading configuration" "wget -q https://raw.githubusercontent.com/PeyxDev/ZiVPN/main/config.json -O /etc/zivpn/config.json"
+
+# Ganti port di config.json
 sed -i "s/:5667/:${ZIVPN_UDP_PORT}/" /etc/zivpn/config.json
 
 # Generate SSL certificate
@@ -143,27 +159,105 @@ EOF
 # Start service
 run_task "Starting ZiVPN Core" "systemctl daemon-reload && systemctl enable zivpn.service && systemctl start zivpn.service"
 
-# Firewall rules
-ufw allow ${ZIVPN_UDP_PORT}/udp &>/dev/null
-ufw allow 6000:19999/udp &>/dev/null
+# ==================== KONFIGURASI IPTABLES DENGAN PRIORITAS ====================
+print_section_header "🔧 Configuring iptables with priority"
 
-# iptables port redirection
 iface=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
-iptables -t nat -A PREROUTING -i "$iface" -p udp --dport 6000:19999 -j DNAT --to-destination :${ZIVPN_UDP_PORT} &>/dev/null
+
+# Backup existing rules
+iptables-save > /root/iptables-backup-$(date +%Y%m%d-%H%M%S).txt 2>/dev/null
+
+# Hapus rule DNAT ZiVPN lama jika ada
+iptables -t nat -D PREROUTING -i "$iface" -p udp --dport 6000:19999 -j DNAT --to-destination :${ZIVPN_UDP_PORT} 2>/dev/null
+
+# Hapus rule UDP-Custom catch-all jika ada (akan ditambahkan kembali)
+if [ "$UDP_CUSTOM_EXISTS" = true ]; then
+    iptables -t nat -D PREROUTING -i "$iface" -p udp --dport 1:65535 -j DNAT --to-destination :36712 2>/dev/null
+fi
+
+# Buat rules dengan urutan prioritas yang benar
+# Rule 1: DNS (port 53)
+iptables -t nat -A PREROUTING -i "$iface" -p udp --dport 53 -j REDIRECT --to-port 5300 2>/dev/null
+
+# Rule 2: ZiVPN untuk range port 6000-19999 (PRIORITAS UTAMA)
+iptables -t nat -A PREROUTING -i "$iface" -p udp --dport 6000:19999 -j DNAT --to-destination :${ZIVPN_UDP_PORT}
+
+# Rule 3: UDP-Custom untuk semua port lainnya (catch-all) - jika ada
+if [ "$UDP_CUSTOM_EXISTS" = true ]; then
+    iptables -t nat -A PREROUTING -i "$iface" -p udp --dport 1:65535 -j DNAT --to-destination :36712
+fi
+
+# Allow INPUT untuk port ZiVPN
+iptables -I INPUT -p udp --dport ${ZIVPN_UDP_PORT} -j ACCEPT 2>/dev/null
+iptables -I INPUT -p udp --dport 6000:19999 -j ACCEPT 2>/dev/null
+
+print_success "iptables rules configured with priority:"
+print_info "  Priority 1: DNS (port 53) → 5300"
+print_info "  Priority 2: ZiVPN (6000-19999) → ${ZIVPN_UDP_PORT}"
+if [ "$UDP_CUSTOM_EXISTS" = true ]; then
+    print_info "  Priority 3: UDP-Custom (1-65535) → 36712 (catch-all)"
+fi
+
+# Firewall rules (ufw)
+if command -v ufw &>/dev/null; then
+    ufw allow ${ZIVPN_UDP_PORT}/udp &>/dev/null
+    ufw allow 6000:19999/udp &>/dev/null
+    print_success "UFW rules added"
+fi
 
 # Save iptables
 apt-get install -y iptables-persistent &>/dev/null
 netfilter-persistent save &>/dev/null 2>&1 || true
+iptables-save > /etc/iptables/rules.v4 2>/dev/null
 
+# ==================== TAMPILKAN KONFIGURASI ====================
+print_section_header "📋 Config.json (Bawaan dari Repo)"
+echo ""
+cat /etc/zivpn/config.json
+echo ""
+
+# ==================== VERIFIKASI RULES ====================
+print_section_header "📋 Verification"
+echo ""
+print_info "iptables NAT rules (priority order):"
+iptables -t nat -L PREROUTING -n -v --line-numbers 2>/dev/null | head -10
+echo ""
+
+# Cek status service
+if systemctl is-active --quiet zivpn; then
+    print_success "ZiVPN Service: RUNNING"
+else
+    print_error "ZiVPN Service: NOT RUNNING"
+fi
+
+if [ "$UDP_CUSTOM_EXISTS" = true ]; then
+    if systemctl is-active --quiet udp-custom; then
+        print_success "UDP-Custom Service: RUNNING"
+    else
+        print_warning "UDP-Custom Service: NOT RUNNING"
+    fi
+fi
+
+# ==================== FINISH ====================
 print_section_header "✅ ZiVPN Core Installed Successfully"
 print_value "Domain" "$domain"
 print_value "UDP Port" "$ZIVPN_UDP_PORT"
 print_value "Config Dir" "/etc/zivpn"
-print_value "API Key" "$API_KEY (from $API_KEY_FILE)"
+print_value "Config File" "/etc/zivpn/config.json (bawaan repo)"
+print_value "Port Range" "6000 - 19999"
 
-print_info ""
-print_info "Commands:"
+echo ""
+print_info "📝 Client Configuration:"
+print_info "  Host: $domain or $(curl -s ifconfig.me)"
+print_info "  Port: 6000-19999 (any port in this range)"
+print_info "  Password: lihat di /etc/zivpn/config.json bagian auth.config"
+echo ""
+print_info "🔧 Commands:"
 print_info "  systemctl start zivpn   - Start ZiVPN"
 print_info "  systemctl stop zivpn    - Stop ZiVPN"
 print_info "  systemctl status zivpn  - Check status"
 print_info "  journalctl -u zivpn -f  - View logs"
+print_info "  cat /etc/zivpn/config.json - Lihat config"
+echo ""
+
+print_success "Installation complete! Client can now connect."
