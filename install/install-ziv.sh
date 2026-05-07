@@ -210,12 +210,6 @@ apt-get install -y iptables-persistent &>/dev/null
 netfilter-persistent save &>/dev/null 2>&1 || true
 iptables-save > /etc/iptables/rules.v4 2>/dev/null
 
-# ==================== TAMPILKAN KONFIGURASI ====================
-print_section_header "📋 Config.json (Bawaan dari Repo)"
-echo ""
-cat /etc/zivpn/config.json
-echo ""
-
 # ==================== VERIFIKASI RULES ====================
 print_section_header "📋 Verification"
 echo ""
@@ -246,11 +240,6 @@ print_value "Config Dir" "/etc/zivpn"
 print_value "Config File" "/etc/zivpn/config.json (bawaan repo)"
 print_value "Port Range" "6000 - 19999"
 
-echo ""
-print_info "📝 Client Configuration:"
-print_info "  Host: $domain or $(curl -s ifconfig.me)"
-print_info "  Port: 6000-19999 (any port in this range)"
-print_info "  Password: lihat di /etc/zivpn/config.json bagian auth.config"
 echo ""
 print_info "🔧 Commands:"
 print_info "  systemctl start zivpn   - Start ZiVPN"
