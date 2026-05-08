@@ -234,11 +234,6 @@ fi
 
 # ==================== FINISH ====================
 print_section_header "✅ ZiVPN Core Installed Successfully"
-print_value "Domain" "$domain"
-print_value "UDP Port" "$ZIVPN_UDP_PORT"
-print_value "Config Dir" "/etc/zivpn"
-print_value "Config File" "/etc/zivpn/config.json (bawaan repo)"
-print_value "Port Range" "6000 - 19999"
 
 echo ""
 print_info "🔧 Commands:"
