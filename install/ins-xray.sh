@@ -109,7 +109,7 @@ mkdir -p /home/vps/public_html
 # set uuid
 uuid=$(cat /proc/sys/kernel/random/uuid)
 # xray config
-cat > /etc/xray/config.json << END
+cat > /usr/local/etc/xray/config.json << END
 {
   "log" : {
     "access": "/var/log/xray/access.log",
