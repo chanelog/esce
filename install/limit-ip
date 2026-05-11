@@ -33,10 +33,10 @@ function vmip(){
 # LIMITVMESSIP
 cek_lock
 sleep 10
-data=( $(ls /etc/kyt/limit/vmess/ip) )
+data=( $(ls /etc/peyx/limit/vmess/ip) )
 for user in "${data[@]}"
 do
-    iplimit=$(cat /etc/kyt/limit/vmess/ip/$user)
+    iplimit=$(cat /etc/peyx/limit/vmess/ip/$user)
     ehh=$(grep -wE "$user" /var/log/xray/access.log | awk '{print $4}' | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq)
     cekcek=$(echo -e "$ehh" | wc -l)
     if [[ $cekcek -gt $iplimit ]]; then
@@ -55,10 +55,10 @@ function vlip(){
 # LIMITVLESSIP
 cek_lock
 sleep 10
-data=( $(ls /etc/kyt/limit/vless/ip) )
+data=( $(ls /etc/peyx/limit/vless/ip) )
 for user in "${data[@]}"
 do
-    iplimit=$(cat /etc/kyt/limit/vless/ip/$user)
+    iplimit=$(cat /etc/peyx/limit/vless/ip/$user)
     ehh=$(grep "$user" /var/log/xray/access.log | awk '{print $4}' | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq)
     cekcek=$(echo -e "$ehh" | wc -l)
     if [[ $cekcek -gt $iplimit ]]; then
@@ -77,10 +77,10 @@ function trip(){
 # LIMITIPTROJAN
 cek_lock
 sleep 10
-data=( $(ls /etc/kyt/limit/trojan/ip) )
+data=( $(ls /etc/peyx/limit/trojan/ip) )
 for user in "${data[@]}"
 do
-    iplimit=$(cat /etc/kyt/limit/trojan/ip/$user)
+    iplimit=$(cat /etc/peyx/limit/trojan/ip/$user)
     ehh=$(grep "$user" /var/log/xray/access.log | awk '{print $4}' | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq)
     cekcek=$(echo -e "$ehh" | wc -l)
     if [[ $cekcek -gt $iplimit ]]; then
