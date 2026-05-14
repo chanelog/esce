@@ -39,7 +39,7 @@ function con() {
   fi
   
   for user in ${data[@]}; do
-    downlink=$(xray api stats --server=127.0.0.1:10000 -name "user>>>${user}>>>traffic>>>downlink" | grep -w "value" | awk '{print $2}' | cut -d '"' -f2)
+    downlink=$(xray api stats --server=0.0.0.0:10000 -name "user>>>${user}>>>traffic>>>downlink" | grep -w "value" | awk '{print $2}' | cut -d '"' -f2)
     
     if [ -e /etc/limit/vmess/${user} ]; then
       plus2=$(cat /etc/limit/vmess/${user})
@@ -47,10 +47,10 @@ function con() {
       if [[ ${plus2} -gt 0 ]]; then
         plus3=$(( ${downlink} + ${plus2} ))
         echo "${plus3}" > /etc/limit/vmess/"${user}"
-        xray api stats --server=127.0.0.1:10000 -name "user>>>${user}>>>traffic>>>downlink" -reset > /dev/null 2>&1
+        xray api stats --server=0.0.0.0:10000 -name "user>>>${user}>>>traffic>>>downlink" -reset > /dev/null 2>&1
       else
         echo "${downlink}" > /etc/limit/vmess/"${user}"
-        xray api stats --server=127.0.0.1:10000 -name "user>>>${user}>>>traffic>>>downlink" -reset > /dev/null 2>&1
+        xray api stats --server=0.0.0.0:10000 -name "user>>>${user}>>>traffic>>>downlink" -reset > /dev/null 2>&1
       fi
     fi
   done

@@ -125,14 +125,14 @@ cat > /etc/xray/config.json << 'EOF'
   },
   "inbounds": [
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": 10000,
       "protocol": "dokodemo-door",
-      "settings": { "address": "127.0.0.1" },
+      "settings": { "address": "0.0.0.0" },
       "tag": "api"
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10001",
       "protocol": "vless",
       "settings": {
@@ -145,7 +145,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10002",
       "protocol": "vmess",
       "settings": {
@@ -157,7 +157,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10003",
       "protocol": "trojan",
       "settings": {
@@ -171,7 +171,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10004",
       "protocol": "shadowsocks",
       "settings": {
@@ -184,7 +184,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10005",
       "protocol": "vless",
       "settings": {
@@ -197,7 +197,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10006",
       "protocol": "vmess",
       "settings": {
@@ -209,7 +209,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10007",
       "protocol": "trojan",
       "settings": {
@@ -222,7 +222,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "127.0.0.1",
+      "listen": "0.0.0.0",
       "port": "10008",
       "protocol": "shadowsocks",
       "settings": {
