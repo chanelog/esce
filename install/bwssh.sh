@@ -7,7 +7,7 @@ LOG_FILE="/tmp/login.db"
 declare -A user_ips
 
 while IFS= read -r line; do
-    # Contoh baris: 2347373 - 'Taryadi' - 0.0.0.0:34834
+    # Contoh baris: 2347373 - 'Taryadi' - 127.0.0.1:34834
     user=$(echo "$line" | awk -F"'" '{print $2}')
     ip=$(echo "$line" | awk -F" - " '{print $3}' | cut -d':' -f1)
     port=$(echo "$line" | awk -F":" '{print $NF}')

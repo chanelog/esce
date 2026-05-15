@@ -125,14 +125,14 @@ cat > /etc/xray/config.json << 'EOF'
   },
   "inbounds": [
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": 10000,
       "protocol": "dokodemo-door",
-      "settings": { "address": "0.0.0.0" },
+      "settings": { "address": "127.0.0.1" },
       "tag": "api"
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10001",
       "protocol": "vless",
       "settings": {
@@ -145,7 +145,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10002",
       "protocol": "vmess",
       "settings": {
@@ -157,7 +157,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10003",
       "protocol": "trojan",
       "settings": {
@@ -171,7 +171,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10004",
       "protocol": "shadowsocks",
       "settings": {
@@ -184,7 +184,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10005",
       "protocol": "vless",
       "settings": {
@@ -197,7 +197,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10006",
       "protocol": "vmess",
       "settings": {
@@ -209,7 +209,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10007",
       "protocol": "trojan",
       "settings": {
@@ -222,7 +222,7 @@ cat > /etc/xray/config.json << 'EOF'
       }
     },
     {
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "port": "10008",
       "protocol": "shadowsocks",
       "settings": {
@@ -243,7 +243,7 @@ cat > /etc/xray/config.json << 'EOF'
     "rules": [
       {
         "type": "field",
-        "ip": ["0.0.0.0/8", "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24", "192.168.0.0/16", "198.18.0.0/15", "198.51.100.0/24", "203.0.113.0/24", "::1/128", "fc00::/7", "fe80::/10"],
+        "ip": ["127.0.0.1/8", "1127.0.0.1/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24", "192.168.0.0/16", "198.18.0.0/15", "198.51.100.0/24", "203.0.113.0/24", "::1/128", "fc00::/7", "fe80::/10"],
         "outboundTag": "blocked"
       },
       { "inboundTag": ["api"], "outboundTag": "api", "type": "field" },
