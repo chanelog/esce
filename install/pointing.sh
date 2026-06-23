@@ -122,6 +122,4 @@ main() {
 }
 
 # Eksekusi fungsi utama
-main
-wget https://raw.githubusercontent.com/PeyxDev/esce/main/install/wild;chmod +x wild;bash wild
-rm -rf wild
+main "$@"
