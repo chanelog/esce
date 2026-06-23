@@ -10,11 +10,15 @@ prepare_directories() {
   clear
 }
 
-# Generate subdomain random
+# Generate subdomain dari input user atau random jika tidak ada
 generate_random_subdomains() {
-  sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
+  DOMAIN="pxstore.web.id"
+  if [[ -n "$1" ]]; then
+    sub="$1"
+  else
+    sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
+  fi
   subsl=$(</dev/urandom tr -dc a-z0-9 | head -c5)
-  DOMAIN="peyx.site"
   SUB_DOMAIN="${sub}.${DOMAIN}"
   NS_DOMAIN="${subsl}.ns.${DOMAIN}"
 }
@@ -94,7 +98,7 @@ main() {
   CF_KEY="15d4ff00cf9ea80e2a923339181fcda599994"
 
   prepare_directories
-  generate_random_subdomains
+  generate_random_subdomains "$1"
   get_public_ip
   get_cloudflare_zone_id
 
