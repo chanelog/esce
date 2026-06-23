@@ -13,7 +13,9 @@ prepare_directories() {
 # Generate subdomain dari input user atau random jika tidak ada
 generate_random_subdomains() {
   DOMAIN="pxstore.web.id"
-  if [[ -f /root/subdomainx ]]; then
+  if [[ -f /etc/xray/subdomain ]]; then
+    sub=$(cat /etc/xray/subdomain)
+  elif [[ -f /root/subdomainx ]]; then
     sub=$(cat /root/subdomainx)
   elif [[ -n "$1" ]]; then
     sub="$1"
