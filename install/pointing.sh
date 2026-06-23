@@ -20,9 +20,8 @@ generate_random_subdomains() {
   else
     sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
   fi
-  subsl=$(</dev/urandom tr -dc a-z0-9 | head -c5)
   SUB_DOMAIN="${sub}.${DOMAIN}"
-  NS_DOMAIN="${subsl}.ns.${DOMAIN}"
+  NS_DOMAIN="${sub}.ns.${DOMAIN}"
 }
 
 # Ambil IP publik
