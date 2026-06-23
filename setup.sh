@@ -190,10 +190,6 @@ git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps2
 cd
 rm -rf /root/izinvps2
 echo "   ✅ Izin sukses"
-
-echo ""
-
-read -p "   Tekan Enter untuk melanjutkan..."
 clear
 }
 
