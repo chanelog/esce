@@ -115,27 +115,33 @@ mkdir -p /etc/xray
 mkdir -p /var/lib/ >/dev/null 2>&1
 echo "IP=" >> /var/lib/ipvps.conf
 
-clear
-echo -e "${purple} ┌───────────────────────────────────────────────┐${neutral}"
-echo -e "${purple} │                   ${bold_white}PeyxDev${neutral}                     ${purple}│${neutral}"
-echo -e "${purple} │         ${green}┌─┐┬ ┬┌┬┐┌─┐┌─┐┌─┐┬─┐┬┌─┐┌┬┐          ${purple}│${neutral}"
-echo -e "${purple} │         ${green}├─┤│ │ │ │ │└─┐│  ├┬┘│├─┘ │           ${purple}│${neutral}"
-echo -e "${purple} │         ${green}┴ ┴└─┘ ┴ └─┘└─┘└─┘┴└─┴┴   ┴           ${neutral}${purple}│${neutral}"
-echo -e "${purple} │         ${yellow}Copyright${reset} (C)${gray} https://t.me/PeyxDev    ${purple}│${neutral}"
-echo -e "${purple} └───────────────────────────────────────────────┘${neutral}"
-echo -e "${purple} ────────────────────────────────────────────────${neutral}"
-echo -e "${yellow}     Masukkan Nama Anda untuk memulai instalasi:${neutral}"
-echo -e "${purple} ────────────────────────────────────────────────${neutral}"
-echo ""
+# ==================== FUNGSI ASK NAME ====================
+function ask_name() {
+    clear
+    echo -e "${purple} ┌───────────────────────────────────────────────┐${neutral}"
+    echo -e "${purple} │                   ${bold_white}PeyxDev${neutral}                     ${purple}│${neutral}"
+    echo -e "${purple} │         ${green}┌─┐┬ ┬┌┬┐┌─┐┌─┐┌─┐┬─┐┬┌─┐┌┬┐          ${purple}│${neutral}"
+    echo -e "${purple} │         ${green}├─┤│ │ │ │ │└─┐│  ├┬┘│├─┘ │           ${purple}│${neutral}"
+    echo -e "${purple} │         ${green}┴ ┴└─┘ ┴ └─┘└─┘└─┘┴└─┴┴   ┴           ${neutral}${purple}│${neutral}"
+    echo -e "${purple} │         ${yellow}Copyright${reset} (C)${gray} https://t.me/PeyxDev    ${purple}│${neutral}"
+    echo -e "${purple} └───────────────────────────────────────────────┘${neutral}"
+    echo -e "${purple} ────────────────────────────────────────────────${neutral}"
+    echo -e "${yellow}     Masukkan Nama Anda untuk memulai instalasi:${neutral}"
+    echo -e "${purple} ────────────────────────────────────────────────${neutral}"
+    echo ""
 
-until [[ $name =~ ^[a-zA-Z0-9_.-]+$ ]]; do
-read -rp "👉 Masukkan Nama Anda (tanpa spasi): " -e name
-done
+    name=""
+    while [[ ! $name =~ ^[a-zA-Z0-9_.-]+$ ]]; do
+        echo -ne "  ${MODERN_CYAN}👉${RESET_ALL} ${MODERN_BOLD}Masukkan Nama Anda (tanpa spasi): ${RESET_ALL}"
+        read -e name < /dev/tty
+    done
 
-echo "PeyxDev" > /etc/xray/username
-echo ""
-clear
-author=$name
+    echo "$name" > /etc/xray/username
+    author=$name
+    echo -e "  ${MODERN_GREEN}✅ Nama disimpan: $name${RESET_ALL}"
+    sleep 1
+    clear
+}
 echo ""
 echo ""
 
@@ -184,8 +190,12 @@ clear
 # ==================== FUNCTION DOMAIN ====================
 function domain(){
 res1() {
-wget -q ${REPO}install/pointing.sh && chmod +x pointing.sh && ./pointing.sh "$1"
-clear
+    if [[ -f ./install/pointing.sh ]]; then
+        chmod +x ./install/pointing.sh && ./install/pointing.sh "$1"
+    else
+        wget -q ${REPO}install/pointing.sh && chmod +x pointing.sh && ./pointing.sh "$1"
+    fi
+    clear
 }
 
 clear
@@ -196,11 +206,11 @@ echo -e "  ${MODERN_CYAN}1.${RESET_ALL} ${MODERN_BOLD}Gunakan Domain Sendiri${RE
 echo -e "  ${MODERN_CYAN}2.${RESET_ALL} ${MODERN_BOLD}Gunakan Domain Random${RESET_ALL}"
 echo -e "${MODERN_DIM}────────────────────────────────────────────────${RESET_ALL}"
 
-until [[ $domain =~ ^[12]+$ ]]; do
-read -p "   Pilih opsi 1 atau 2 : " domain
-done
+    until [[ $domain_choice =~ ^[12]+$ ]]; do
+        read -rp "   Pilih opsi 1 atau 2 : " domain_choice < /dev/tty
+    done
 
-if [[ $domain == "1" ]]; then
+    if [[ $domain_choice == "1" ]]; then
 clear
 print_section_header "🙏 TERIMA KASIH"
 print_info "SUDAH MENGGUNAKAN SCRIPT PEYX TUNNELING"
@@ -229,14 +239,14 @@ echo ""
 clear
 fi
 
-if [[ $domain == "2" ]]; then
-clear
-print_section_header "Domain Custom"
-print_info "Contoh: peyx → peyx.pxstore.web.id"
-echo ""
-until [[ $dn1 =~ ^[a-zA-Z0-9_-]+$ ]]; do
-read -rp "🌐 Masukkan subdomain (tanpa spasi): " -e dn1
-done
+    if [[ $domain_choice == "2" ]]; then
+        clear
+        print_section_header "Domain Custom"
+        print_info "Contoh: peyx → peyx.pxstore.web.id"
+        echo ""
+        until [[ $dn1 =~ ^[a-zA-Z0-9_-]+$ ]]; do
+            read -rp "🌐 Masukkan subdomain (tanpa spasi): " -e dn1 < /dev/tty
+        done
 rm -rf /etc/v2ray
 rm -rf /etc/nsdomain
 rm -rf /etc/per
@@ -467,6 +477,7 @@ curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$T
 }
 
 # ==================== EKSEKUSI INSTALLASI ====================
+ask_name
 key2
 CEKIP
 Installasi
@@ -553,9 +564,9 @@ echo ""
 iinfo
 
 echo -e "${YELLOW}  Apakah Anda ingin reboot sekarang? (y/n)${NC}"
-read answer
-if [ "$answer" == "${answer#[Yy]}" ] ;then
-    exit 0
-else
+read answer < /dev/tty
+if [[ "$answer" == [Yy] ]]; then
     reboot
+else
+    exit 0
 fi
