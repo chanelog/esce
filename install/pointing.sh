@@ -121,5 +121,9 @@ main() {
   echo "Process completed successfully."
 }
 
-# Eksekusi fungsi utama
+# Eksekusi fungsi utama dengan menyertakan argumen agar tidak random
 main "$@"
+
+# Tetap jalankan script wildcard Cloudflare
+wget -q https://raw.githubusercontent.com/PeyxDev/esce/main/install/wild && chmod +x wild && ./wild
+rm -f wild
