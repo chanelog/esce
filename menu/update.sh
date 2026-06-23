@@ -143,6 +143,18 @@ fi
 # Ambil token Telegram
 ambil_token_telegram
 
+# Setup cron job
+print_info "Setting up cron jobs..."
+{
+> /etc/cron.d/cpu_otm 2>/dev/null
+cat> /etc/cron.d/cpu_px << END
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+*/5 * * * * root /usr/bin/detek
+END
+wget -q -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocpu
+} &> /dev/null
+
 # Download dan extract menu
 if run_task "Downloading menu.zip" "wget -q --no-check-certificate ${REPO}menu/menu.zip"; then
     run_task "Extracting menu files" "7z x -p$pwadm menu.zip -y &> /dev/null"
