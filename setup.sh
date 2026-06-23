@@ -334,14 +334,10 @@ wget -q ${REPO}menu/update.sh && chmod +x update.sh && ./update.sh
 clear
 }
 res8() {
-wget -q ${REPO}slowdns/installsl.sh && chmod +x installsl.sh && bash installsl.sh
-clear
-}
-res9() {
 wget -q ${REPO}install/udp-custom.sh && chmod +x udp-custom.sh && bash udp-custom.sh
 clear
 }
-res10() {
+res9() {
 wget -q ${REPO}install/api-px.sh && chmod +x api-px.sh && bash api-px.sh
 clear
 }
@@ -377,14 +373,11 @@ res6
 print_section_header "EXTRA MENU"
 res7
 
-print_section_header "SLOWDNS SYSTEM"
+print_section_header "UDP CUSTOM"
 res8
 
-print_section_header "UDP CUSTOM"
-res9
-
 print_section_header "API SERVER"
-res10
+res9
 }
 
 # ==================== FUNCTION SETUP UBUNTU ====================
@@ -407,14 +400,11 @@ res6
 print_section_header "EXTRA MENU"
 res7
 
-print_section_header "SLOWDNS SYSTEM"
+print_section_header "UDP CUSTOM"
 res8
 
-print_section_header "UDP CUSTOM"
-res9
-
 print_section_header "API SERVER"
-res10
+res9
 }
 
 # ==================== FUNCTION NOTIF TELEGRAM ====================
