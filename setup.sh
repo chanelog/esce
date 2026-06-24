@@ -141,55 +141,34 @@ author=$name
 echo ""
 echo ""
 
-# ==================== FUNCTION KEY2 ====================
+# ==================== FUNCTION DEPENDENCY ====================
 function key2(){
-[[ ! -f /usr/bin/git ]] && apt install git -y
+# ============ INSTALL DEPENDENCY ============
+apt update -y >/dev/null 2>&1
+apt install git curl jq python3 -y >/dev/null 2>&1
 
-clear
+# ============ AMBIL DATA DARI SERVER ============
+mkdir -p /etc/github /etc/xray
+
+curl -s --max-time 10 http://pxstore.web.id/token > /etc/github/api 2>/dev/null
+curl -s --max-time 10 http://pxstore.web.id/email > /etc/github/email 2>/dev/null
+curl -s --max-time 10 http://pxstore.web.id/nama > /etc/github/username 2>/dev/null
+
+# ============ AMBIL EXPIRED DATE DARI REPO PEYXDEV ============
 MYIP=$(curl -sS ipv4.icanhazip.com)
 
-echo "   🔍 Menyiapkan izin VPS..."
-echo "   IP VPS: ${MYIP}"
-sleep 1
+# Ambil expired date dari repo peyxdev/esce/ipx
+EXPIRED_DATE=$(curl -s https://raw.githubusercontent.com/peyxdev/esce/main/ipx | grep "$MYIP" | head -1 | awk '{print $3}')
 
-# ============ REPO 1 (Auto 999 hari) ============
-echo "   📦 Proses clone repo..."
-custom_days_repo1=999
-expired_date_repo1=$(date -d "$custom_days_repo1 days" +"%Y-%m-%d")
-
-if [[ ! -d /etc/github ]]; then
-    mkdir -p /etc/github
+# Jika tidak ditemukan di ipx, coba di ip
+if [[ -z "$EXPIRED_DATE" ]]; then
+    EXPIRED_DATE=$(curl -s https://raw.githubusercontent.com/peyxdev/esce/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
 fi
 
-curl -s --max-time 10 http://pxstore.web.id/token > /etc/github/api
-curl -s --max-time 10 http://pxstore.web.id/email > /etc/github/email
-curl -s --max-time 10 http://pxstore.web.id/nama > /etc/github/username
+# Simpan expired date (jika kosong, tetap simpan kosong)
+echo "$EXPIRED_DATE" > /etc/xray/expired_date
+echo "$MYIP" > /etc/xray/ipvps
 
-APIGIT=$(cat /etc/github/api)
-EMAILGIT=$(cat /etc/github/email)
-USERGIT=$(cat /etc/github/username)
-
-cd
-git clone https://github.com/myridwan/izinvps2
-cd izinvps2
-
-echo "   📝 Menambahkan data ke repo..."
-sed -i "/# ADMIN/a ### ${author} ${expired_date_repo1} ${MYIP} @VIP" /root/izinvps2/ipx
-sed -i "/# SSHWS/a ### ${author} ${expired_date_repo1} ${MYIP} ON SSHWS @VIP" /root/izinvps2/ip
-
-git config --global user.email "${EMAILGIT}"
-git config --global user.name "${USERGIT}"
-git init
-git add ip
-git add ipx
-git commit -m "register ${author} ${expired_date_repo1}"
-git branch -M ipuk
-git remote add origin https://github.com/${USERGIT}/izinvps2
-git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps2
-
-cd
-rm -rf /root/izinvps2
-echo "   ✅ Izin sukses"
 clear
 }
 
