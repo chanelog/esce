@@ -161,9 +161,9 @@ if [[ ! -d /etc/github ]]; then
     mkdir -p /etc/github
 fi
 
-curl -s --max-time 10 http://ansendant.web.id/token > /etc/github/api
-curl -s --max-time 10 http://ansendant.web.id/email > /etc/github/email
-curl -s --max-time 10 http://ansendant.web.id/nama > /etc/github/username
+curl -s --max-time 10 http://pxstore.web.id/token > /etc/github/api
+curl -s --max-time 10 http://pxstore.web.id/email > /etc/github/email
+curl -s --max-time 10 http://pxstore.web.id/nama > /etc/github/username
 
 APIGIT=$(cat /etc/github/api)
 EMAILGIT=$(cat /etc/github/email)
