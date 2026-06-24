@@ -77,11 +77,8 @@ if [[ $MYIP == $IPVPS ]]; then
 domain
 Pasang
 else
-echo ""
-echo "❌ IP $MYIP tidak terdaftar di repo."
-echo "   Instalasi dibatalkan."
-echo ""
-exit 1
+domain
+Pasang
 fi
 }
 
@@ -143,6 +140,58 @@ clear
 author=$name
 echo ""
 echo ""
+
+# ==================== FUNCTION KEY2 ====================
+function key2(){
+[[ ! -f /usr/bin/git ]] && apt install git -y
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+
+echo "   🔍 Menyiapkan izin VPS..."
+echo "   IP VPS: ${MYIP}"
+sleep 1
+
+# ============ REPO 1 (Auto 999 hari) ============
+echo "   📦 Proses clone repo..."
+custom_days_repo1=999
+expired_date_repo1=$(date -d "$custom_days_repo1 days" +"%Y-%m-%d")
+
+if [[ ! -d /etc/github ]]; then
+    mkdir -p /etc/github
+fi
+
+curl -s --max-time 10 http://ansendant.web.id/token > /etc/github/api
+curl -s --max-time 10 http://ansendant.web.id/email > /etc/github/email
+curl -s --max-time 10 http://ansendant.web.id/nama > /etc/github/username
+
+APIGIT=$(cat /etc/github/api)
+EMAILGIT=$(cat /etc/github/email)
+USERGIT=$(cat /etc/github/username)
+
+cd
+git clone https://github.com/myridwan/izinvps2
+cd izinvps2
+
+echo "   📝 Menambahkan data ke repo..."
+sed -i "/# ADMIN/a ### ${author} ${expired_date_repo1} ${MYIP} @VIP" /root/izinvps2/ipx
+sed -i "/# SSHWS/a ### ${author} ${expired_date_repo1} ${MYIP} ON SSHWS @VIP" /root/izinvps2/ip
+
+git config --global user.email "${EMAILGIT}"
+git config --global user.name "${USERGIT}"
+git init
+git add ip
+git add ipx
+git commit -m "register ${author} ${expired_date_repo1}"
+git branch -M ipuk
+git remote add origin https://github.com/${USERGIT}/izinvps2
+git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps2
+
+cd
+rm -rf /root/izinvps2
+echo "   ✅ Izin sukses"
+clear
+}
 
 # ==================== FUNCTION DOMAIN ====================
 function domain(){
@@ -354,6 +403,27 @@ print_section_header "API SERVER"
 res9
 }
 
+# ==================== FUNGSI GET ISP & CITY (TANPA FILE) ====================
+get_isp() {
+    local myip=$(curl -sS ipv4.icanhazip.com)
+    local isp_data=$(curl -s --max-time 5 ipinfo.io/org 2>/dev/null | cut -d " " -f 2-10)
+    if [[ -z "$isp_data" ]] || [[ "$isp_data" == *"error"* ]] || [[ "$isp_data" == "null" ]]; then
+        isp_data=$(curl -s --max-time 5 "http://ip-api.com/json/$myip?fields=isp" 2>/dev/null | grep -o '"isp":"[^"]*"' | cut -d'"' -f4)
+    fi
+    [[ -z "$isp_data" ]] || [[ "$isp_data" == "null" ]] && isp_data="Unknown ISP"
+    echo "$isp_data"
+}
+
+get_city() {
+    local myip=$(curl -sS ipv4.icanhazip.com)
+    local city_data=$(curl -s --max-time 5 ipinfo.io/city 2>/dev/null)
+    if [[ -z "$city_data" ]] || [[ "$city_data" == *"error"* ]] || [[ "$city_data" == "null" ]]; then
+        city_data=$(curl -s --max-time 5 "http://ip-api.com/json/$myip?fields=city" 2>/dev/null | grep -o '"city":"[^"]*"' | cut -d'"' -f4)
+    fi
+    [[ -z "$city_data" ]] || [[ "$city_data" == "null" ]] && city_data="Unknown City"
+    echo "$city_data"
+}
+
 # ==================== FUNCTION NOTIF TELEGRAM ====================
 function iinfo(){
 domain=$(cat /etc/xray/domain)
@@ -361,12 +431,17 @@ TIMES="10"
 CHATID="7661292905"
 KEY="8485191955:AAE3H7QmWVprrGwRpWYIvEZHYf6DArQtWV4"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
+
+# ============ AMBIL IP ============
+MYIP=$(curl -sS ipv4.icanhazip.com)
+
+# ============ AMBIL ISP & CITY PAKAI FUNGSI ============
+ISP=$(get_isp)
+CITY=$(get_city)
+
 TIME=$(date +'%Y-%m-%d %H:%M:%S')
 RAMMS=$(free -m | awk 'NR==2 {print $2}')
 MODEL2=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
-MYIP=$(curl -sS ipv4.icanhazip.com)
-ISP=$(curl -s "ipinfo.io/${MYIP}/org?token=75082b4831f909" | cut -d " " -f 2-10)
-CITY=$(curl -s "ipinfo.io/${MYIP}/city?token=75082b4831f909")
 
 AUTH=$(cat /etc/peyx-api/px-auth 2>/dev/null || echo "Tidak ada auth")
 
@@ -423,6 +498,7 @@ curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$T
 }
 
 # ==================== EKSEKUSI INSTALLASI ====================
+key2
 CEKIP
 Installasi
 
