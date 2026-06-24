@@ -77,8 +77,11 @@ if [[ $MYIP == $IPVPS ]]; then
 domain
 Pasang
 else
-domain
-Pasang
+echo ""
+echo "❌ IP $MYIP tidak terdaftar di repo."
+echo "   Instalasi dibatalkan."
+echo ""
+exit 1
 fi
 }
 
