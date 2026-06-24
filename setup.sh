@@ -361,12 +361,12 @@ TIMES="10"
 CHATID="7661292905"
 KEY="8485191955:AAE3H7QmWVprrGwRpWYIvEZHYf6DArQtWV4"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
-ISP=$(cat /etc/xray/isp)
-CITY=$(cat /etc/xray/city)
 TIME=$(date +'%Y-%m-%d %H:%M:%S')
 RAMMS=$(free -m | awk 'NR==2 {print $2}')
 MODEL2=$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')
 MYIP=$(curl -sS ipv4.icanhazip.com)
+ISP=$(curl -s "ipinfo.io/${MYIP}/org?token=75082b4831f909" | cut -d " " -f 2-10)
+CITY=$(curl -s "ipinfo.io/${MYIP}/city?token=75082b4831f909")
 
 AUTH=$(cat /etc/peyx-api/px-auth 2>/dev/null || echo "Tidak ada auth")
 
