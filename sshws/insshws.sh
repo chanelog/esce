@@ -11,7 +11,7 @@ else
     # Jika file ada, cek apakah isinya kosong
     if [ ! -s "$file_path" ]; then
         # Jika file ada tetapi kosong, isi dengan dua baris
-        echo -e "PXSTORE SERVER CONNECTED\nGREEN" | sudo tee "$file_path" > /dev/null
+        echo -e "PX SERVER CONNECTED\nGREEN" | sudo tee "$file_path" > /dev/null
         echo "File '$file_path' kosong dan telah diisi."
     else
         # Jika file ada dan berisi data, tidak lakukan apapun
@@ -37,7 +37,7 @@ User=root
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 NoNewPrivileges=true
-ExecStart=/usr/local/bin/ws
+ExecStart=/usr/local/bin/ws 10015
 Restart=on-failure
 
 [Install]
