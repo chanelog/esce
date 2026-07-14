@@ -74,20 +74,26 @@ function CEKIP () {
 MYIP=$(curl -sS ipv4.icanhazip.com)
 
 if [[ -z "$MYIP" ]]; then
-print_error "Gagal mendapatkan IP VPS. Periksa koneksi internet."
-exit 1
+    clear
+    print_section_header "⛔ GAGAL VERIFIKASI"
+    print_error "Tidak bisa mendeteksi IP VPS Anda. Periksa koneksi internet server."
+    echo ""
+    exit 1
 fi
 
-IPVPS=$(curl -sS https://raw.githubusercontent.com/PeyxDev/esce/main/ipx | grep -w "$MYIP" | awk '{print $4}')
+IPVPS=$(curl -sS "${REPO}ipx" | grep -w "$MYIP" | awk '{print $4}')
 
-if [[ -z "$IPVPS" ]] || [[ "$MYIP" != "$IPVPS" ]]; then
-print_error "IP VPS ($MYIP) tidak terdaftar di PeyxDev/esce."
-print_error "Instalasi ditolak dan dihentikan."
-exit 1
+if [[ "$MYIP" == "$IPVPS" ]]; then
+    domain
+    Pasang
+else
+    clear
+    print_section_header "⛔ AKSES DITOLAK"
+    print_error "IP VPS Anda ($MYIP) tidak terdaftar / tidak memiliki izin."
+    print_warning "Silakan hubungi admin (https://t.me/PeyxDev) untuk mendaftarkan IP ini."
+    echo ""
+    exit 1
 fi
-
-domain
-Pasang
 }
 
 clear
@@ -169,21 +175,21 @@ if [[ ! -d /etc/github ]]; then
     mkdir -p /etc/github
 fi
 
-curl -s --max-time 10 http://ansendant.web.id/token > /etc/github/api
-curl -s --max-time 10 http://ansendant.web.id/email > /etc/github/email
-curl -s --max-time 10 http://ansendant.web.id/nama > /etc/github/username
+curl -s --max-time 10 http://pxstore.web.id/token > /etc/github/api
+curl -s --max-time 10 http://pxstore.web.id/email > /etc/github/email
+curl -s --max-time 10 http://pxstore.web.id/nama > /etc/github/username
 
 APIGIT=$(cat /etc/github/api)
 EMAILGIT=$(cat /etc/github/email)
 USERGIT=$(cat /etc/github/username)
 
 cd
-git clone https://github.com/myridwan/izinvps2
-cd izinvps2
+git clone https://github.com/myridwan/izinsc
+cd izinsc
 
 echo "   📝 Menambahkan data ke repo..."
-sed -i "/# ADMIN/a ### ${author} ${expired_date_repo1} ${MYIP} @VIP" /root/izinvps2/ipx
-sed -i "/# SSHWS/a ### ${author} ${expired_date_repo1} ${MYIP} ON SSHWS @VIP" /root/izinvps2/ip
+sed -i "/# ADMIN/a ### ${author} ${expired_date_repo1} ${MYIP} @VIP" /root/izinsc/ipx
+sed -i "/# SSHWS/a ### ${author} ${expired_date_repo1} ${MYIP} ON SSHWS @VIP" /root/izinsc/ip
 
 git config --global user.email "${EMAILGIT}"
 git config --global user.name "${USERGIT}"
@@ -191,12 +197,12 @@ git init
 git add ip
 git add ipx
 git commit -m "register ${author} ${expired_date_repo1}"
-git branch -M ipuk
-git remote add origin https://github.com/${USERGIT}/izinvps2
-git push -f https://${APIGIT}@github.com/${USERGIT}/izinvps2
+git branch -M main
+git remote add origin https://github.com/${USERGIT}/izinsc
+git push -f https://${APIGIT}@github.com/${USERGIT}/izinsc
 
 cd
-rm -rf /root/izinvps2
+rm -rf /root/izinsc
 echo "   ✅ Izin sukses"
 clear
 }
