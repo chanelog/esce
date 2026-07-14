@@ -541,10 +541,9 @@ sysctl -p >/dev/null 2>&1
 # Konfigurasi resolv.conf
 sudo systemctl disable systemd-resolved 2>/dev/null
 sudo systemctl stop systemd-resolved 2>/dev/null
-sudo chattr -i /etc/resolv.conf 2>/dev/null
-sudo rm -f /etc/resolv.conf 2>/dev/null
-echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" | sudo tee /etc/resolv.conf >/dev/null
-sudo chattr +i /etc/resolv.conf 2>/dev/null
+sudo chattr -i /etc/resolv.conf
+sudo rm -f /etc/resolv.conf
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" | sudo tee /etc/resolv.conf
 sudo systemctl start systemd-resolved 2>/dev/null
 sudo systemctl enable systemd-resolved 2>/dev/null
 
