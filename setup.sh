@@ -388,9 +388,9 @@ AUTH=$(cat /etc/peyx-api/px-auth 2>/dev/null || echo "Tidak ada auth")
 if [[ -f /etc/xray/expired_date ]]; then
 IZIN=$(cat /etc/xray/expired_date)
 else
-IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/xray/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
+IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/esce/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
 if [[ -z "$IZIN" ]]; then
-IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/xray/main/ipx | grep "$MYIP" | head -1 | awk '{print $3}')
+IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/esce/main/ipx | grep "$MYIP" | head -1 | awk '{print $3}')
 fi
 if [[ -z "$IZIN" ]]; then
 IZIN=$(curl -s https://raw.githubusercontent.com/myridwan/izinvps2/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
