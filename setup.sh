@@ -84,7 +84,7 @@ if [[ "$MYIP" != "$IPVPS" ]]; then
 clear
 print_section_header "⛔ AKSES DITOLAK"
 print_error "IP VPS Anda ($MYIP) tidak terdaftar / tidak memiliki izin."
-print_warning "Silakan hubungi admin (https://t.me/PeyxDev) untuk mendaftarkan IP ini."
+print_warning "Silakan hubungi admin (https://t.me/DarkZiv) untuk mendaftarkan IP ini."
 echo ""
 exit 1
 fi
