@@ -1,6 +1,6 @@
 # ============================================================
 # HASIL DEOBFUSKASI (referensi) - setup__1_.sh
-# Script asli: installer autoscript SSH/VPN/Xray "PeyxDev"
+# Script asli: installer autoscript SSH/VPN/Xray "xray"
 #
 # CATATAN KEAMANAN (baca sebelum menjalankan apapun di bawah ini):
 # - Fungsi CEKIP mewajibkan verifikasi IP ke server milik pembuat script
