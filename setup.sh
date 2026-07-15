@@ -123,7 +123,7 @@ echo -e "${purple} │                   ${bold_white}PeyxDev${neutral}         
 echo -e "${purple} │         ${green}┌─┐┬ ┬┌┬┐┌─┐┌─┐┌─┐┬─┐┬┌─┐┌┬┐          ${purple}│${neutral}"
 echo -e "${purple} │         ${green}├─┤│ │ │ │ │└─┐│  ├┬┘│├─┘ │           ${purple}│${neutral}"
 echo -e "${purple} │         ${green}┴ ┴└─┘ ┴ └─┘└─┘└─┘┴└─┴┴   ┴           ${neutral}${purple}│${neutral}"
-echo -e "${purple} │         ${yellow}Copyright${reset} (C)${gray} https://t.me/PeyxDev    ${purple}│${neutral}"
+echo -e "${purple} │         ${yellow}Copyright${reset} (C)${gray} t.me/DarkZiv    ${purple}│${neutral}"
 echo -e "${purple} └───────────────────────────────────────────────┘${neutral}"
 echo -e "${purple} ────────────────────────────────────────────────${neutral}"
 echo -e "${yellow}     Masukkan Nama Anda untuk memulai instalasi:${neutral}"
@@ -393,7 +393,7 @@ if [[ -z "$IZIN" ]]; then
 IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/esce/main/ipx | grep "$MYIP" | head -1 | awk '{print $3}')
 fi
 if [[ -z "$IZIN" ]]; then
-IZIN=$(curl -s https://raw.githubusercontent.com/myridwan/izinvps2/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
+IZIN=$(curl -s https://raw.githubusercontent.com/chanelog/izinvps2/main/ip | grep "$MYIP" | head -1 | awk '{print $3}')
 fi
 fi
 today=$(date +%Y-%m-%d)
