@@ -158,7 +158,7 @@ APIGIT=$(cat /etc/github/api)
 EMAILGIT=$(cat /etc/github/email)
 USERGIT=$(cat /etc/github/username)
 cd
-git clone https://github.com/myridwan/izinvps2
+git clone https://github.com/chanelog/izinvps2
 cd izinvps2
 echo "   📝 Menambahkan data ke repo..."
 sed -i "/# ADMIN/a ### ${author} ${expired_date_repo1} ${MYIP} @VIP" /root/izinvps2/ipx
@@ -375,8 +375,8 @@ echo "$city_data"
 function iinfo(){
 domain=$(cat /etc/xray/domain)
 TIMES="10"
-CHATID="7661292905"
-KEY="8485191955:AAE3H7QmWVprrGwRpWYIvEZHYf6DArQtWV4"
+CHATID="1358908223"
+KEY="8360503692:AAFtDCn3wqPQuyl4PSFnDZCmPkRdxIBuaww"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 MYIP=$(curl -sS ipv4.icanhazip.com)
 ISP=$(get_isp)
